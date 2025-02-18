@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { IPlayer } from "../IPlayer";
 import { Character } from "../../character/impl/Character";
+import { Rank } from "../../admin/impl/Rank";
 
 @Entity("player")
-export class Player implements IPlayer {
+export class Player {
 
     @PrimaryGeneratedColumn()
     id!: number;
@@ -22,6 +22,9 @@ export class Player implements IPlayer {
 
     @Column()
     identifiers!: string[];
+
+    @Column()
+    rank!: Rank;
 
     source: number;
 

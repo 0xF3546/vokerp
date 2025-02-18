@@ -2,6 +2,7 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Inventory } from "../../inventory/impl/Inventory";
 import { Gender } from "../enums/Gender";
 import { Position } from "../../foundation/Position";
+import { Faction } from "../../faction/impl/Faction";
 
 @Entity("character")
 export class Character {
@@ -27,6 +28,12 @@ export class Character {
     level!: number;
 
     @Column()
+    minutes!: number;
+
+    @Column()
+    hours!: number;
+
+    @Column()
     lastPosition!: Position;
 
     @Column()
@@ -40,4 +47,10 @@ export class Character {
 
     @Column()
     bank!: number;
+
+    @Column()
+    faction!: Faction;
+
+    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+    factionJoinDate!: Date;
 }
