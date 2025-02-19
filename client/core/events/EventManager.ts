@@ -2,6 +2,7 @@ let events = 0;
 
 export class EventManager {
     private events: Array<{ ev: string, func: Function }> = [];
+    private webViewEvents: Array<{ ev: string, func: Function }> = []
     private debug: boolean = false;
 
     constructor() {
@@ -62,6 +63,17 @@ export class EventManager {
         emitNet("serverEvent", ...args);
 
         if (this.debug) console.log(`[EmitServerEvent::${args[0]}]`);
+    }
+
+    emitWebView = (event: string, ...args: any[]) => {
+        SendNUIMessage({
+            event: event,
+            args: args
+        })
+    }
+
+    onWebView = (ev: string, func: Function): void => {
+        RegisterRawNuiCallback(ev, func);
     }
 }
 

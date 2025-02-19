@@ -1,9 +1,11 @@
-import { createContext, useContext, useState, useRef, createRef, cloneElement } from "react";
+import { createContext, useContext, useState, useRef, createRef, cloneElement, useEffect } from "react";
 import { ReactNode } from "react";
 import { Component } from "../utils/Component";
+import CharCreator from "../views/CharCreator";
+import Hud from "../views/Hud";
 
 interface WebViewContextProps {
-  activeComponents: Component[];
+  getActiveComponents: () => Component[];
   addComponent: (component: Component) => void;
   showComponent: (name: string, delay?: number) => void;
   hideComponent: (name: string, delay?: number) => void;
@@ -11,12 +13,11 @@ interface WebViewContextProps {
   getComponents: () => Component[];
   getComponent: (name: string) => Component | undefined;
   getRef: (name: string) => React.RefObject<any> | undefined;
-  on: (eventName: string, callback: (...args: any[]) => void) => void;
   emit: (eventName: string, ...args: any[]) => void;
 }
 
 const webViewContext = createContext<WebViewContextProps>({
-  activeComponents: [],
+  getActiveComponents: () => [],
   addComponent: () => {},
   showComponent: () => {},
   hideComponent: () => {},
@@ -24,7 +25,6 @@ const webViewContext = createContext<WebViewContextProps>({
   getComponents: () => [],
   getComponent: () => undefined,
   getRef: () => undefined,
-  on: () => {},
   emit: () => {},
 });
 
@@ -32,30 +32,48 @@ export const useWebView = () => useContext(webViewContext);
 
 export const WebViewProvider = ({ children }: { children: ReactNode }) => {
   const [components, setComponents] = useState<Component[]>([]);
-  const [listeners, setListeners] = useState<{ [key: string]: ((...args: any[]) => void)[] }>({});
   const refs = useRef<{ [key: string]: React.RefObject<any> }>({});
 
+  useEffect(() => {
+    console.log("Adding components...");
+    const charCreatorComponent = new Component(<CharCreator />, "charcreator");
+    const hudComponent = new Component(<Hud />, "hud");
+    console.log("CharCreator Component:", charCreatorComponent);
+    console.log("Hud Component:", hudComponent);
+    addComponent(charCreatorComponent);
+    addComponent(hudComponent);
+    showComponent("hud");
+  }, []);
+  
   function addComponent(component: Component) {
     if (!component.name) return;
-    
-    if (!refs.current[component.name]) {
-        refs.current[component.name] = createRef<any>();
+  
+    if (components.some((c) => c.name === component.name)) {
+      console.warn(`Component with name "${component.name}" already exists.`);
+      return;
     }
-    
+  
+    if (!refs.current[component.name]) {
+      refs.current[component.name] = createRef<any>();
+    }
+  
     component.ref = refs.current[component.name];
-    
-    const clonedComponent = cloneElement(component.component, { ref: component.ref });
-    component.component = clonedComponent;
-    
-    setComponents((prevComponents) => [...prevComponents, component]);
-}
+  
+    const clonedComponent = cloneElement(component.view, { ref: component.ref });
+    component.view = clonedComponent;
 
+    component.isActive = false;
+    component.ref?.current?.hide?.();
+  
+    setComponents((prevComponents) => [...prevComponents, component]);
+  }
 
   function showComponent(name: string, delay = 500) {
     setComponents((prevComponents) =>
       prevComponents.map((component) => {
         if (component.name === name) {
           component.delay = delay;
+          component.isActive = true;
           component.ref?.current?.show?.(delay);
         }
         return component;
@@ -68,6 +86,7 @@ export const WebViewProvider = ({ children }: { children: ReactNode }) => {
       prevComponents.map((component) => {
         if (component.name === name) {
           component.delay = delay;
+          component.isActive = false;
           component.ref?.current?.hide?.(delay);
         }
         return component;
@@ -79,6 +98,7 @@ export const WebViewProvider = ({ children }: { children: ReactNode }) => {
     setComponents((prevComponents) =>
       prevComponents.map((component) => {
         if (component.closeable) {
+          component.isActive = false;
           component.ref?.current?.hide?.();
         }
         return component;
@@ -87,9 +107,7 @@ export const WebViewProvider = ({ children }: { children: ReactNode }) => {
   }
 
   function getComponent(name: string) {
-    return components.find(
-      (component) => component.name === name
-    );
+    return components.find((component) => component.name === name);
   }
 
   function getComponents() {
@@ -100,24 +118,19 @@ export const WebViewProvider = ({ children }: { children: ReactNode }) => {
     return refs.current[name];
   }
 
-  function on(eventName: string, callback: (...args: any[]) => void) {
-    setListeners((prevListeners) => ({
-      ...prevListeners,
-      [eventName]: [...(prevListeners[eventName] || []), callback],
-    }));
-  }
-
   function emit(eventName: string, ...args: any[]) {
     components.forEach((component) => {
-        component.emit(eventName, ...args);
+      component.emit(eventName, ...args);
     });
-}
+  }
 
+  function getActiveComponents() {
+    return components.filter((component) => component.isActive);
+  }
 
   return (
     <webViewContext.Provider
       value={{
-        activeComponents: components,
         addComponent,
         showComponent,
         hideComponent,
@@ -125,8 +138,8 @@ export const WebViewProvider = ({ children }: { children: ReactNode }) => {
         getComponent,
         getComponents,
         getRef,
-        on,
         emit,
+        getActiveComponents
       }}
     >
       {children}

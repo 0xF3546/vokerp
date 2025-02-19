@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { debugData } from "../utils/debugData";
 import { fetchNui } from "../utils/fetchNui";
 import { useWebView } from "../contexts/webViewContext";
 import { Component } from "../utils/Component";
-import CharCreator from "../views/CharCreator";
-
 // This will set the NUI to visible if we are
 // developing in browser
 debugData([
@@ -40,7 +38,12 @@ const App: React.FC = () => {
   const [clientData, setClientData] = useState<ReturnData | null>(null);
   const webView = useWebView();
 
-  webView.addComponent(new Component(<CharCreator />, "charcreator"));
+  window.addEventListener('message', function (event) {
+    const data = event.data;
+    if (data.event !== undefined) {
+      webView.emit(data.event, data.args);
+    }
+  })
 
   const handleGetClientData = () => {
     fetchNui<ReturnData>("getClientData")
@@ -57,14 +60,11 @@ const App: React.FC = () => {
 
   return (
     <div className="nui-wrapper">
-      <div className="popup-thing">
-        <div>
-          <h1>This is the NUI Popup!</h1>
-          <p>Exit with the escape key</p>
-          <button onClick={handleGetClientData}>Get Client Data</button>
-          {clientData && <ReturnClientDataComp data={clientData} />}
+      {webView.getActiveComponents().map((component, index) => (
+        <div key={index}>
+          {component.view}
         </div>
-      </div>
+      ))}
     </div>
   );
 };

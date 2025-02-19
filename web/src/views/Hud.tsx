@@ -1,27 +1,27 @@
-import { useState, forwardRef, useImperativeHandle } from "react";
-import { HudProps } from "../@types/HudProps";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
 
 const Hud = forwardRef((_, ref) => {
     const [visible, setVisible] = useState(false);
-    const [props, setProps] = useState<HudProps>({money: 0});
-
-    const handleEvent = (eventName: string, ...args: any[]) => {
-        if (eventName === "setMoney") {
-            console.log("Charakterdaten aktualisieren mit:", args);
-        }
-    };
 
     useImperativeHandle(ref, () => ({
-        show: (delay: number) => setVisible(true),
-        hide: (delay: number) => setVisible(false),
-        emit: handleEvent
+        show: (delay: number) => {
+            console.log("Showing HUD");
+            setVisible(true);
+        },
+        hide: (delay: number) => {
+            console.log("Hiding HUD");
+            setVisible(false);
+        },
+        emit: (eventName: string, ...args: any[]) => {
+            console.log(`Event received: ${eventName}`, args);
+        }
     }));
 
     if (!visible) return null;
 
     return (
-        <div>
-            Money: {props.money}
+        <div style={{ position: 'absolute', top: '10px', left: '10px', backgroundColor: 'black', color: 'white', padding: '10px' }}>
+            HUD is visible!
         </div>
     );
 });
