@@ -1,6 +1,6 @@
 export interface IViewComponent {
-    hide: () => void;
-    show: () => void;
+    hide: (delay?: number) => void;
+    show: (delay?: number) => void;
     emit: (eventName: string, ...args: any[]) => void;
   }
   

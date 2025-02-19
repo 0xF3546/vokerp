@@ -57,7 +57,7 @@ export const WebViewProvider = ({ children }: { children: ReactNode }) => {
         if (component.name === name) {
           component.Visible = true;
           component.delay = delay;
-          component.ref?.current?.show?.();
+          component.ref?.current?.show?.(delay);
         }
         return component;
       })
@@ -70,7 +70,7 @@ export const WebViewProvider = ({ children }: { children: ReactNode }) => {
         if (component.name === name) {
           component.Visible = false;
           component.delay = delay;
-          component.ref?.current?.hide?.();
+          component.ref?.current?.hide?.(delay);
         }
         return component;
       })
