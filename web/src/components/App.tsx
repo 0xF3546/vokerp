@@ -4,7 +4,7 @@ import { debugData } from "../utils/debugData";
 import { fetchNui } from "../utils/fetchNui";
 import { useWebView } from "../contexts/webViewContext";
 import { Component } from "../utils/Component";
-import CharCreator from "./CharCreator";
+import CharCreator from "../views/CharCreator";
 
 // This will set the NUI to visible if we are
 // developing in browser

@@ -55,7 +55,6 @@ export const WebViewProvider = ({ children }: { children: ReactNode }) => {
     setComponents((prevComponents) =>
       prevComponents.map((component) => {
         if (component.name === name) {
-          component.Visible = true;
           component.delay = delay;
           component.ref?.current?.show?.(delay);
         }
@@ -68,7 +67,6 @@ export const WebViewProvider = ({ children }: { children: ReactNode }) => {
     setComponents((prevComponents) =>
       prevComponents.map((component) => {
         if (component.name === name) {
-          component.Visible = false;
           component.delay = delay;
           component.ref?.current?.hide?.(delay);
         }
@@ -81,7 +79,6 @@ export const WebViewProvider = ({ children }: { children: ReactNode }) => {
     setComponents((prevComponents) =>
       prevComponents.map((component) => {
         if (component.closeable) {
-          component.Visible = false;
           component.ref?.current?.hide?.();
         }
         return component;
