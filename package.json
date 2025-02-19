@@ -4,10 +4,13 @@
   "description": "FiveM Roleplay Framework",
   "main": "index.js",
   "scripts": {
-    "build": "npm run clearbuild && npm run typecheck && node build/build-bundle.js",
-    "clearbuild": "rimraf ./dist",
-    "typecheck": "tsc --noEmit -p client/tsconfig.json && tsc --noEmit -p server/tsconfig.json",
-    "watch": "npm run clearbuild && cross-env IS_WATCH_MODE=1 node build/build-bundle.js"
+    "build": "webpack --mode production",
+    "watch": "webpack --watch --mode development"
+  },
+  "browser": {
+    "fs": false,
+    "path": false,
+    "os": false
   },
   "author": "Project Error",
   "license": "MIT",
@@ -15,12 +18,20 @@
     "@citizenfx/client": "^2.0.6063-1",
     "@citizenfx/server": "^2.0.6063-1",
     "@types/node": "^20.10.5",
+    "@types/webpack-env": "^1.18.8",
     "cross-env": "^7.0.3",
     "esbuild": "^0.19.10",
     "rimraf": "^5.0.1",
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "typeorm": "^0.3.20"
+    "clean-webpack-plugin": "^4.0.0",
+    "mysql": "^2.18.1",
+    "ts-loader": "^9.5.2",
+    "tsconfig-paths-webpack-plugin": "^4.2.0",
+    "typeorm": "^0.3.20",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-node-externals": "^3.0.0"
   }
 }
