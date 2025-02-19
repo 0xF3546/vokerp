@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import "./App.css";
 import { debugData } from "../utils/debugData";
 import { fetchNui } from "../utils/fetchNui";
+import { useWebView } from "../contexts/webViewContext";
+import { Component } from "../utils/Component";
+import CharCreator from "./CharCreator";
 
 // This will set the NUI to visible if we are
 // developing in browser
@@ -35,6 +38,9 @@ interface ReturnData {
 
 const App: React.FC = () => {
   const [clientData, setClientData] = useState<ReturnData | null>(null);
+  const webView = useWebView();
+
+  webView.addComponent(new Component(<CharCreator />, "charcreator"));
 
   const handleGetClientData = () => {
     fetchNui<ReturnData>("getClientData")
