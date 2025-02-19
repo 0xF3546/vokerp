@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Inventory } from "../../inventory/impl/Inventory";
 import { Gender } from "../enums/Gender";
 import { Position } from "../../foundation/Position";
@@ -9,7 +9,8 @@ export class Character {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
+    @OneToOne(() => Inventory, { cascade: true })
+    @JoinColumn()
     inventory!: Inventory;
 
     @Column()
@@ -48,7 +49,8 @@ export class Character {
     @Column()
     bank!: number;
 
-    @Column()
+    @ManyToOne(() => Faction)
+    @JoinColumn()
     faction!: Faction;
 
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

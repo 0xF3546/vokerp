@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Character } from "../../character/impl/Character";
 import { Rank } from "../../admin/impl/Rank";
 
@@ -11,7 +11,8 @@ export class Player {
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
     createdAt!: Date;
 
-    @Column()
+    @OneToOne(() => Character, { cascade: true })
+    @JoinColumn()
     character!: Character;
 
     @Column()
@@ -23,7 +24,8 @@ export class Player {
     @Column()
     identifiers!: string[];
 
-    @Column()
+    @ManyToOne(() => Rank)
+    @JoinColumn()
     rank!: Rank;
 
     source: number;

@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Inventory } from "../../inventory/impl/Inventory";
 import { Position } from "../../foundation/Position";
 
@@ -20,7 +20,8 @@ export class Faction {
     @Column()
     maxMembers!: number;
 
-    @Column()
+    @OneToOne(() => Inventory, { cascade: true })
+    @JoinColumn()
     inventory!: Inventory;
 
     @Column()
