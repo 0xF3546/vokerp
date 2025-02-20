@@ -11,7 +11,7 @@ export class Player {
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
     createdAt!: Date;
 
-    @OneToOne(() => Character, { cascade: true })
+    @OneToOne(() => Character, { cascade: true, eager: true })
     @JoinColumn()
     character!: Character;
 
@@ -21,12 +21,12 @@ export class Player {
     @Column()
     license!: string;
 
-    @Column()
+    @Column("json")
     identifiers!: string[];
 
-    @ManyToOne(() => Rank)
+    @ManyToOne(() => Rank, { nullable: true, eager: true })
     @JoinColumn()
-    rank!: Rank;
+    rank!: Rank | null;
 
     source: number;
 

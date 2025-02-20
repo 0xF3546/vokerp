@@ -1,5 +1,12 @@
-on('onResourceStart', (resName: string) => {
-  if (resName === GetCurrentResourceName()) {
-    console.log('TypeScript boilerplate started!')
+import { Delay } from "./core/foundation/Utils";
+
+const playerId = PlayerId();
+
+while (true) {
+  if (NetworkIsPlayerActive(playerId)) {
+    DoScreenFadeOut(0);
+    Delay(500);
+    emitNet('playerJoined');
+    break;
   }
-})
+}

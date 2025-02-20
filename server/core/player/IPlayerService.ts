@@ -38,4 +38,6 @@ export type IPlayerService = {
     load: (player: Player) => void
 
     playerDropped: (source: number) => void
+
+    createPlayer: (source: number) => Promise<Player>
 }

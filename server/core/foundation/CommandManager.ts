@@ -36,3 +36,23 @@ class CommandManager {
         }
     }
 }
+
+const commandManager = new CommandManager();
+
+export function load() {
+    commandManager.add("players", (player) => {
+        if (player.Character == undefined) return;
+
+        player.notification(null, `Spieler: ${getPlayers().length}`);
+
+        if (!player.Character.isPermitted("playerlist")) return;
+
+        eventManager.emitClient(player, "Administrator::Playerlist");
+    });
+
+    /*commandManager.add("ooc", (player, ...args) => {
+        utils.sendNotificationInRange(player.pos, 10, `(OOC) ` + player.Character.firstname + ` ` + player.Character.lastname, args, 5000, "warning");
+    });*/
+}
+
+export default commandManager;

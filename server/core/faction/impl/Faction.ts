@@ -27,6 +27,6 @@ export class Faction {
     @Column()
     vehicleColor!: number;
 
-    @Column()
-    equipPoint!: Position;
+    @Column("json")
+    equipPoint!: Position;    
 }

@@ -1,7 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
-import { Item } from "./Item";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { InventoryItem } from "./InventoryItem";
 
-@Entity("inventorys")
+@Entity("inventories") // Sollte plural sein
 export class Inventory {
     @PrimaryGeneratedColumn()
     id!: number;
@@ -18,54 +18,60 @@ export class Inventory {
     @Column()
     imagePath!: string;
 
-    @Column()
-    items!: Item[];
+    @OneToMany(() => InventoryItem, inventoryItem => inventoryItem.inventory)
+    items!: InventoryItem[];
 
-    addItem() {
-        // TODO
+    addItem(item: InventoryItem) {
+        // Hier fügst du ein neues Item zum Inventory hinzu
+        if (this.items.length < this.maxSlots && this.getWeight() + item.item.weight <= this.maxWeight) {
+            this.items.push(item);
+        }
     }
 
-    removeItem() {
-        // TODO
+    removeItem(itemId: number) {
+        this.items = this.items.filter(item => item.id !== itemId);
     }
 
-    updateItem() {
-        // TODO
+    updateItem(itemId: number, newItem: InventoryItem) {
+        const index = this.items.findIndex(item => item.id === itemId);
+        if (index !== -1) {
+            this.items[index] = newItem;
+        }
     }
 
-    getItem() {
-        // TODO
+    getItem(itemId: number) {
+        return this.items.find(item => item.id === itemId);
     }
 
     getItems() {
-        // TODO
+        return this.items;
     }
 
     getWeight() {
-        // TODO
+        return this.items.reduce((totalWeight, item) => totalWeight + item.item.weight, 0);
     }
 
     getSlots() {
-        // TODO
+        return this.items.length;
     }
 
     getFreeSlots() {
-        // TODO
+        return this.maxSlots - this.items.length;
     }
 
     getFreeWeight() {
-        // TODO
+        return this.maxWeight - this.getWeight();
     }
 
     isFull() {
-        // TODO
+        return this.items.length >= this.maxSlots || this.getWeight() >= this.maxWeight;
     }
 
     isEmpty() {
-        // TODO
+        return this.items.length === 0;
     }
 
-    hasItem() {
-        // TODO
+    hasItem(itemId: number) {
+        return this.items.some(item => item.id === itemId);
     }
 }

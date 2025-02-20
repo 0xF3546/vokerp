@@ -6,6 +6,14 @@ export class FactionService implements IFactionService {
     private factionRepository = dataSource.getRepository(Faction);
     private factionCache = new Map<number, Faction>();
 
+    load() {
+        this.factionRepository.find().then(factions => {
+            factions.forEach(faction => {
+                this.factionCache.set(faction.id, faction);
+            });
+        });
+    }
+
     saveFaction(faction: Faction) {
         return this.factionRepository.save(faction);
     }
@@ -33,5 +41,5 @@ export class FactionService implements IFactionService {
 
 }
 
-const factionService = new FactionService()
+let factionService = new FactionService()
 export default factionService;

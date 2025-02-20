@@ -9,6 +9,9 @@
     "types": ["@citizenfx/client", "@types/node", "webpack-env"],
     "lib": ["ES2020"],
     "baseUrl": "../",
+    "paths": {
+      "@shared/*": ["../shared/*"]
+    }
   },
   "include": ["./**/*"],
   "exclude": ["**/node_modules", "**/__tests__/*"]

@@ -1,28 +1,22 @@
 on('playerConnecting', (name: string, setKickReason: any, deferrals: any) => {
+    console.log(`Player ${name} is connecting to the server.`)
     deferrals.defer()
 
     const player = source.toString();
 
-    setTimeout(() => {
-        deferrals.update(`Hello ${name}. Your steam ID is being checked.`)
+    let licenseIdentifier: any = null;
 
-        let steamIdentifier: any = null;
-
-        for (let i = 0; i < GetNumPlayerIdentifiers(player); i++) {
-            const identifier = GetPlayerIdentifier(player, i);
-
-            if (identifier.includes('steam:')) {
-                steamIdentifier = identifier;
-            }
+    for (let i = 0; i < GetNumPlayerIdentifiers(player); i++) {
+        const identifier = GetPlayerIdentifier(player, i);
+        console.log(identifier);  // Debugging
+        if (identifier.includes('license:')) {
+            licenseIdentifier = identifier;
         }
+    }
 
-        // pretend to be a wait
-        setTimeout(() => {
-            if (steamIdentifier === null) {
-                deferrals.done("You are not connected to Steam.")
-            } else {
-                deferrals.done()
-            }
-        }, 0)
-    }, 0)
+    if (licenseIdentifier === null) {
+        deferrals.done("You are not connected to Rockstar Games.")
+    } else {
+        deferrals.done()
+    }
 })

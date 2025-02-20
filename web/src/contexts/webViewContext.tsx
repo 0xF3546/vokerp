@@ -1,8 +1,9 @@
-import { createContext, useContext, useState, useRef, createRef, cloneElement, useEffect } from "react";
+import { createContext, useContext, useState, useRef, createRef, cloneElement, useEffect, useCallback } from "react";
 import { ReactNode } from "react";
 import { Component } from "../utils/Component";
 import CharCreator from "../views/CharCreator";
-import Hud from "../views/Hud";
+import Hud from "../views/hud/Hud";
+import { ViewComponent } from "../@types/ViewComponent";
 
 interface WebViewContextProps {
   getActiveComponents: () => Component[];
@@ -28,50 +29,56 @@ const webViewContext = createContext<WebViewContextProps>({
   emit: () => {},
 });
 
-export const useWebView = () => useContext(webViewContext);
+const useWebView = () => useContext(webViewContext);
 
-export const WebViewProvider = ({ children }: { children: ReactNode }) => {
+const WebViewProvider = ({ children }: { children: ReactNode }) => {
   const [components, setComponents] = useState<Component[]>([]);
   const refs = useRef<{ [key: string]: React.RefObject<any> }>({});
 
   useEffect(() => {
-    console.log("Adding components...");
-    const charCreatorComponent = new Component(<CharCreator />, "charcreator");
-    const hudComponent = new Component(<Hud />, "hud");
-    console.log("CharCreator Component:", charCreatorComponent);
-    console.log("Hud Component:", hudComponent);
-    addComponent(charCreatorComponent);
-    addComponent(hudComponent);
-    showComponent("hud");
+    if (components.length === 0) {
+      console.log("Adding components...");
+      const charCreatorComponent = new Component(<CharCreator />, "charcreator");
+      const hudComponent = new Component(<Hud />, "hud");
+      console.log("CharCreator Component:", charCreatorComponent);
+      console.log("Hud Component:", hudComponent);
+      addComponent(charCreatorComponent);
+      addComponent(hudComponent);
+    }
   }, []);
   
-  function addComponent(component: Component) {
-    if (!component.name) return;
-  
-    if (components.some((c) => c.name === component.name)) {
-      console.warn(`Component with name "${component.name}" already exists.`);
+
+  const addComponent = useCallback((component: Component) => {
+    if (!component.name || typeof component.name !== "string") {
+      console.error("Component benötigt einen gültigen Namen als String.");
       return;
     }
   
-    if (!refs.current[component.name]) {
-      refs.current[component.name] = createRef<any>();
-    }
+    setComponents((prevComponents) => {
+      if (prevComponents.some((c) => c.name === component.name)) {
+        console.warn(`Component mit Name "${component.name}" existiert bereits.`);
+        return prevComponents;
+      }
   
-    component.ref = refs.current[component.name];
+      if (!refs.current[component.name]) {
+        refs.current[component.name] = createRef<ViewComponent>();
+      }
   
-    const clonedComponent = cloneElement(component.view, { ref: component.ref });
-    component.view = clonedComponent;
+      component.ref = refs.current[component.name];
+      const clonedComponent = cloneElement(component.view, { ref: component.ref });
+      component.view = clonedComponent;
+  
+      return [...prevComponents, component];
+    });
+  }, []);
+  
 
-    component.isActive = false;
-    component.ref?.current?.hide?.();
-  
-    setComponents((prevComponents) => [...prevComponents, component]);
-  }
-
-  function showComponent(name: string, delay = 500) {
+  const showComponent = useCallback((name: string, delay = 500) => {
+    console.log(`Showing component: ${name}`);
     setComponents((prevComponents) =>
       prevComponents.map((component) => {
         if (component.name === name) {
+          console.log(`Setting ${name} to active`);
           component.delay = delay;
           component.isActive = true;
           component.ref?.current?.show?.(delay);
@@ -79,12 +86,14 @@ export const WebViewProvider = ({ children }: { children: ReactNode }) => {
         return component;
       })
     );
-  }
-
-  function hideComponent(name: string, delay = 500) {
+  }, []);
+  
+  const hideComponent = useCallback((name: string, delay = 500) => {
+    console.log(`Hiding component: ${name}`);
     setComponents((prevComponents) =>
       prevComponents.map((component) => {
         if (component.name === name) {
+          console.log(`Setting ${name} to inactive`);
           component.delay = delay;
           component.isActive = false;
           component.ref?.current?.hide?.(delay);
@@ -92,41 +101,54 @@ export const WebViewProvider = ({ children }: { children: ReactNode }) => {
         return component;
       })
     );
-  }
-
-  function hideAllWebViews() {
+  }, []);
+  
+  const hideAllWebViews = useCallback(() => {
+    console.log("Hiding all web views");
     setComponents((prevComponents) =>
       prevComponents.map((component) => {
-        if (component.closeable) {
-          component.isActive = false;
-          component.ref?.current?.hide?.();
-        }
+        console.log(`Hiding ${component.name}`);
+        component.isActive = false;
+        component.ref?.current?.hide?.();
         return component;
       })
     );
-  }
+  }, []);
 
-  function getComponent(name: string) {
+  const getComponent = useCallback((name: string) => {
     return components.find((component) => component.name === name);
-  }
+  }, [components]);
 
-  function getComponents() {
+  const getComponents = useCallback(() => {
     return components;
-  }
+  }, [components]);
 
-  function getRef(name: string) {
+  const getRef = useCallback((name: string) => {
     return refs.current[name];
-  }
+  }, []);
 
-  function emit(eventName: string, ...args: any[]) {
+  const emit = useCallback((eventName: string, ...args: any[]) => {
+    console.log(`Emitting event: ${eventName}, aktuelle Komponenten:`, components);
+  
+    if (components.length === 0) {
+      console.warn("❌ Keine Komponenten vorhanden!");
+      return;
+    }
+  
     components.forEach((component) => {
+      console.log(`🔹 Event "${eventName}" an ${component.name} senden`);
+      if (!component.emit) {
+        console.warn(`⚠ Component ${component.name} hat keine emit-Methode.`);
+        return;
+      }
       component.emit(eventName, ...args);
     });
-  }
+  }, [components]);
+  
 
-  function getActiveComponents() {
+  const getActiveComponents = useCallback(() => {
     return components.filter((component) => component.isActive);
-  }
+  }, [components]);
 
   return (
     <webViewContext.Provider
@@ -146,3 +168,5 @@ export const WebViewProvider = ({ children }: { children: ReactNode }) => {
     </webViewContext.Provider>
   );
 };
+
+export { WebViewProvider, useWebView };

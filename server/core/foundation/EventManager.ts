@@ -1,3 +1,5 @@
+import playerService from "../player/impl/PlayerService";
+
 class EventManager {
     private debug: boolean;
     private events: Array<{ ev: string, func: Function }> = [];
@@ -8,6 +10,8 @@ class EventManager {
 
         onNet("serverEvent", (...args: any[]) => {
             if (this.debug) console.debug(`SE: ${args}`);
+            const player = playerService.getBySource(args[0]);
+            if (player != null) args[0] = player;
             this.emitFromClient(...args);
         });
     }
@@ -95,6 +99,10 @@ class EventManager {
         }
 
         if (this.debug) console.log(`[EmitEvent::${ev}]`);
+    }
+
+    emitWebView = (player, event: string, ...args: any[]): void => {
+        emitNet("webViewEvent", player, event, ...args);
     }
 }
 

@@ -2,16 +2,19 @@ let events = 0;
 
 export class EventManager {
     private events: Array<{ ev: string, func: Function }> = [];
-    private webViewEvents: Array<{ ev: string, func: Function }> = []
     private debug: boolean = false;
 
     constructor() {
         this.events = [];
         this.debug = false;
 
-        on("clientEvent", (...args) => {
+        onNet("clientEvent", (...args) => {
             this.emit(...args);
         });
+
+        onNet("webViewEvent", (event, ...args) => {
+            this.emitWebView(event, args);
+        })
     }
 
     emitServerPromise = (...args: any[]): Promise<any> => {

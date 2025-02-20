@@ -1,7 +1,7 @@
 import { createRef } from "react";
 
 export class Component {
-    public name: string | null;
+    public name: string;
     public delay: number;
     public closeable: boolean;
     public hide: boolean;
@@ -11,7 +11,7 @@ export class Component {
   
     constructor(
       component: JSX.Element,
-      name: string | null = null,
+      name: string,
       closeable: boolean = true,
       hide: boolean = true
     ) {
@@ -24,6 +24,7 @@ export class Component {
     }
   
     emit(eventName: string, ...args: any[]) {
+      console.log(`Event "${eventName}" wird an ${this.name} gesendet`, args);
       this.ref?.current?.emit?.(eventName, ...args);
     }
   }

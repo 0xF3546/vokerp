@@ -2,6 +2,8 @@ import { IPlayerService } from "../IPlayerService";
 import { dataSource } from "../../../data/database/app-data-source";
 import { Player } from "./Player";
 import { PositionParser } from "../../foundation/PositionParser";
+import { Character } from "@server/core/character/impl/Character";
+import { eventManager } from "@server/core/foundation/EventManager";
 
 export class PlayerService implements IPlayerService {
     private playerRepository = dataSource.getRepository(Player);
@@ -15,15 +17,17 @@ export class PlayerService implements IPlayerService {
         return await this.playerRepository.findOne({
             where: {
                 id: id
-            }
+            },
+            relations: ["character"]
         });
 
     }
 
     async savePlayer(player: Player) {
-        player.character.lastPosition = PositionParser.toPosition(GetEntityCoords(GetPlayerPed(player.source.toString())));
-        player.character.armour = GetPedArmour(GetPlayerPed(player.source.toString()));
-        player.character.health = GetEntityHealth(GetPlayerPed(player.source.toString()));
+        const ped = GetPlayerPed(player.source.toString());
+        player.character.lastPosition = PositionParser.toPosition(GetEntityCoords(ped), GetEntityHeading(ped));
+        player.character.armour = GetPedArmour(ped);
+        player.character.health = GetEntityHealth(ped);
         return await this.playerRepository.save(player);
     }
 
@@ -48,10 +52,29 @@ export class PlayerService implements IPlayerService {
     init(player: Player, source: number) {
         this.playerCache.set(source, player);
         player.source = source;
+        player.character.player = player;
     }
 
     load(player: Player) {
+        console.log(`Loading Player ${player.id} with source ${player.source}...`);
+        console.log(GetPlayerName(player.source.toString()));
+        if (!player.character) {
+            console.error(`Character für Spieler ${player.id} nicht geladen!`);
+            return;
+        }
+
         PositionParser.applyPosition(player.source, player.character.lastPosition);
+        player.character.load();
+        SetPedArmour(GetPlayerPed(player.source.toString()), player.character.armour);
+        // SetEntityHealth(GetPlayerPed(player.source.toString()), player.character.health);
+
+        eventManager.emitWebView(player.source, "updateHud", {
+            money: player.character.cash,
+            maxVoiceRange: 2,
+            voiceRange: 3,
+            radioState: 0,
+            isVoiceMuted: false
+        });
     }
 
     playerDropped(source: number) {
@@ -60,6 +83,17 @@ export class PlayerService implements IPlayerService {
             this.savePlayer(player);
             this.playerCache.delete(source);
         }
+    }
+
+    async createPlayer(source: number) {
+        const player = new Player(source);
+        player.source = source;
+        const identifiers = getPlayerIdentifiers(source);
+        player.license = identifiers[3];
+        player.identifiers = identifiers;
+        player.steamId = identifiers[0];
+        player.character = new Character();
+        return await this.playerRepository.save(player);
     }
 }
 

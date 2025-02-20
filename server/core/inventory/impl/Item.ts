@@ -1,4 +1,4 @@
-import { Column, Double, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("items")
 export class Item {
@@ -9,8 +9,8 @@ export class Item {
     @Column()
     name!: string;
 
-    @Column({default: 0.25})
-    weight!: Double;
+    @Column("double", { default: 0.25 })
+    weight!: number;
 
     @Column()
     maxStack!: number;
