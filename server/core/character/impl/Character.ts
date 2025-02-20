@@ -1,12 +1,14 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Inventory } from "../../inventory/impl/Inventory";
-import { Gender } from "../enums/Gender";
 import { Position } from "../../foundation/Position";
 import { Faction } from "../../faction/impl/Faction";
 import { Player } from "@server/core/player/impl/Player";
 import { CharacterData } from "@server/core/types/CharacterData";
 import { CharacterClothes } from "@server/core/types/CharacterClothes";
 import { CharacterProps } from "@server/core/types/CharacterProps";
+import { eventManager } from "@server/core/foundation/EventManager";
+import { LoadedPlayer } from "@shared/types/LoadedPlayer";
+import { Gender } from "@shared/enum/Gender";
 
 @Entity("character")
 export class Character {
@@ -117,6 +119,14 @@ export class Character {
 
   load = () => {
     this.loadMPModel(this.data);
+
+    const loadedData: LoadedPlayer = {
+      firstname: this.firstname,
+      lastname: this.lastname,
+      gender: this.gender,
+    }
+
+    eventManager.emitClient(this.player.source, "playerLoaded", JSON.stringify(loadedData));
   }
 
 

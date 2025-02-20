@@ -1,3 +1,7 @@
+import { Gender } from "../enum/Gender";
+
 export type LoadedPlayer = {
-    name: string;
+    firstname: string | null;
+    lastname: string | null;
+    gender: Gender;
 }

@@ -10,7 +10,7 @@
     "lib": ["ES2020"],
     "baseUrl": "../",
     "paths": {
-      "@shared/*": ["../shared/*"]
+      "@shared/*": ["shared/*"]
     }
   },
   "include": ["./**/*"],
