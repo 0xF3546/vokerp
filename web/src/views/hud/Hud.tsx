@@ -3,6 +3,8 @@ import { HudProps } from "../../@types/HudProps";
 import { RadioState } from "../../@types/RadioState";
 import "./hud.css";
 import { ViewComponent } from "../../@types/ViewComponent";
+import { ImVolumeHigh, ImVolumeLow, ImVolumeMedium, ImVolumeMute } from "react-icons/im";
+import { IoIosRadio } from "react-icons/io";
 
 const Hud = forwardRef<ViewComponent>((_, ref) => {
   const visibleRef = useRef(true); // Verhindert unerwartetes Zurücksetzen
@@ -83,48 +85,52 @@ const Hud = forwardRef<ViewComponent>((_, ref) => {
 
   if (!visible) return null;
 
+  const getVolumeIcon = () => {
+    if (props.isVoiceMuted) return <ImVolumeMute />
+    switch (props.voiceRange) {
+      case 32:
+        <ImVolumeHigh />
+        break;
+      case 16:
+        <ImVolumeHigh />
+        break;
+      case 8:
+        <ImVolumeMedium />
+        break;
+      case 3:
+        <ImVolumeLow />
+        break;
+      default:
+        return <ImVolumeLow /> 
+    }
+  }
+
+  const getRadioIcon = () => {
+    return <IoIosRadio />
+  }
+
   return (
-    <div className="fixed right-6 top-20">
-      <div className="flex flex-col space-y-2">
-        <div className="flex items-center bg-black bg-opacity-85 p-2 rounded-md">
-          <div className="bg-green-600 w-8 h-8 flex items-center justify-center rounded-md shadow-lg">
-            <span className="text-white">$</span>
-          </div>
-          <span className="ml-2 text-white">{props.money}</span>
+    <div className="playerHud">
+      <div className="moneyBody">
+        <div className="inner">
+          <div className="logo">$</div>
+          <span id="money">{props.money.toLocaleString()}</span>
         </div>
-        <div className="bg-black bg-opacity-75 p-2 rounded-md text-white">{date}</div>
-        <div className="flex space-x-2">
-          <div
-            className={`w-10 h-10 flex items-center justify-center rounded-md ${
-              props.voiceRange === 1
-                ? "bg-green-500"
-                : props.voiceRange === 3
-                ? "bg-yellow-500"
-                : props.voiceRange === 8
-                ? "bg-orange-500"
-                : props.voiceRange === 15 || props.voiceRange === 35
-                ? "bg-red-500"
-                : "bg-gray-500"
-            }`}
-          >
-            <i className={`fas ${props.voiceRange <= 3 ? "fa-volume-low" : "fa-volume-high"} text-white`}></i>
-          </div>
-          <div
-            className={`w-10 h-10 flex items-center justify-center rounded-md ${
-              props.radioState === 0 ? "bg-red-500" : props.radioState === 1 ? "bg-orange-500" : "bg-blue-500"
-            }`}
-          >
-            <i
-              className={`fas ${
-                props.radioState === RadioState.NC
-                  ? "fa-microphone-alt-slash"
-                  : props.radioState === RadioState.PTT
-                  ? "fa-microphone-alt"
-                  : "fa-microphone"
-              } text-white`}
-            ></i>
-          </div>
-        </div>
+      </div>
+      <div className="dateBody">
+        <div id="uiDate" className="inner">{date}</div>
+      </div>
+
+      <div className="voiceBody">
+        <div id="voiceRange">{getVolumeIcon()}</div>
+      </div>
+
+      <div className="talkingBody">
+        <img src="./images/ui/talking.gif" />
+      </div>
+
+      <div className="funkBody">
+        <div id="funkRange">{getRadioIcon()}</div>
       </div>
     </div>
   );

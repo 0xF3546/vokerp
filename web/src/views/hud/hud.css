@@ -1,0 +1,130 @@
+.playerHud {
+    position: absolute;
+    right: 1.5vh;
+    top: 8vh;
+}
+
+.playerHud .moneyBody {
+    height: 2.5vh;
+    min-width: 13.5vh;
+    background: linear-gradient(90deg, rgba(12, 12, 12, 0.85), rgba(22, 22, 22, 0.75));
+    transform: skewX(-25deg);
+    border-radius: 3.5px;
+    line-height: 2.5vh;
+    text-align: center;
+    color: white;
+    font-family: Montserrat;
+    font-size: 1.1vh;
+    position: relative;
+    padding-left: 3.6vh;
+}
+
+.playerHud .moneyBody .inner {
+    margin-left: 0; /* Inneren Rand entfernen */
+    margin-right: 1vh; /* Inneren Rand rechts anpassen */
+}
+
+.playerHud .moneyBody .inner .logo {
+    position: absolute;
+    left: -0.5vh; /* Logo leicht nach links verschieben */
+    top: -0.5vh;
+    color: white;
+    background: linear-gradient(90deg, rgb(67, 133, 58), rgb(53, 177, 37));
+    width: 3.25vh;
+    height: 3.25vh;
+    line-height: 3vh;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px 0.5px rgba(67, 133, 58, 0.75);
+}
+
+.dateBody {
+    position: fixed; /* Fixiert den DateBody relativ zum Ansichtsfenster */
+    left: 2.5vh; /* Positioniert den DateBody ganz links */
+    bottom: 0vh; /* Positioniert den DateBody ganz unten */
+    height: auto;
+    width: auto;
+    background: none;
+    transform: none;
+    border-radius: 0;
+    line-height: 2vh;
+    text-align: center;
+    color: white;
+    font-family: Montserrat;
+    font-size: 1.1vh;
+    box-shadow: none;
+}
+
+.dateBody .inner {
+    transform: none;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.talkingBody {
+    display: none;
+    position: absolute;
+    right: 3.5vh;
+    top: 17vh;
+    transform: rotate(270deg);
+}
+
+.talkingBody img {
+    width: 9vh;
+    position: absolute;
+}
+
+.playerHud .voiceBody {
+    position: absolute;
+    right: 5.75vh;
+    margin-top: 2vh;
+    height: 2.45vh;
+    width: 9.25vh;
+    transform: skewX(-25deg);
+    border-radius: 3.5px;
+    display: flex; /* Flexbox für horizontale und vertikale Zentrierung */
+    justify-content: center; /* Horizontale Zentrierung */
+    align-items: center; /* Vertikale Zentrierung */
+    text-align: center;
+    color: white;
+    font-family: Montserrat;
+    font-size: 0.8vh;
+}
+
+.playerHud .voiceBody #voiceRange {
+    background: linear-gradient(90deg, rgba(22, 22, 22, 0.9), rgba(12, 12, 12, 0.9));
+    border-radius: 3.5px;
+    height: 100%;
+    width: 33%; /* Width hinzufügen, damit es korrekt zentriert wird */
+    font-size: 1.5vh;
+    display: flex; /* Flexbox für inneren Inhalt */
+    justify-content: center; /* Horizontale Zentrierung des inneren Inhalts */
+    align-items: center; /* Vertikale Zentrierung des inneren Inhalts */
+}
+
+.playerHud .funkBody {
+    position: absolute;
+    right: 1vh;
+    margin-top: 2vh;
+    height: 2.45vh;
+    width: 10.25vh;
+    transform: skewX(-25deg);
+    border-radius: 3.5px;
+    display: flex; /* Flexbox für horizontale und vertikale Zentrierung */
+    justify-content: center; /* Horizontale Zentrierung */
+    align-items: center; /* Vertikale Zentrierung */
+    text-align: center;
+    color: white;
+    font-family: Montserrat;
+    font-size: 0.8vh;
+}
+
+.playerHud .funkBody #funkRange {
+    background: linear-gradient(90deg, rgba(22, 22, 22, 0.9), rgba(12, 12, 12, 0.9));
+    border-radius: 3.5px;
+    height: 100%;
+    width: 33%; /* Width hinzufügen, damit es korrekt zentriert wird */
+    font-size: 1.5vh;
+    display: flex; /* Flexbox für inneren Inhalt */
+    justify-content: center; /* Horizontale Zentrierung des inneren Inhalts */
+    align-items: center; /* Vertikale Zentrierung des inneren Inhalts */
+}
