@@ -19,5 +19,5 @@ export class AdminService implements IAdminService {
     }
 }
 
-const adminService = new AdminService();
+const adminService: IAdminService = new AdminService();
 export default adminService;

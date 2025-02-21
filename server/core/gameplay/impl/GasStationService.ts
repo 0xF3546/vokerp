@@ -24,3 +24,6 @@ export class GasStationService implements IGasStationService {
         return await this.gasStationRepository.save(gasStation);
     }
 }
+
+const gasStationService: IGasStationService = new GasStationService();
+export default gasStationService;

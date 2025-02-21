@@ -41,5 +41,5 @@ export class FactionService implements IFactionService {
 
 }
 
-let factionService = new FactionService()
+let factionService: IFactionService = new FactionService()
 export default factionService;

@@ -1,5 +1,5 @@
 import { IPlayerService } from "../IPlayerService";
-import { dataSource } from "../../../data/database/app-data-source";
+import { dataSource } from "@server/data/database/app-data-source";
 import { Player } from "./Player";
 import { PositionParser } from "../../foundation/PositionParser";
 import { Character } from "@server/core/character/impl/Character";
@@ -101,15 +101,14 @@ export class PlayerService implements IPlayerService {
     async checkBan(license: string) {
         const player = await this.findPlayerByLicense(license);
         if (!player) return null;
-        return this.playerBanRepository.findOne({
-            relations: ["players"],
+        return await this.playerBanRepository.findOne({
             where: {
                 player: player
             }
         }) || null;
-    };
+    }
 }
 
-const playerService = new PlayerService();
+const playerService: IPlayerService = new PlayerService();
 
 export default playerService;
