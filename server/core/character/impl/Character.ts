@@ -9,6 +9,7 @@ import { CharacterProps } from "@server/core/types/CharacterProps";
 import { eventManager } from "@server/core/foundation/EventManager";
 import { LoadedPlayer } from "@shared/types/LoadedPlayer";
 import { Gender } from "@shared/enum/Gender";
+import playerService from "@server/core/player/impl/PlayerService";
 
 @Entity("character")
 export class Character {
@@ -129,6 +130,29 @@ export class Character {
     eventManager.emitClient(this.player.source, "playerLoaded", JSON.stringify(loadedData));
   }
 
+  removeCash = (amount: number): boolean => {
+    if (this.cash < amount) return false;
+    this.cash -= amount;
+    playerService.savePlayer(this.player);
+    return true;
+  }
+
+  addCash = (amount: number): void => {
+    this.cash += amount;
+    playerService.savePlayer(this.player);
+  }
+
+  removeBank = (amount: number): boolean => {
+    if (this.bank < amount) return false;
+    this.bank -= amount;
+    playerService.savePlayer(this.player);
+    return true;
+  }
+
+  addBank = (amount: number): void => {
+    this.bank += amount;
+    playerService.savePlayer(this.player);
+  }
 
   loadMPModel = (charData: CharacterData) => {
     let model = 1885233650;

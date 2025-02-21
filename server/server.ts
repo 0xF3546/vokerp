@@ -2,6 +2,7 @@ import "reflect-metadata";
 import adminService from "./core/admin/impl/AdminService";
 import factionService from "./core/faction/impl/FactionService";
 import { dataSource } from "./data/database/app-data-source";
+import houseService from "./core/gameplay/impl/HouseService";
 
 on("onResourceStart", (resName: string) => {
   if (resName === GetCurrentResourceName()) {
@@ -23,4 +24,5 @@ on("onResourceStart", (resName: string) => {
 const init = () => {
   adminService.load();
   factionService.load();
+  houseService.load();
 }
