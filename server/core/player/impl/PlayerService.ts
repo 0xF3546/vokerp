@@ -4,8 +4,10 @@ import { Player } from "./Player";
 import { PositionParser } from "../../foundation/PositionParser";
 import { Character } from "@server/core/character/impl/Character";
 import { eventManager } from "@server/core/foundation/EventManager";
+import { PlayerBan } from "./PlayerBan";
 
 export class PlayerService implements IPlayerService {
+    private playerBanRepository = dataSource.getRepository(PlayerBan);
     private playerRepository = dataSource.getRepository(Player);
     /**
      * Cache for Players, `key = source`, `value = Player`
@@ -95,6 +97,17 @@ export class PlayerService implements IPlayerService {
         player.character = new Character();
         return await this.playerRepository.save(player);
     }
+
+    async checkBan(license: string) {
+        const player = await this.findPlayerByLicense(license);
+        if (!player) return null;
+        return this.playerBanRepository.findOne({
+            relations: ["players"],
+            where: {
+                player: player
+            }
+        }) || null;
+    };
 }
 
 const playerService = new PlayerService();

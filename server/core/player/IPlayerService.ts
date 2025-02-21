@@ -1,4 +1,5 @@
 import { Player } from "./impl/Player"
+import { PlayerBan } from "./impl/PlayerBan"
 
 export type IPlayerService = {
     /**
@@ -40,4 +41,6 @@ export type IPlayerService = {
     playerDropped: (source: number) => void
 
     createPlayer: (source: number) => Promise<Player>
+
+    checkBan: (license: string) => Promise<PlayerBan | null>
 }

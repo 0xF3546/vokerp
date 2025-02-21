@@ -6,6 +6,7 @@ import { Inventory } from "@server/core/inventory/impl/Inventory";
 import { InventoryItem } from "@server/core/inventory/impl/InventoryItem";
 import { Item } from "@server/core/inventory/impl/Item";
 import { Player } from "@server/core/player/impl/Player";
+import { PlayerBan } from "@server/core/player/impl/PlayerBan";
 import { Vehicle } from "@server/core/vehicle/impl/Vehicle";
 import { VehicleClass } from "@server/core/vehicle/impl/VehicleClass";
 import { DataSource } from "typeorm"
@@ -20,5 +21,5 @@ export const dataSource = new DataSource({
     logging: true,
     synchronize: true,
     //entities: [__dirname + "../../core/**/impl/*.{js,ts}"],
-    entities: [Player, Faction, Rank, Vehicle, VehicleClass, Character, Inventory, Item, InventoryItem, GasStation]
+    entities: [Player, PlayerBan, Faction, Rank, Vehicle, VehicleClass, Character, Inventory, Item, InventoryItem, GasStation]
 })

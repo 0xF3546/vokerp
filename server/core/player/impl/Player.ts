@@ -28,9 +28,16 @@ export class Player {
     @JoinColumn()
     rank!: Rank | null;
 
+    @Column({default: 0})
+    warns!: number;
+
     source: number;
 
     constructor(source: number) {
         this.source = source;
+    }
+
+    kickPlayer = (reason: string = null) => {
+        DropPlayer(this.source.toString(), reason);
     }
 }
