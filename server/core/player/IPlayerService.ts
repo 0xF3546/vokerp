@@ -34,12 +34,32 @@ export type IPlayerService = {
      */
     updateIdentifiers: (player: Player, identifiers: string[]) => Promise<Player>
 
+    /**
+    * init a player
+    * @param player player instance
+    * @param source fivem global.source of the player
+    */
+
     init: (player: Player, source: number) => void
 
+    /**
+    * load a player
+    * @param player player instance
+    */
     load: (player: Player) => void
 
+    /**
+    * trigger when player is dropped
+    * @param source fivem global.source of the player
+    */
     playerDropped: (source: number) => void
 
+    /**
+     * 
+     * @param source fivem global.source of the player
+     * @returns new player instance
+     *      
+     */
     createPlayer: (source: number) => Promise<Player>
 
     checkBan: (license: string) => Promise<PlayerBan | null>

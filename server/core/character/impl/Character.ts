@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Inventory } from "../../inventory/impl/Inventory";
-import { Position } from "../../foundation/Position";
+import { Position } from "../../../../shared/types/Position";
 import { Faction } from "../../faction/impl/Faction";
 import { Player } from "@server/core/player/impl/Player";
 import { CharacterData } from "@server/core/types/CharacterData";
@@ -9,7 +9,9 @@ import { CharacterProps } from "@server/core/types/CharacterProps";
 import { eventManager } from "@server/core/foundation/EventManager";
 import { LoadedPlayer } from "@shared/types/LoadedPlayer";
 import { Gender } from "@shared/enum/Gender";
-import playerService from "@server/core/player/impl/PlayerService";
+import playerService, { getPlayerService } from "@server/core/player/impl/PlayerService";
+import { PositionParser } from "@server/core/foundation/PositionParser";
+import factionService from "@server/core/faction/impl/FactionService";
 
 @Entity("character")
 export class Character {
@@ -62,9 +64,11 @@ export class Character {
   @Column({ default: 2500 })
   bank!: number;
 
-  @ManyToOne(() => Faction, { nullable: true, eager: true })
-  @JoinColumn()
-  faction!: Faction | null;
+  @Column({nullable: true, default: null})
+  factionId!: number | null;
+
+  @Column({ default: 0 })
+  factionRank!: number;
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   factionJoinDate!: Date;
@@ -118,6 +122,21 @@ export class Character {
 
   player?: Player;
 
+  private lastTeleport = Date.now();
+
+  get position() {
+    return PositionParser.getPosition(this.player);
+  }
+
+  set position(pos: Position) {
+    this.lastTeleport = Date.now();
+    PositionParser.applyPosition(this.player, pos);
+  }
+
+  get faction() {
+    return factionService.getFactionById(this.factionId);
+  }
+
   load = () => {
     this.loadMPModel(this.data);
 
@@ -125,6 +144,7 @@ export class Character {
       firstname: this.firstname,
       lastname: this.lastname,
       gender: this.gender,
+      position: this.lastPosition,
     }
 
     eventManager.emitClient(this.player.source, "playerLoaded", JSON.stringify(loadedData));
@@ -133,25 +153,25 @@ export class Character {
   removeCash = (amount: number): boolean => {
     if (this.cash < amount) return false;
     this.cash -= amount;
-    playerService.savePlayer(this.player);
+    getPlayerService().savePlayer(this.player);
     return true;
   }
 
   addCash = (amount: number): void => {
     this.cash += amount;
-    playerService.savePlayer(this.player);
+    getPlayerService().savePlayer(this.player);
   }
 
   removeBank = (amount: number): boolean => {
     if (this.bank < amount) return false;
     this.bank -= amount;
-    playerService.savePlayer(this.player);
+    getPlayerService().savePlayer(this.player);
     return true;
   }
 
   addBank = (amount: number): void => {
     this.bank += amount;
-    playerService.savePlayer(this.player);
+    getPlayerService().savePlayer(this.player);
   }
 
   loadMPModel = (charData: CharacterData) => {

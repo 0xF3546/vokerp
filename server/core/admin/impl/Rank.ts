@@ -16,4 +16,7 @@ export class Rank {
 
     @Column()
     clotheId!: number;
+
+    @Column({default: 0})
+    permLevel!: number;
 }

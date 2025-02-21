@@ -17,30 +17,18 @@ export class EventManager {
         })
     }
 
-    emitServerPromise = (...args: any[]): Promise<any> => {
+    emitServerPromise = (event, ...args: any[]): Promise<any> => {
         return new Promise((resolve, reject) => {
-            this.emitServer(...args);
+            this.emitServer(event, ...args);
 
-            this.on(`${args[0]}::Callback`, (...callbackArgs: any[]) => {
+            this.on(`${event}::Callback`, (...callbackArgs: any[]) => {
                 resolve(callbackArgs);
-                this.off(`${args[0]}::Callback`);
             });
         });
     }
 
-    off = (ev: string): void => {
-        const index = this.events.findIndex(e => e.ev === ev);
-
-        if (index !== -1) {
-            this.events.splice(index, 1);
-        }
-    }
-
     on = (ev: string, func: Function): void => {
-        this.events.push({
-            ev: ev,
-            func: func
-        });
+        onNet(ev, func);
     }
 
     emit = (...args: any[]): void => {
@@ -61,9 +49,9 @@ export class EventManager {
         if (this.debug) console.log(`[EmitEvent::${ev}]`);
     }
 
-    emitServer = (...args: any[]): void => {
+    emitServer = (event, ...args: any[]): void => {
         events++;
-        emitNet("serverEvent", ...args);
+        emitNet(event, ...args);
 
         if (this.debug) console.log(`[EmitServerEvent::${args[0]}]`);
     }

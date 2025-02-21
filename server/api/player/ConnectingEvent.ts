@@ -1,4 +1,4 @@
-import playerService from "@server/core/player/impl/PlayerService";
+import { getPlayerService } from "@server/core/player/impl/PlayerService";
 
 on('playerConnecting', async (name: string, setKickReason: any, deferrals: any) => {
     console.log(`Player ${name} is connecting to the server.`)
@@ -19,7 +19,7 @@ on('playerConnecting', async (name: string, setKickReason: any, deferrals: any) 
     if (licenseIdentifier === null) {
         deferrals.done("You are not connected to Rockstar Games.")
     } else {
-        const playerBan = await playerService.checkBan(licenseIdentifier);
+        const playerBan = await getPlayerService().checkBan(licenseIdentifier);
         if (playerBan !== null) {
             deferrals.done(`Du wurdest wegen ${playerBan.reason} gebannt.`)
         }

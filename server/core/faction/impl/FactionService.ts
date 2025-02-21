@@ -41,5 +41,12 @@ export class FactionService implements IFactionService {
 
 }
 
-let factionService: IFactionService = new FactionService()
+export const factionServiceInitializer = {
+    load: () => {
+        factionService = new FactionService();
+        factionService.load();
+    }
+}
+
+let factionService: IFactionService;
 export default factionService;

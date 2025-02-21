@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Inventory } from "../../inventory/impl/Inventory";
-import { Position } from "../../foundation/Position";
+import { Position } from "../../../../shared/types/Position";
 
 @Entity("factions")
 export class Faction {

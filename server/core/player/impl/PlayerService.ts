@@ -26,7 +26,7 @@ export class PlayerService implements IPlayerService {
     }
 
     async savePlayer(player: Player) {
-        const ped = GetPlayerPed(player.source.toString());
+        const ped = player.getPed();
         player.character.lastPosition = PositionParser.toPosition(GetEntityCoords(ped), GetEntityHeading(ped));
         player.character.armour = GetPedArmour(ped);
         player.character.health = GetEntityHealth(ped);
@@ -42,7 +42,7 @@ export class PlayerService implements IPlayerService {
     }
 
     updateIdentifiers(player: Player, identifiers: string[]) {
-        player.license = identifiers[3];
+        player.license = identifiers['license'];
         player.identifiers = identifiers;
         return this.savePlayer(player);
     }
@@ -65,7 +65,7 @@ export class PlayerService implements IPlayerService {
             return;
         }
 
-        PositionParser.applyPosition(player.source, player.character.lastPosition);
+        player.character.position = player.character.lastPosition;
         player.character.load();
         SetPedArmour(GetPlayerPed(player.source.toString()), player.character.armour);
         // SetEntityHealth(GetPlayerPed(player.source.toString()), player.character.health);
@@ -91,9 +91,9 @@ export class PlayerService implements IPlayerService {
         const player = new Player(source);
         player.source = source;
         const identifiers = getPlayerIdentifiers(source);
-        player.license = identifiers[3];
+        player.license = identifiers['license'];
         player.identifiers = identifiers;
-        player.steamId = identifiers[0];
+        player.steamId = identifiers['steam'];
         player.character = new Character();
         return await this.playerRepository.save(player);
     }
@@ -103,12 +103,26 @@ export class PlayerService implements IPlayerService {
         if (!player) return null;
         return await this.playerBanRepository.findOne({
             where: {
-                player: player
+                player: { id: player.id}
             }
         }) || null;
     }
 }
 
-const playerService: IPlayerService = new PlayerService();
+export const playerServiceInitializer = {
+    load: () => {
+        playerService = new PlayerService();
+        console.log("PlayerService loaded!");
+    }
+}
+
+export const getPlayerService = () => {
+    if (!playerService) {
+        throw new Error("PlayerService is not initialized. Call playerServiceInitializer.load() first.");
+    }
+    return playerService;
+}
+
+let playerService: IPlayerService;
 
 export default playerService;

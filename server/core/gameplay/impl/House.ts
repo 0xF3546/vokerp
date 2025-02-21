@@ -1,5 +1,5 @@
 import { Character } from "@server/core/character/impl/Character";
-import { Position } from "@server/core/foundation/Position";
+import { Position } from "@shared/types/Position";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import houseService from "./HouseService";
 

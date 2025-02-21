@@ -1,4 +1,4 @@
-import { Position } from "@server/core/foundation/Position";
+import { Position } from "@shared/types/Position";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("house_interiors")

@@ -11,6 +11,7 @@ import { InventoryItem } from "@server/core/inventory/impl/InventoryItem";
 import { Item } from "@server/core/inventory/impl/Item";
 import { Player } from "@server/core/player/impl/Player";
 import { PlayerBan } from "@server/core/player/impl/PlayerBan";
+import { Garage } from "@server/core/vehicle/impl/Garage";
 import { Vehicle } from "@server/core/vehicle/impl/Vehicle";
 import { VehicleClass } from "@server/core/vehicle/impl/VehicleClass";
 import { DataSource } from "typeorm"
@@ -22,8 +23,8 @@ export const dataSource = new DataSource({
     username: "erik",
     password: "485zbtmfrt435t",
     database: "vokerp",
-    logging: true,
+    logging: false,
     synchronize: true,
     //entities: [__dirname + "../../core/**/impl/*.{js,ts}"],
-    entities: [Player, PlayerBan, Faction, Rank, Vehicle, VehicleClass, Character, Inventory, Item, InventoryItem, GasStation, House, Clothe, HouseBasement, HouseInterior]
+    entities: [Player, PlayerBan, Faction, Rank, Vehicle, VehicleClass, Character, Inventory, Item, InventoryItem, GasStation, House, Clothe, HouseBasement, HouseInterior, Garage]
 })

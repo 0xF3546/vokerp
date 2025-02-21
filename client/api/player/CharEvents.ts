@@ -1,1 +1,1 @@
-import { eventManager } from "client/core/events/EventManager";
+import { eventManager } from "client/core/foundation/EventManager";

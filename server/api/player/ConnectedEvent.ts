@@ -1,4 +1,5 @@
-import playerService from "../../core/player/impl/PlayerService";
+import { getStreamer } from "@server/core/foundation/Streamer";
+import { getPlayerService } from "../../core/player/impl/PlayerService";
 
 onNet('playerJoined', async () => {
     const source = global.source.toString();
@@ -6,11 +7,12 @@ onNet('playerJoined', async () => {
     if (GetPlayerPed(source) === 0) return;
     console.log(`Parsed = ${parseInt(source)}`);
     const identifiers = getPlayerIdentifiers(source);
-    const player = await playerService.findPlayerByLicense(identifiers[3]);
+    const player = await getPlayerService().findPlayerByLicense(identifiers['license']);
     if (!player) {
-        await playerService.createPlayer(parseInt(source));
+        await getPlayerService().createPlayer(parseInt(source));
     }
 
-    playerService.init(player, parseInt(source));
-    playerService.load(player);
+    getPlayerService().init(player, parseInt(source));
+    getPlayerService().load(player);
+    getStreamer().loadForPlayer(player);
 })

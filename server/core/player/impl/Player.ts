@@ -37,6 +37,10 @@ export class Player {
         this.source = source;
     }
 
+    getPed = () => {
+        return GetPlayerPed(this.source.toString());
+    }
+
     kickPlayer = (reason: string = null) => {
         DropPlayer(this.source.toString(), reason);
     }

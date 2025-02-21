@@ -42,5 +42,12 @@ export class HouseService implements IHouseService {
     }
 }
 
-const houseService: IHouseService = new HouseService();
+export const houseServerInitializer = {
+    load: () => {
+        houseService = new HouseService();
+        houseService.load();
+    }
+}
+
+let houseService: IHouseService;
 export default houseService;

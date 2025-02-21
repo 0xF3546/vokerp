@@ -19,5 +19,12 @@ export class AdminService implements IAdminService {
     }
 }
 
-const adminService: IAdminService = new AdminService();
+export const adminServiceInitializer = {
+    load: () => {
+        adminService = new AdminService();
+        adminService.load();
+    }
+}
+
+let adminService: IAdminService;
 export default adminService;
