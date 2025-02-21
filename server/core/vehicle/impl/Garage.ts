@@ -19,7 +19,7 @@ export class Garage {
     @Column("json")
     position!: Position;
 
-    @Column("json")
+    @Column("json", { default: [] })
     parkoutPositions!: Position[];
 
     @Column({ type: "enum", enum: GarageType, default: GarageType.ALL })
