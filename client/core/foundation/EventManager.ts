@@ -57,13 +57,40 @@ export class EventManager {
     }
 
     emitWebView = (event: string, ...args: any[]) => {
+        if (event.toLowerCase() === "showcomponent") {
+            SetNuiFocus(true, true);
+        } else if (event.toLowerCase() === "hidecomponent") {
+            SetNuiFocus(false, false);
+        }
+
+        const isJSON = (obj: any): boolean => {
+            try {
+                JSON.parse(obj);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        };
+
         SendNUIMessage({
             event: event,
-            args: args
+            args: isJSON(args) ? args : JSON.stringify(args)
         })
     }
 
-    onWebView = (ev: string, func: Function): void => {
+    onWebView = (ev: string, func: (body: any) => void): void => {
+        RegisterRawNuiCallback(ev, (args: any) => {
+            try {
+                const requestBody = typeof args === 'string' ? JSON.parse(args) : args;
+                const body = requestBody.body;
+                func(body);
+            } catch (error) {
+                console.error("Fehler beim Verarbeiten des HTTP-Posts:", error);
+            }
+        });
+    };
+
+    onRawWebView = (ev: string, func: Function): void => {
         RegisterRawNuiCallback(ev, func);
     }
 }

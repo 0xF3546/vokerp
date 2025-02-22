@@ -31,13 +31,15 @@ const Chat = () => {
     }
 
     return (
-        <>
-            <input 
+        <div className="mt-4 absolute left-[0.75rem] bg-gradient-to-r from-[rgba(12,12,12,0.9)] to-[rgba(32,32,32,0.9)] w-[20rem] h-[2rem] rounded-[5px]">
+            <input
+                className="w-[18.75rem] h-full text-[0.725rem] bg-transparent outline-none border-none  text-white font-montserrat ml-[0.7rem]"
+                placeholder="Befehl eingeben..."
                 value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)} 
-                onKeyDown={handleKeyPress} 
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={handleKeyPress}
             />
-        </>
+        </div>
     )
 }
 

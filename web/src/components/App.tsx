@@ -11,8 +11,11 @@ const App: React.FC = () => {
   function handleMessage(event: MessageEvent) {
     const data = event.data;
     if (data.event !== undefined) {
+      console.log(data.args);
+      console.log("Received event:", data.event);
+      data.args = JSON.parse(data.args);
+      console.log("Received message:", data.args);
       if (data.event === "notification") {
-        data.args = JSON.parse(data.args);
         notify.showNotification(data.args.title, data.args.message, data.args.color, data.args.delay);
         return;
       } else if (data.event === "showComponent") {
@@ -22,7 +25,7 @@ const App: React.FC = () => {
         webView.hideComponent(data.args);
         return;
       }
-      webView.emit(data.event, JSON.parse(data.args));
+      webView.emit(data.event, data.args);
     }
   }
 
@@ -32,18 +35,14 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      notify.showNotification("Test", "This is a test notification", "green", 5000);
-      webView.showComponent("hud");
-    }, 1000);
-    setTimeout(() => {
-      notify.showNotification("Test", "This is a test 35z", "green", 5000);
-    }, 2000);
+    webView.showComponent("hud");
+    /*setTimeout(() => {
+      webView.showComponent("charcreator");
+    }, 1000);*/
   }, []);
 
   return (
     <div>
-      hi
       {webView.getActiveComponents().map((component, index) => (
         <div key={index}>
           {component.view}

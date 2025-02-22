@@ -75,11 +75,14 @@ const WebViewProvider = ({ children }: { children: ReactNode }) => {
   }, []);
   
 
-  const showComponent = useCallback((name: string, delay = 500) => {
+  const showComponent = useCallback((name: any | string, delay = 500) => {
+    if (typeof name !== 'string') {
+      name = name.toString();
+    }
     console.log(`Showing component: ${name}`);
     setComponents((prevComponents) =>
       prevComponents.map((component) => {
-        if (component.name === name) {
+        if (component.name.toLowerCase() === name.toLowerCase()) {
           console.log(`Setting ${name} to active`);
           component.delay = delay;
           component.isActive = true;
@@ -88,13 +91,16 @@ const WebViewProvider = ({ children }: { children: ReactNode }) => {
         return component;
       })
     );
-  }, []);
+  }, [components]);
   
-  const hideComponent = useCallback((name: string, delay = 500) => {
+  const hideComponent = useCallback((name: any | string, delay = 500) => {
+    if (typeof name !== 'string') {
+      name = name.toString();
+    }
     console.log(`Hiding component: ${name}`);
     setComponents((prevComponents) =>
       prevComponents.map((component) => {
-        if (component.name === name) {
+        if (component.name.toLowerCase() === name.toLowerCase()) {
           console.log(`Setting ${name} to inactive`);
           component.delay = delay;
           component.isActive = false;
@@ -127,7 +133,7 @@ const WebViewProvider = ({ children }: { children: ReactNode }) => {
 
   const getRef = useCallback((name: string) => {
     return refs.current[name];
-  }, []);
+  }, [components]);
 
   const emit = useCallback((eventName: string, ...args: any[]) => {
     console.log(`Emitting event: ${eventName}, aktuelle Komponenten:`, components);

@@ -1,5 +1,9 @@
 import { eventManager } from "client/core/foundation/EventManager";
 
-eventManager.on("handleCommand", (command: string) => {
-    ExecuteCommand(command);
+eventManager.onWebView("handleCommand", (args: string) => {
+    console.log(args);
+    const command = JSON.parse(args);
+    console.log(command);
+    ExecuteCommand(command.replace("/", ""));
+    eventManager.emitWebView("hideComponent", "chat");
 });

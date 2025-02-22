@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 import Notification, { NotificationProps } from "../components/notification/Notification";
+import { useWebView } from "./webViewContext";
 
 interface NotificationContextProps {
     showNotification: (title: string | null, message: string | null, color: string, delay: number) => void;
@@ -13,6 +14,7 @@ const useNotification = () => useContext(notificationContext);
 
 const NotificationProvider = ({ children }: { children: ReactNode }) => {
     const [notifications, setNotifications] = useState<NotificationProps[]>([]);
+    const webView = useWebView();
 
     const showNotification = (title: string | null, message: string | null, color: string, delay: number) => {
         const notification: NotificationProps = {
@@ -42,9 +44,13 @@ const NotificationProvider = ({ children }: { children: ReactNode }) => {
         }, delay);
     };
 
+    const isChatActive = () => {
+        return webView.getActiveComponents().filter(x => x.name === 'chat').length > 0;
+    }
+
     return (
         <notificationContext.Provider value={{ showNotification }}>
-            <div id="notifications">
+            <div id={`notifications`} className={`${isChatActive() && 'mt-10'}`}>
                 {notifications.map((notification) => (
                     <Notification key={notification.id} {...notification} />
                 ))}
