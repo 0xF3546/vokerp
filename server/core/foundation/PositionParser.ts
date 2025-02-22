@@ -6,13 +6,15 @@ export class PositionParser {
         return {
             x: coordinate[0],
             y: coordinate[1],
-            z: coordinate[2]
+            z: coordinate[2],
+            heading: heading
         };
     }
 
     static applyPosition(entity: number | Player, position: Position) {
         if (entity instanceof Player) entity = entity.getPed();
         SetEntityCoords(entity, position.x || 0, position.y || 0, position.z || 0, false, false, false, false);
+        SetEntityHeading(entity, position.heading || 0);
     }
 
     static getPosition(entity: number | Player) {

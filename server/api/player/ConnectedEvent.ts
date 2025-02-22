@@ -1,9 +1,10 @@
 import { getStreamer } from "@server/core/foundation/Streamer";
 import { getPlayerService } from "../../core/player/impl/PlayerService";
+import { eventManager } from "@server/core/foundation/EventManager";
 
-onNet('playerJoined', async () => {
-    const source = global.source.toString();
+eventManager.on('playerJoined', async (source: number | string) => {
     console.log(`Player ${source} is joining the server!`);
+    source = source.toString()
     if (GetPlayerPed(source) === 0) return;
     console.log(`Parsed = ${parseInt(source)}`);
     const identifiers = getPlayerIdentifiers(source);

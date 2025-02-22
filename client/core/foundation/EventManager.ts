@@ -2,11 +2,11 @@ let events = 0;
 
 export class EventManager {
     private events: Array<{ ev: string, func: Function }> = [];
-    private debug: boolean = false;
+    private debug: boolean;
 
     constructor() {
         this.events = [];
-        this.debug = false;
+        this.debug = true;
 
         onNet("clientEvent", (...args) => {
             this.emit(...args);
@@ -49,11 +49,11 @@ export class EventManager {
         if (this.debug) console.log(`[EmitEvent::${ev}]`);
     }
 
-    emitServer = (event, ...args: any[]): void => {
+    emitServer = (event: string, ...args: any[]): void => {
         events++;
         emitNet(event, ...args);
 
-        if (this.debug) console.log(`[EmitServerEvent::${args[0]}]`);
+        if (this.debug) console.log(`[EmitServerEvent::${event}]`);
     }
 
     emitWebView = (event: string, ...args: any[]) => {

@@ -27,7 +27,7 @@ export class PlayerService implements IPlayerService {
 
     async savePlayer(player: Player) {
         const ped = player.getPed();
-        player.character.lastPosition = PositionParser.toPosition(GetEntityCoords(ped), GetEntityHeading(ped));
+        player.character.lastPosition = player.character.position;
         player.character.armour = GetPedArmour(ped);
         player.character.health = GetEntityHealth(ped);
         return await this.playerRepository.save(player);
@@ -70,13 +70,13 @@ export class PlayerService implements IPlayerService {
         SetPedArmour(GetPlayerPed(player.source.toString()), player.character.armour);
         // SetEntityHealth(GetPlayerPed(player.source.toString()), player.character.health);
 
-        eventManager.emitWebView(player.source, "updateHud", {
+        eventManager.emitWebView(player.source, "updateHud", JSON.stringify({
             money: player.character.cash,
             maxVoiceRange: 2,
             voiceRange: 3,
             radioState: 0,
             isVoiceMuted: false
-        });
+        }));
     }
 
     playerDropped(source: number) {
