@@ -16,5 +16,5 @@ commandManager.add("addGarage", (player: Player, args) => {
     garage.npc = 's_m_m_autoshop_01';
 
     getVehicleService().createGarage(garage);
-    notify(player, "Garage erstellt");
+    player.notify("", "Garage erstellt", "green");
 });

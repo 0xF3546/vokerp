@@ -1,6 +1,8 @@
 import { dataSource } from "@server/data/database/app-data-source";
 import { IAdminService } from "../IAdminService";
 import { Rank } from "./Rank";
+import { Player } from "@server/core/player/impl/Player";
+import { getPlayerService } from "@server/core/player/impl/PlayerService";
 
 export class AdminService implements IAdminService {
     private rankRepository = dataSource.getRepository(Rank);
@@ -17,6 +19,14 @@ export class AdminService implements IAdminService {
     getRankByName(name: string) {
         return this.rankCache.get(name);
     }
+
+    setPlayerAduty = (player: Player, aduty: boolean) => {
+        player.aduty = aduty;
+    }
+    setPlayerRank = (player: Player, rank: Rank) => {
+        player.rank = rank;
+        getPlayerService().savePlayer(player);
+    }
 }
 
 export const adminServiceInitializer = {
@@ -24,6 +34,13 @@ export const adminServiceInitializer = {
         adminService = new AdminService();
         adminService.load();
     }
+}
+
+export const getAdminService = () => {
+    if (!adminService) {
+        throw new Error("AdminService not initialized");
+    }
+    return adminService;
 }
 
 let adminService: IAdminService;

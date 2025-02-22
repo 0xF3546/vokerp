@@ -7,19 +7,19 @@ commandManager.add("veh", (player: Player, vehicleName: string) => {
     
     const vehicleHash = GetHashKey(vehicleName);
     if (!vehicleHash) {
-        notify(player, "Invalid vehicle name");
+        player.notify("", "Invalid vehicle name", "red");
         return;
     }
 
     const vehicle = CreateVehicle(vehicleHash, player.character.position.x, player.character.position.y, player.character.position.z, player.character.position.heading, true, true);
     if (!vehicle) {
-        notify(player, "Failed to create vehicle");
+        player.notify("", "Failed to create vehicle", "red");
         return;
     }
 
     const ped = player.getPed();
     if (!ped) {
-        notify(player, "Failed to get player ped");
+        player.notify("", "Failed to get player ped", "red");
         return;
     }
 

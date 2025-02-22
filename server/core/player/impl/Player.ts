@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Character } from "../../character/impl/Character";
 import { Rank } from "../../admin/impl/Rank";
+import { notify } from "@server/core/foundation/Utils";
 
 @Entity("player")
 export class Player {
@@ -32,6 +33,7 @@ export class Player {
     warns!: number;
 
     source: number;
+    aduty: boolean = false;
 
     constructor(source: number) {
         this.source = source;
@@ -43,5 +45,9 @@ export class Player {
 
     kickPlayer = (reason: string = null) => {
         DropPlayer(this.source.toString(), reason);
+    }
+
+    notify = (title: string | null, message: string, color: string = "green", delay = 5000) => {
+        notify(this, title, message, color, delay);
     }
 }

@@ -12,6 +12,11 @@ const App: React.FC = () => {
   function handleMessage(event: MessageEvent) {
     const data = event.data;
     if (data.event !== undefined) {
+      if (data.event === "notification") {
+        data.args = JSON.parse(data.args);
+        notify.showNotification(data.args.title, data.args.message, data.args.color, data.args.delay);
+        return;
+      }
       webView.emit(data.event, JSON.parse(data.args));
     }
   }

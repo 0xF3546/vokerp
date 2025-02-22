@@ -12,5 +12,5 @@ commandManager.add("addGasStation", (player: Player, args) => {
     gasStation.position = player.character.position;
 
     getGasStationService().create(gasStation);
-    notify(player, "Tankstelle erstellt");
+    player.notify("", "Tankstelle erstellt", "green");
 });
