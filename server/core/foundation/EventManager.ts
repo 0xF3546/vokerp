@@ -18,7 +18,6 @@ class EventManager {
 
         if (player == null) return;
     
-        args.splice(0, 1);
         if (player instanceof Player) player = player.source;
     
         // Wenn "all" als Player angegeben ist, sende an alle
@@ -28,7 +27,6 @@ class EventManager {
         } else {
             if (this.debug) console.log(`Player Entity for ID ${player}: ${player}`);
             if (player !== "0") {
-                console.log(...args);
                 emitNet(event, player, ...args);
                 if (this.debug) console.log(`[EmitClientEvent::${GetPlayerName(player.toString())}::${event}]`);
             } else {

@@ -3,8 +3,6 @@ import { Blip } from "@shared/types/Blip";
 import { streamer } from "client/core/foundation/Streamer";
 
 eventManager.on("Streamer::LoadBlips", (blips: string) => {
-    console.log("Loading blips");
-    console.log(blips);
     const blipArray: Blip[] = JSON.parse(blips);
     blipArray.forEach(blip => {
         streamer.createBlip(blip);

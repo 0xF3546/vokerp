@@ -112,7 +112,6 @@ export class PlayerService implements IPlayerService {
 export const playerServiceInitializer = {
     load: () => {
         playerService = new PlayerService();
-        console.log("PlayerService loaded!");
     }
 }
 

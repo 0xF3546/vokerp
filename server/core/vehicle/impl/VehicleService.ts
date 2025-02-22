@@ -6,11 +6,14 @@ import { Position } from "@shared/types/Position";
 import { VehicleClass } from "./VehicleClass";
 import { getStreamer } from "@server/core/foundation/Streamer";
 import { PedDto } from "@server/core/foundation/PedDto";
+import { Blip } from "@shared/types/Blip";
+import { GarageExitpoint } from "./GarageExitpoint";
 
 export class VehicleService implements IVehicleService {
     private vehicleRepository = dataSource.getRepository(Vehicle);
     private garageRepository = dataSource.getRepository(Garage);
     private vehicleClassRepository = dataSource.getRepository(VehicleClass);
+    private garageExitPointRepository = dataSource.getRepository(GarageExitpoint);
     private garageCache: Garage[] = [];
     private vehicleCache: Map<number, Vehicle> = new Map();
     private vehicleClassCache: VehicleClass[] = [];
@@ -18,15 +21,28 @@ export class VehicleService implements IVehicleService {
     load() {
         this.garageRepository.find().then(garages => {
             this.garageCache = garages;
+            console.log(`${garages.length} Garagen wurden geladen.`);
+        })
+        .then(() => {
+            this.garageCache.forEach(garage => {
+                this.createBlip(garage);
+                getStreamer().createPed(new PedDto(garage.npc, garage.position));    
+            });
+        });
+
+        this.garageExitPointRepository.find().then(exitPoints => {
+            exitPoints.forEach(exitPoint => {
+                const garage = this.garageCache.find(g => g.id === exitPoint.garageId);
+                if (garage) {
+                    garage.exitPoints.push(exitPoint);
+                }
+            });
         });
 
         this.vehicleClassRepository.find().then(vehicleClasses => {
             this.vehicleClassCache = vehicleClasses;
+            console.log(`${vehicleClasses.length} Fahrzeugklassen wurden geladen.`);
         });
-
-        for (const garage of this.garageCache) {
-            this.createBlip(garage);
-        }
     }
 
     parkVehicle(vehicle: Vehicle): void {
@@ -65,14 +81,14 @@ export class VehicleService implements IVehicleService {
     }
 
     private createBlip(garage: Garage) {
-        getStreamer().createBlip({
-            id: `garage_${garage.id}`,
-            name: "Garage",
-            position: garage.position,
-            sprite: 473,
-            color: 0,
-            scale: 1
-        });
+        getStreamer().createBlip(new Blip(
+            `garage_${garage.id}`,
+            garage.position,
+            "Garage",
+            473,
+            0,
+            1
+        ));
     }
 
     getClassById(id: number) {
@@ -80,10 +96,12 @@ export class VehicleService implements IVehicleService {
     }
 
     createGarage(garage: Garage): void {
-        this.garageCache.push(garage);
-        this.garageRepository.save(garage);
-        this.createBlip(garage);
-        getStreamer().createPed(new PedDto('s_m_m_autoshop_01', garage.position));
+        getStreamer().createPed(new PedDto(garage.npc || 's_m_m_autoshop_01', garage.position));
+        this.garageRepository.save(garage)
+        .then(() => {
+            this.createBlip(garage);
+            this.garageCache.push(garage);
+        });
     }    
 }
 

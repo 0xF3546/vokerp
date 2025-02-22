@@ -10,7 +10,6 @@ on('playerConnecting', async (name: string, setKickReason: any, deferrals: any) 
 
     for (let i = 0; i < GetNumPlayerIdentifiers(player); i++) {
         const identifier = GetPlayerIdentifier(player, i);
-        console.log(identifier);  // Debugging
         if (identifier.includes('license:')) {
             licenseIdentifier = identifier;
         }

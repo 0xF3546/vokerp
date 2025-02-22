@@ -1,9 +1,12 @@
 import { Position } from "@shared/types/Position";
 import { GarageType } from "@shared/enum/Garage";
-import { Collection, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { GarageExitpoint } from "./GarageExitpoint";
 
 @Entity("garages")
 export class Garage {
+    public exitPoints: GarageExitpoint[] = [];
+
     @PrimaryGeneratedColumn()
     id!: number;
 
@@ -19,12 +22,9 @@ export class Garage {
     @Column("json")
     position!: Position;
 
-    @Column("json", { default: [] })
-    parkoutPositions!: Position[];
-
     @Column({ type: "enum", enum: GarageType, default: GarageType.ALL })
     type!: GarageType;
 
-    @Column()
+    @Column({default: true})
     blip!: boolean;
 }

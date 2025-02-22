@@ -2,6 +2,7 @@ import { dataSource } from "@server/data/database/app-data-source";
 import { IGasStationService } from "../IGasStationService";
 import { GasStation } from "./GasStation";
 import { getStreamer } from "@server/core/foundation/Streamer";
+import { Blip } from "@shared/types/Blip";
 
 export class GasStationService implements IGasStationService {
     private gasStationRepository = dataSource.getRepository(GasStation);
@@ -15,14 +16,14 @@ export class GasStationService implements IGasStationService {
 
     load = () => {
         this.gasStationRepository.find().then(gasStations => {
-            gasStations.forEach(gasStation => {
-                this.gasStationCache.push(gasStation);
+            console.log(`${gasStations.length} Tankstellen wurden geladen.`);
+            this.gasStationCache = gasStations;
+        })
+        .then(() => {
+            this.gasStationCache.forEach(gasStation => {
+                this.createBlip(gasStation);
             });
         });
-
-        for (const gasStation of this.gasStationCache) {
-            this.createBlip(gasStation);
-        }
     }
 
     create(gasStation: GasStation): void {
@@ -32,14 +33,14 @@ export class GasStationService implements IGasStationService {
     }
     
     private createBlip(gasStation: GasStation) {
-        getStreamer().createBlip({
-            id: `gasStation_${gasStation.id}`,
-            name: "Tankstelle",
-            position: gasStation.position,
-            sprite: 361,
-            color: 0,
-            scale: 1
-        });
+        getStreamer().createBlip(new Blip(
+            `gasStation_${gasStation.id}`,
+            gasStation.position,
+            "Tankstelle",
+            361,
+            0,
+            1
+        ));
     }
 
     private update = async (gasStation) => {

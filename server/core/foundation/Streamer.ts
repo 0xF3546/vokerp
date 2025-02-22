@@ -14,8 +14,7 @@ class Streamer implements IStreamer {
     }
 
     createBlip(blip: Blip): void {
-        console.log("Creating blip");
-        blip.id = Math.random().toString(36).substring(7);
+        if (blip.id === null) blip.id = Math.random().toString(36).substring(7);
         this.blips.push(blip);
         eventManager.emitClient("all", "Streamer::addBlip", JSON.stringify(blip));
     }
@@ -32,14 +31,13 @@ class Streamer implements IStreamer {
     }
 
     loadForPlayer(player: Player) {
-        console.log("Loading blips for player");
-        console.log(this.blips.length);
         eventManager.emitClient(player, "Streamer::LoadBlips", JSON.stringify(this.blips));
     }
 
     createPed(ped: PedDto): void {
-        this.peds.push(ped);
         ped.handle = CreatePed(ped.pedType, GetHashKey(ped.model), ped.position.x, ped.position.y, ped.position.z, ped.position.heading, true, true);
+        FreezeEntityPosition(ped.handle, true);
+        this.peds.push(ped);
     }
 }
 
