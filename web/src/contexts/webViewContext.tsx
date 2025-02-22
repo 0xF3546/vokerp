@@ -4,6 +4,7 @@ import { Component } from "../utils/Component";
 import CharCreator from "../views/CharCreator";
 import Hud from "../views/hud/Hud";
 import { ViewComponent } from "../@types/ViewComponent";
+import Chat from "../components/chat/Chat";
 
 interface WebViewContextProps {
   getActiveComponents: () => Component[];
@@ -44,6 +45,7 @@ const WebViewProvider = ({ children }: { children: ReactNode }) => {
       console.log("Hud Component:", hudComponent);
       addComponent(charCreatorComponent);
       addComponent(hudComponent);
+      addComponent(new Component(<Chat />, "chat"));
     }
   }, []);
   

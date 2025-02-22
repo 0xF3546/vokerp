@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import { useWebView } from "../contexts/webViewContext";
 import { useNotification } from "../contexts/notificationContext";
-import { setInternalBufferSize } from "typeorm/driver/mongodb/bson.typings";
 
 
 const App: React.FC = () => {
@@ -15,6 +14,12 @@ const App: React.FC = () => {
       if (data.event === "notification") {
         data.args = JSON.parse(data.args);
         notify.showNotification(data.args.title, data.args.message, data.args.color, data.args.delay);
+        return;
+      } else if (data.event === "showComponent") {
+        webView.showComponent(data.args);
+        return;
+      } else if (data.event === "hideComponent") {
+        webView.hideComponent(data.args);
         return;
       }
       webView.emit(data.event, JSON.parse(data.args));
