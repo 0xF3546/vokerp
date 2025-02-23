@@ -62,5 +62,7 @@ export type IPlayerService = {
      */
     createPlayer: (source: number) => Promise<Player>
 
+    getPlayers: () => Player[]
+
     checkBan: (license: string) => Promise<PlayerBan | null>
 }

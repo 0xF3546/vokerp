@@ -1,0 +1,1 @@
+export type ClotheStoreComponent = [string, number]

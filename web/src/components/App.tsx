@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import { useWebView } from "../contexts/webViewContext";
 import { useNotification } from "../contexts/notificationContext";
+import { eventListener } from "../utils/EventListener";
 
 
 const App: React.FC = () => {
@@ -24,10 +25,22 @@ const App: React.FC = () => {
       } else if (data.event === "hideComponent") {
         webView.hideComponent(data.args);
         return;
+      } else if (data.event === "copyPos") {
+        copyToClipboard(JSON.stringify(data.args));
+        return;
       }
-      webView.emit(data.event, data.args);
+      eventListener.emit(data.event, data.args);
     }
   }
+
+  const copyToClipboard = (str: string) => {
+    const el = document.createElement('textarea');
+    el.value = str;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+ };
 
   useEffect(() => {
     window.addEventListener("message", handleMessage);
@@ -35,10 +48,10 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    webView.showComponent("hud");
-    /*setTimeout(() => {
-      webView.showComponent("charcreator");
-    }, 1000);*/
+    setTimeout(() => {
+      webView.showComponent("hud");
+      //webView.showComponent("charcreator");
+    }, 1000);
   }, []);
 
   return (

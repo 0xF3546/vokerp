@@ -12,7 +12,17 @@ class EventManager {
             const source = global.source;
             func(source, ...args);
         });
-    }    
+    }
+
+    onCallback(ev: string, func: (source: number, ...args: any[]) => any): void {
+        onNet(ev, (...args) => {
+            const source = global.source;
+            const result = func(source, ...args);
+            if (result) {
+                emitNet(ev + "::Callback", source, result);
+            }
+        });
+    }
 
     emitClient(player: number | Player | string, event: string, ...args: any[]): void {
 
@@ -40,7 +50,8 @@ class EventManager {
         throw new Error("Method not implemented.");
     }
 
-    emitWebView = (player, event: string, ...args: any[]): void => {
+    emitWebView = (player: number | Player, event: string, ...args: any[]): void => {
+        if (player instanceof Player) player = player.source;
         emitNet("webViewEvent", player, event, ...args);
     }
 }

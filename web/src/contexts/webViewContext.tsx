@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useRef, createRef, cloneElement, useEffect, useCallback } from "react";
 import { ReactNode } from "react";
 import { Component } from "../utils/Component";
-import CharCreator from "../views/CharCreator";
+import CharCreator from "../views/charcreator/CharCreator";
 import Hud from "../views/hud/Hud";
 import { ViewComponent } from "../@types/ViewComponent";
 import Chat from "../components/chat/Chat";
@@ -15,7 +15,6 @@ interface WebViewContextProps {
   getComponents: () => Component[];
   getComponent: (name: string) => Component | undefined;
   getRef: (name: string) => React.RefObject<any> | undefined;
-  emit: (eventName: string, ...args: any[]) => void;
 }
 
 const webViewContext = createContext<WebViewContextProps>({
@@ -27,7 +26,6 @@ const webViewContext = createContext<WebViewContextProps>({
   getComponents: () => [],
   getComponent: () => undefined,
   getRef: () => undefined,
-  emit: () => {},
 });
 
 const useWebView = () => useContext(webViewContext);
@@ -133,26 +131,7 @@ const WebViewProvider = ({ children }: { children: ReactNode }) => {
 
   const getRef = useCallback((name: string) => {
     return refs.current[name];
-  }, [components]);
-
-  const emit = useCallback((eventName: string, ...args: any[]) => {
-    console.log(`Emitting event: ${eventName}, aktuelle Komponenten:`, components);
-  
-    if (components.length === 0) {
-      console.warn("❌ Keine Komponenten vorhanden!");
-      return;
-    }
-  
-    components.forEach((component) => {
-      console.log(`🔹 Event "${eventName}" an ${component.name} senden`);
-      if (!component.emit) {
-        console.warn(`⚠ Component ${component.name} hat keine emit-Methode.`);
-        return;
-      }
-      component.emit(eventName, ...args);
-    });
-  }, [components]);
-  
+  }, [components]);  
 
   const getActiveComponents = useCallback(() => {
     return components.filter((component) => component.isActive);
@@ -168,7 +147,6 @@ const WebViewProvider = ({ children }: { children: ReactNode }) => {
         getComponent,
         getComponents,
         getRef,
-        emit,
         getActiveComponents
       }}
     >

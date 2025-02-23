@@ -5,9 +5,11 @@ import "./hud.css";
 import { ViewComponent } from "../../@types/ViewComponent";
 import { ImVolumeHigh, ImVolumeLow, ImVolumeMedium, ImVolumeMute } from "react-icons/im";
 import { IoIosRadio } from "react-icons/io";
+import { fetchNui } from "../../utils/fetchNui";
+import { eventListener } from "../../utils/EventListener";
 
 const Hud = forwardRef<ViewComponent>((_, ref) => {
-  const visibleRef = useRef(true); // Verhindert unerwartetes Zurücksetzen
+  const visibleRef = useRef(true);
   const [visible, setVisible] = useState(true);
   const [props, setProps] = useState<HudProps>({
     money: 0,
@@ -25,6 +27,28 @@ const Hud = forwardRef<ViewComponent>((_, ref) => {
     }
   }, [visible]);
 
+  useEffect(() => {
+    const load = async () => {
+      const data: string = await fetchNui("loadHud");
+      console.log("Data received:", data);
+      setProps((state) => ({ ...state, ...JSON.parse(data) }));
+    }
+    load();
+
+    eventListener.listen("updateHud", (props: HudProps) => {
+      setProps((prevProps) => ({ ...prevProps, ...props }));
+    });
+
+    eventListener.listen("player::VoiceRangeChanged", (voiceRange: number) => {
+      console.log("Voice range changed to:", voiceRange);
+      setProps((prevProps) => ({ ...prevProps, voiceRange }));
+    });
+    return () => {
+      eventListener.remove("updateHud");
+      eventListener.remove("player::VoiceRangeChanged");
+    }
+  }, []);
+
   useImperativeHandle(ref, () => ({
     show: (delay: number = 0) => {
       console.log("Showing HUD with delay:", delay);
@@ -41,18 +65,7 @@ const Hud = forwardRef<ViewComponent>((_, ref) => {
         setVisible(false);
         console.log("HUD is now hidden after delay");
       }, delay);
-    },
-    emit: (eventName: string, ...args: any[]) => {
-      console.log(`Event received: ${eventName}`, args);
-      switch (eventName.toLowerCase()) {
-        case "updatehud":
-          setProps((prevProps) => ({ ...prevProps, ...args }));
-          break;
-        case "updatevoicerange":
-          setProps((prevProps) => ({ ...prevProps, voiceRange: args[0] }));
-          break;
-      }
-    },
+    }
   }));
 
   // Stack-Trace zur Fehleranalyse
@@ -85,25 +98,21 @@ const Hud = forwardRef<ViewComponent>((_, ref) => {
 
   if (!visible) return null;
 
-  const getVolumeIcon = () => {
-    if (props.isVoiceMuted) return <ImVolumeMute />
-    switch (props.voiceRange) {
-      case 32:
-        <ImVolumeHigh />
-        break;
-      case 16:
-        <ImVolumeHigh />
-        break;
-      case 8:
-        <ImVolumeMedium />
-        break;
-      case 3:
-        <ImVolumeLow />
-        break;
-      default:
-        return <ImVolumeLow /> 
-    }
+const getVolumeIcon = () => {
+  if (props.isVoiceMuted) return <ImVolumeMute />;
+  switch (props.voiceRange) {
+    case 32:
+      return <ImVolumeHigh />;
+    case 16:
+      return <ImVolumeHigh />;
+    case 8:
+      return <ImVolumeMedium />;
+    case 3:
+      return <ImVolumeLow />;
+    default:
+      return <ImVolumeLow />;
   }
+};
 
   const getRadioIcon = () => {
     return <IoIosRadio />

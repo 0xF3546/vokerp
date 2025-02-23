@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn
 import { Character } from "../../character/impl/Character";
 import { Rank } from "../../admin/impl/Rank";
 import { notify } from "@server/core/foundation/Utils";
+import { MAX_VOICE_RANGE } from "@shared/constants/MAX_VOICE_RANGE";
 
 @Entity("player")
 export class Player {
@@ -34,6 +35,7 @@ export class Player {
 
     source: number;
     aduty: boolean = false;
+    voiceRange: number = 1;
 
     constructor(source: number) {
         this.source = source;
@@ -49,5 +51,23 @@ export class Player {
 
     notify = (title: string | null, message: string, color: string = "green", delay = 5000) => {
         notify(this, title, message, color, delay);
+    }
+
+    setVariable = (key: string, value: any) => {
+        GetPlayer(this.source.toString()).state[key] = value;
+    }
+
+    getVariable = (key: string) => {
+        return GetPlayer(this.source.toString()).state[key];
+    }
+
+    setVoiceRange = (range: number | undefined): number => {
+        const initialRange = range || this.voiceRange++;
+        if (initialRange > MAX_VOICE_RANGE) {
+            this.voiceRange = 0;
+        } else {
+            this.voiceRange = initialRange;
+        }
+        return this.voiceRange;
     }
 }

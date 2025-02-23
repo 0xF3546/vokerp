@@ -1,15 +1,14 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Inventory } from "../../inventory/impl/Inventory";
 import { Position } from "../../../../shared/types/Position";
-import { Faction } from "../../faction/impl/Faction";
 import { Player } from "@server/core/player/impl/Player";
-import { CharacterData } from "@server/core/types/CharacterData";
-import { CharacterClothes } from "@server/core/types/CharacterClothes";
-import { CharacterProps } from "@server/core/types/CharacterProps";
+import { CharacterData } from "@shared/types/CharacterData";
+import { CharacterClothes } from "@shared/types/CharacterClothes";
+import { CharacterProps } from "@shared/types/CharacterProps";
 import { eventManager } from "@server/core/foundation/EventManager";
 import { LoadedPlayer } from "@shared/types/LoadedPlayer";
 import { Gender } from "@shared/enum/Gender";
-import playerService, { getPlayerService } from "@server/core/player/impl/PlayerService";
+import { getPlayerService } from "@server/core/player/impl/PlayerService";
 import { PositionParser } from "@server/core/foundation/PositionParser";
 import factionService from "@server/core/faction/impl/FactionService";
 
@@ -64,7 +63,7 @@ export class Character {
   @Column({ default: 2500 })
   bank!: number;
 
-  @Column({nullable: true, default: null})
+  @Column({ nullable: true, default: null })
   factionId!: number | null;
 
   @Column({ default: 0 })
@@ -137,17 +136,15 @@ export class Character {
     return factionService.getFactionById(this.factionId);
   }
 
+  get name() {
+    return `${this.firstname} ${this.lastname}`;
+  }
+
   load = () => {
     this.loadMPModel(this.data);
 
-    const loadedData: LoadedPlayer = {
-      firstname: this.firstname,
-      lastname: this.lastname,
-      gender: this.gender,
-      position: this.lastPosition,
-    }
-
-    eventManager.emitClient(this.player.source, "playerLoaded", JSON.stringify(loadedData));
+    SetPedArmour(GetPlayerPed(this.player.source.toString()), this.player.character.armour);
+    // SetEntityHealth(GetPlayerPed(player.source.toString()), player.character.health);
   }
 
   removeCash = (amount: number): boolean => {
@@ -175,10 +172,6 @@ export class Character {
   }
 
   loadMPModel = (charData: CharacterData) => {
-    let model = 1885233650;
-    if (this.gender === Gender.FEMALE) model = -1667301416;
-    SetPlayerModel(this.player.source.toString(), model.toString())
-    
     for (let key in charData) {
       console.log(`Setting ${key} to ${charData[key]}`);
       this.setData(key, charData[key], false);
@@ -194,7 +187,7 @@ export class Character {
           if (save) this.data[id] = val;
 
           // Geschlecht ändern (setzt es auf den Server)
-          emitNet("setGender", this.player, val);
+          emitNet("setGender", this.player.source, val);
         }
         break;
 
@@ -350,8 +343,64 @@ export class Character {
     }
   };
 
+  setClothes = async (clothes: CharacterClothes, save = true) => {
+    if (save) {
+        this.clothes = clothes;
+    }
+
+    const ped = this.player.getPed();
+
+    for (const [id, [drawableId, textureId]] of Object.entries(clothes)) {
+        const componentId = parseInt(id);
+        const drawable = parseInt(drawableId.toString());
+        const texture = parseInt(textureId.toString());
+
+        if (componentId === 10) {
+            // if (isCustomBeard(parseInt(charData["beardStyle"]))) continue;
+            continue;
+        } else if (componentId === 1) {
+            if (drawable === 135) {
+                SetPedComponentVariation(ped, componentId, drawable, texture, 2);
+                continue;
+            }
+            if (this.player.getVariable("maskState")) {
+                SetPedComponentVariation(ped, 1, 0, 0, 2);
+                continue;
+            }
+        }
+
+        SetPedComponentVariation(ped, componentId, drawable, texture, 2);
+    }
+
+    //eventManager.emitClient(this.player, "Character::setClothes", JSON.stringify(this.clothes));
+
+    if (save) {
+        getPlayerService().savePlayer(this.player);
+    }
+}
+
+  setClothe = async (componentId, drawable, texture, save = true) => {
+    if (save) this.clothes[componentId] = [drawable, texture];
+
+    SetPedComponentVariation(this.player.getPed(), componentId, drawable, texture, 0);
+    eventManager.emitClient(this.player, "Character::setClothe", componentId, drawable, texture);
+
+    if (save) getPlayerService().savePlayer(this.player);
+  }
+
+  saveClothes = async () => {
+    getPlayerService().savePlayer(this.player);
+    return true;
+  }
+
+  setTmpClothes = (clothes) => {
+    clothes = JSON.parse(clothes);
+
+    this.setClothes(clothes, false);
+  }
+
   loadTattoos = () => {
-    
+
   }
 
 

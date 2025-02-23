@@ -1,11 +1,15 @@
 import { Rank } from "@server/core/admin/impl/Rank";
+import { Ticket } from "@server/core/admin/impl/Ticket";
 import { Character } from "@server/core/character/impl/Character";
 import { Faction } from "@server/core/faction/impl/Faction";
 import { Clothe } from "@server/core/gameplay/impl/Clothe";
+import { ClotheShop } from "@server/core/gameplay/impl/ClotheShop";
 import { GasStation } from "@server/core/gameplay/impl/GasStation";
 import { House } from "@server/core/gameplay/impl/House";
 import { HouseBasement } from "@server/core/gameplay/impl/HouseBasement";
 import { HouseInterior } from "@server/core/gameplay/impl/HouseInterior";
+import { JumpPoint } from "@server/core/gameplay/impl/JumpPoint";
+import { Shop } from "@server/core/gameplay/impl/Shop";
 import { Inventory } from "@server/core/inventory/impl/Inventory";
 import { InventoryItem } from "@server/core/inventory/impl/InventoryItem";
 import { Item } from "@server/core/inventory/impl/Item";
@@ -27,5 +31,5 @@ export const dataSource = new DataSource({
     logging: false,
     synchronize: true,
     //entities: [__dirname + "../../core/**/impl/*.{js,ts}"],
-    entities: [Player, PlayerBan, Faction, Rank, Vehicle, VehicleClass, Character, Inventory, Item, InventoryItem, GasStation, House, Clothe, HouseBasement, HouseInterior, Garage, GarageExitpoint]
+    entities: [Player, PlayerBan, Faction, Rank, Vehicle, VehicleClass, Character, Inventory, Item, InventoryItem, GasStation, House, Clothe, HouseBasement, HouseInterior, Garage, GarageExitpoint, Ticket, JumpPoint, Shop, ClotheShop]
 })

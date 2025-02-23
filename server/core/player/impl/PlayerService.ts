@@ -5,14 +5,15 @@ import { PositionParser } from "../../foundation/PositionParser";
 import { Character } from "@server/core/character/impl/Character";
 import { eventManager } from "@server/core/foundation/EventManager";
 import { PlayerBan } from "./PlayerBan";
+import { LoadedPlayer } from "@shared/types/LoadedPlayer";
 
 export class PlayerService implements IPlayerService {
     private playerBanRepository = dataSource.getRepository(PlayerBan);
     private playerRepository = dataSource.getRepository(Player);
     /**
-     * Cache for Players, `key = source`, `value = Player`
+     * Cache for Players
      */
-    private playerCache = new Map<number, Player>();
+    private playerCache: Player[] = [];
 
     async findPlayerById(id: number) {
 
@@ -48,11 +49,11 @@ export class PlayerService implements IPlayerService {
     }
 
     getBySource(source: number) {
-        return this.playerCache.get(source);
+        return this.playerCache.find(player => player.source === source);
     }
 
     init(player: Player, source: number) {
-        this.playerCache.set(source, player);
+        this.playerCache.push(player);
         player.source = source;
         player.character.player = player;
     }
@@ -66,24 +67,22 @@ export class PlayerService implements IPlayerService {
         }
 
         player.character.position = player.character.lastPosition;
-        player.character.load();
-        SetPedArmour(GetPlayerPed(player.source.toString()), player.character.armour);
-        // SetEntityHealth(GetPlayerPed(player.source.toString()), player.character.health);
 
-        eventManager.emitWebView(player.source, "updateHud", JSON.stringify({
-            money: player.character.cash,
-            maxVoiceRange: 2,
-            voiceRange: 3,
-            radioState: 0,
-            isVoiceMuted: false
-        }));
+        const loadedData: LoadedPlayer = {
+            firstname: player.character.firstname,
+            lastname: player.character.lastname,
+            gender: player.character.gender,
+            position: player.character.lastPosition,
+          }
+
+        eventManager.emitClient(player.source, "playerLoaded", JSON.stringify(loadedData));
     }
 
     playerDropped(source: number) {
         const player = this.getBySource(source);
         if (player) {
             this.savePlayer(player);
-            this.playerCache.delete(source);
+            this.playerCache.splice(this.playerCache.indexOf(player), 1);
         }
     }
 
@@ -106,6 +105,10 @@ export class PlayerService implements IPlayerService {
                 player: { id: player.id}
             }
         }) || null;
+    }
+
+    getPlayers() {
+        return this.playerCache;
     }
 }
 

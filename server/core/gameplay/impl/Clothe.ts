@@ -28,6 +28,9 @@ export class Clothe {
     @Column()
     prop!: number
 
+    @Column()
+    shopId!: number;
+
     @Column({ type: "enum", enum: Gender, default: Gender.MALE })
     gender!: Gender
 }

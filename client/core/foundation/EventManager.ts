@@ -18,6 +18,7 @@ export class EventManager {
     }
 
     emitServerPromise = (event, ...args: any[]): Promise<any> => {
+        if (this.debug) console.log(`[EmitServerPromise::${event}]`);
         return new Promise((resolve, reject) => {
             this.emitServer(event, ...args);
 
@@ -91,7 +92,8 @@ export class EventManager {
     };
 
     onRawWebView = (ev: string, func: Function): void => {
-        RegisterRawNuiCallback(ev, func);
+        RegisterNuiCallbackType(ev);
+        on(`__cfx_nui:${ev}`, func);
     }
 }
 

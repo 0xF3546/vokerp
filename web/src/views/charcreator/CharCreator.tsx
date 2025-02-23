@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useImperativeHandle, forwardRef } from "react";
-import { useNotification } from "../contexts/notificationContext";
-import { fetchNui } from "../utils/fetchNui";
+import React, { useState, useEffect, useImperativeHandle, forwardRef, useRef } from "react";
+import { useNotification } from "../../contexts/notificationContext";
+import { fetchNui } from "../../utils/fetchNui";
+import "./charcreator.css";
 
 const CharCreator = forwardRef((_, ref) => {
+  const visibleRef = useRef(true);
   const [visible, setVisible] = useState(false);
   const [active, setActive] = useState<string | null>(null);
   const [state, setState] = useState(true);
@@ -13,14 +15,26 @@ const CharCreator = forwardRef((_, ref) => {
   const notification = useNotification();
 
   useImperativeHandle(ref, () => ({
-    show: () => setVisible(true),
-    hide: () => setVisible(false),
+    show: (delay: number = 0) => {
+      visibleRef.current = true;
+      setTimeout(() => {
+        setVisible(true);
+      }, delay);
+    },
+    hide: (delay: number = 0) => {
+      visibleRef.current = false;
+      setTimeout(() => {
+        setVisible(false);
+      }, delay);
+    },
     emit: (eventName: string, ...args: any[]) => {
       if (eventName === "CHAR_UPDATE") {
         console.log("Charakterdaten aktualisieren mit:", args);
       }
     },
   }));
+
+  if (!visible) return null;
 
   useEffect(() => {
     if (charData) {
@@ -239,9 +253,8 @@ const CharCreator = forwardRef((_, ref) => {
     ],
   };
 
-  return visible ? (
-    <div id="CharCreatorWindow">
-      <link href="./css/charcreator.css" rel="stylesheet" />
+  return (
+    <div id="CharCreator">
       <div className="leftBody">
         <div className="header">Schönheitsklinik</div>
         <div className="inner">
@@ -294,7 +307,7 @@ const CharCreator = forwardRef((_, ref) => {
         </div>
       </div>
     </div>
-  ) : null;
+  );
 });
 
 export default CharCreator;
