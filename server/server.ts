@@ -8,6 +8,7 @@ import { gasStationServiceInitializer } from "./core/gameplay/impl/GasStationSer
 import { playerServiceInitializer } from "./core/player/impl/PlayerService";
 import { gamePlayInitializer } from "./core/gameplay/impl/Gameplay";
 import { farmServiceInitializer } from "./core/gameplay/impl/FarmService";
+import { animationServiceInitializer } from "./core/character/impl/AnimationService";
 
 on("onResourceStart", (resName: string) => {
   if (resName === GetCurrentResourceName()) {
@@ -34,4 +35,5 @@ const init = (dataSource) => {
   gasStationServiceInitializer.load();
   gamePlayInitializer.load();
   farmServiceInitializer.load();
+  animationServiceInitializer.load();
 }

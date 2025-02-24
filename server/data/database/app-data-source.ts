@@ -1,5 +1,7 @@
 import { Rank } from "@server/core/admin/impl/Rank";
 import { Ticket } from "@server/core/admin/impl/Ticket";
+import { Animation } from "@server/core/character/impl/Animation";
+import { AnimationCategory } from "@server/core/character/impl/AnimationCategory";
 import { Character } from "@server/core/character/impl/Character";
 import { Faction } from "@server/core/faction/impl/Faction";
 import { Clothe } from "@server/core/gameplay/impl/Clothe";
@@ -39,5 +41,6 @@ export const dataSource = new DataSource({
     entities: [Player, PlayerBan, Faction, Rank, 
         Vehicle, VehicleClass, VehicleShop, VehicleShopVehicle, VehicleShopExitPoint,
          Character, Inventory, Item, InventoryItem, GasStation, House, Clothe, HouseBasement, HouseInterior, Garage, GarageExitpoint, Ticket, JumpPoint, Shop, ClotheShop,
-        FarmingZone, FarmingzonePosition]
+        FarmingZone, FarmingzonePosition,
+        Animation, AnimationCategory]
 })

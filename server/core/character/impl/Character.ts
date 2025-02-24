@@ -87,6 +87,9 @@ export class Character {
   @Column("json", { nullable: true })
   tattoos?: string[] = [];
 
+  @Column("json", { default: "[]" })
+  animations: number[] = [];
+
   player?: Player;
 
   private lastTeleport = Date.now();
