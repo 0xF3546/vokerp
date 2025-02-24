@@ -373,6 +373,4 @@ export class Character {
   loadTattoos = () => {
 
   }
-
-
 }
