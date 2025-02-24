@@ -5,3 +5,52 @@
 #root {
   height: 100%
 }
+
+@font-face {
+  font-family: Montserrat;
+  src: url('./utils/fonts/Montserrat/Montserrat-Bold.ttf');
+}
+
+@font-face {
+  font-family: SFProRegular;
+  src: url('./utils/fonts/SFProRegular.ttf');
+}
+
+@font-face {
+  font-family: SFProLight;
+  src: url('./utils/fonts/SFProLight.ttf');
+}
+
+@font-face {
+  font-family: Billabong;
+  src: url('./utils/fonts/Billabong.ttf');
+}
+
+@font-face {
+  font-family: Passport;
+  src: url('./utils/fonts/Passport.ttf');
+}
+
+@font-face {
+  font-family: Credc;
+  src: url('./utils/fonts/CREDC___.ttf');
+}
+
+@font-face {
+font-family: 'digital';
+src: url("./utils/fonts/hologram/digital.ttf");
+}
+
+html {
+  overflow-x: hidden;
+  overflow-y: hidden;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -o-user-select: none;
+
+  /* background: url("./images/bg.jpg");
+  background-repeat: no-repeat;
+  background-size: auto; */
+}

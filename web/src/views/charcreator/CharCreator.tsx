@@ -2,10 +2,12 @@ import React, { useState, useEffect, useImperativeHandle, forwardRef, useRef } f
 import { useNotification } from "../../contexts/notificationContext";
 import { fetchNui } from "../../utils/fetchNui";
 import "./charcreator.css";
+import { eventListener } from "../../utils/EventListener";
 
-const CharCreator = forwardRef((_, ref) => {
+const CharCreator = () => {
   const visibleRef = useRef(true);
   const [visible, setVisible] = useState(false);
+  const [usesChar, setUsesChar] = useState(true);
   const [active, setActive] = useState<string | null>(null);
   const [state, setState] = useState(true);
   const [charData, setCharData] = useState<any>({});
@@ -13,28 +15,23 @@ const CharCreator = forwardRef((_, ref) => {
   const [heading, setHeading] = useState<number>(0);
 
   const notification = useNotification();
+  const loadCharData = (data: any) => {
+    setCharData(data);
+  }
 
-  useImperativeHandle(ref, () => ({
-    show: (delay: number = 0) => {
-      visibleRef.current = true;
-      setTimeout(() => {
-        setVisible(true);
-      }, delay);
-    },
-    hide: (delay: number = 0) => {
-      visibleRef.current = false;
-      setTimeout(() => {
-        setVisible(false);
-      }, delay);
-    },
-    emit: (eventName: string, ...args: any[]) => {
-      if (eventName === "CHAR_UPDATE") {
-        console.log("Charakterdaten aktualisieren mit:", args);
-      }
-    },
-  }));
+  useEffect(() => {
+    const load = async () => {
+      const data = await fetchNui("getCharData");
+      setCharData(data);
+    }
 
-  if (!visible) return null;
+    load();
+
+    eventListener.listen("CharCreator::LoadData", loadCharData);
+    return () => {
+      eventListener.remove("CharCreator::LoadData");
+    }
+  }, [])
 
   useEffect(() => {
     if (charData) {
@@ -43,7 +40,7 @@ const CharCreator = forwardRef((_, ref) => {
         if (input) {
           input.value = charData[id];
           const target = document.getElementById(id);
-          if (target) {
+          if (target && input.type === "range") {
             target.children[0].textContent = `${input.value} | ${input.max}`;
           }
         }
@@ -62,7 +59,7 @@ const CharCreator = forwardRef((_, ref) => {
   const handleGenderClick = (gender: number) => {
     setGender(gender);
     fetchNui("setData", ["Gender", gender]);
-    
+
   };
 
   const handleItemClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -124,7 +121,6 @@ const CharCreator = forwardRef((_, ref) => {
   };
 
   const items = [
-    { body: "char", label: "Charakter" },
     { body: "kopf", label: "Kopf" },
     { body: "gesicht", label: "Oberes Gesicht" },
     { body: "gesicht2", label: "Unteres Gesicht" },
@@ -139,46 +135,60 @@ const CharCreator = forwardRef((_, ref) => {
   ];
 
   const renderInputs = (inputs: any[]) => {
-    return inputs.map((input, index) => (
-      <div className="data" key={index}>
-        <span id={input.id} className="input">
-          {input.label} <span className="right">{input.right}</span>
-        </span>
-        <br />
-        <input
-          onInput={setRange}
-          onChange={setRange}
-          data-target={input.id}
-          step={input.step}
-          min={input.min}
-          max={input.max}
-          defaultValue={input.defaultValue}
-          type="range"
-        />
-      </div>
-    ));
+    return inputs.map((input, index) => {
+      if (input.id === "gender") {
+        return (
+          <div className="data" key={index}>
+            <span id={input.id} className="input">
+              {input.label} <span className="right">{input.right}</span>
+            </span>
+            <br />
+            <div className="gender-buttons">
+              <button
+                className={`gender-button ${gender === 0 ? "active" : ""}`}
+                onClick={() => handleGenderClick(0)}
+              >
+                Männlich
+              </button>
+              <button
+                className={`gender-button ${gender === 1 ? "active" : ""}`}
+                onClick={() => handleGenderClick(1)}
+              >
+                Weiblich
+              </button>
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <div className="data" key={index}>
+            <span id={input.id} className="input">
+              {input.label} <span className="right">{input.right}</span>
+            </span>
+            <br />
+            <input
+              onInput={setRange}
+              onChange={setRange}
+              data-target={input.id}
+              step={input.step}
+              min={input.min}
+              max={input.max}
+              defaultValue={input.defaultValue}
+              placeholder={input.placeholder}
+              type={input.placeholder ? "text" : "range"}
+            />
+          </div>
+        );
+      }
+    });
   };
 
   const sections: { [key: string]: { id: string, label: string; placeholder?: string; right?: string; min: string; max: string; defaultValue: string; step?: string }[] } = {
     char: [
-      {
-        id: "firstname", label: "Vorname", placeholder: "Max",
-        min: "",
-        max: "",
-        defaultValue: ""
-      },
-      {
-        id: "lastname", label: "Nachname", placeholder: "Mustermann",
-        min: "",
-        max: "",
-        defaultValue: ""
-      },
-      {
-        id: "birthday", label: "Geburtsdatum", placeholder: "28.01.1996",
-        min: "",
-        max: "",
-        defaultValue: ""
-      },
+      { id: "gender", label: "Geschlecht", placeholder: "Männlich/Weiblich", min: "0", max: "1", defaultValue: "0" },
+      { id: "firstname", label: "Vorname", placeholder: "Vorname", min: "0", max: "0", defaultValue: "" },
+      { id: "lastname", label: "Nachname", placeholder: "Nachname", min: "0", max: "0", defaultValue: "" },
+      { id: "birthday", label: "Geburtsdatum", placeholder: "TT.MM.JJJJ", min: "0", max: "0", defaultValue: "" },
     ],
     kopf: [
       { id: "shapeFirst", label: "Gesicht Vater", right: "0 | 45", min: "0", max: "45", defaultValue: "0" },
@@ -258,6 +268,15 @@ const CharCreator = forwardRef((_, ref) => {
       <div className="leftBody">
         <div className="header">Schönheitsklinik</div>
         <div className="inner">
+          {usesChar && (
+            <div
+              data-body={"char"}
+              className={`item ${active === 'char' ? "active" : ""}`}
+              onClick={handleItemClick}
+            >
+              Charakter
+            </div>
+          )}
           {items.map((item, index) => (
             <div
               key={index}
@@ -274,16 +293,19 @@ const CharCreator = forwardRef((_, ref) => {
       <div className="rightBody">
         <div className="header">{active}</div>
         <div className="body">
-          {Object.keys(sections).map((section, index) => (
-            <div
-              key={index}
-              className="inner"
-              id={section}
-              style={{ display: active === items[index].label ? "block" : "none" }}
-            >
-              {renderInputs(sections[section as keyof typeof sections])}
-            </div>
-          ))}
+          {Object.keys(sections).map((section) => {
+            const item = items.find((item) => item.body === section);
+            return (
+              <div
+                key={section}
+                className="inner"
+                id={section}
+                style={{ display: active === item?.label ? "block" : "none" }}
+              >
+                {renderInputs(sections[section as keyof typeof sections])}
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -308,6 +330,6 @@ const CharCreator = forwardRef((_, ref) => {
       </div>
     </div>
   );
-});
+};
 
 export default CharCreator;
