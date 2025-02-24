@@ -1,6 +1,6 @@
-# Voke Server
+# Voke Roleplay Projekt-Guidelines
 
-## Struktur
+## Ordnerstruktur
 
 ```
 📂 Voke Server
