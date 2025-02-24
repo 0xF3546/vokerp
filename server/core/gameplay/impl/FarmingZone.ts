@@ -12,7 +12,7 @@ export class FarmingZone {
     @Column()
     name!: string;
 
-    @Column()
+    @Column("json")
     position!: Position;
 
     @Column({default: 0})

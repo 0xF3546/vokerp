@@ -4,11 +4,16 @@ import { FarmingZone } from "./FarmingZone";
 import { FarmingzonePosition } from "./FarmingzonePosition";
 import { Position } from "@shared/types/Position";
 import { getDistanceBetween } from "@server/core/foundation/Utils";
+import { Processor } from "./Processor";
+import { getStreamer } from "@server/core/foundation/Streamer";
+import { PedDto } from "@server/core/foundation/PedDto";
 
 export class FarmService implements IFarmService {
     private farmingRepository = dataSource.getRepository(FarmingZone);
     private farmingzonePositionRepository = dataSource.getRepository(FarmingzonePosition);
+    private processorRepository = dataSource.getRepository(Processor);
     private farmingzones: FarmingZone[] = [];
+    private processors: Processor[] = [];
 
     load() {
         this.farmingRepository.find().then(farmingzones => {
@@ -22,6 +27,17 @@ export class FarmService implements IFarmService {
                 if (farmingzone) {
                     farmingzone.positions.push(position);
                 }
+            });
+        });
+
+        this.processorRepository.find().then(processors => {
+            this.processors = processors;
+            console.log(`${processors.length} Verarbeiter wurden geladen.`);
+            this.processors.forEach(processor => {
+                getStreamer().createPed(new PedDto(
+                    processor.npc,
+                    processor.position,
+                ));
             });
         });
     }
@@ -98,7 +114,29 @@ export class FarmService implements IFarmService {
         }).reduce((prev, current) => {
             return prev.distance < current.distance ? prev : current;
         });
-    }       
+    }      
+    
+    getProcessorById(id: number): Processor | undefined {
+        return this.processors.find(processor => processor.id === id);
+    }
+
+    getProcessors(): Processor[] {
+        return this.processors;
+    }
+
+    async createProcessor(processor: Processor): Promise<Processor> {
+        processor = await this.processorRepository.save(processor);
+        this.processors.push(processor);
+        getStreamer().createPed(new PedDto(
+            processor.npc,
+            processor.position,
+        ));
+        return processor;
+    }
+
+    async updateProcessor(processor: Processor): Promise<Processor> {
+        return await this.processorRepository.save(processor);
+    }
 }
 
 let farmService: IFarmService;

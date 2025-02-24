@@ -9,6 +9,6 @@ export class FarmingzonePosition {
     @Column()
     farmingzoneId!: number;
     
-    @Column()
+    @Column("json")
     position!: Position;
 }

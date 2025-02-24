@@ -1,6 +1,7 @@
 import { Position } from "@shared/types/Position";
 import { FarmingZone } from "./impl/FarmingZone";
 import { FarmingzonePosition } from "./impl/FarmingzonePosition";
+import { Processor } from "./impl/Processor";
 
 export type IFarmService = {
     load: () => void;
@@ -16,4 +17,9 @@ export type IFarmService = {
     updateFarmingzone: (farmingzone: FarmingZone) => Promise<FarmingZone>;
     deleteFarmingzone: (id: number) => Promise<void>;
     getNearestFarmingzonePosition: (position: Position) => {FarmingzonePosition: FarmingzonePosition, distance: number} | undefined;
+
+    getProcessorById: (id: number) => Processor | undefined;
+    getProcessors: () => Processor[];
+    createProcessor: (processor: Processor) => Promise<Processor>;
+    updateProcessor: (processor: Processor) => Promise<Processor>;
 };
