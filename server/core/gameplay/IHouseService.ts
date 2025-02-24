@@ -9,4 +9,7 @@ export type IHouseService = {
     getInteriorById: (id: number) => HouseInterior | null
     getBasementById: (id: number) => HouseBasement | null
     buyHouse: (player: Player, house: House) => boolean
+    createHouse: (house: House) => Promise<House>
+    createInterior: (interior: HouseInterior) => Promise<HouseInterior>
+    createBasement: (basement: HouseBasement) => Promise<HouseBasement>
 }

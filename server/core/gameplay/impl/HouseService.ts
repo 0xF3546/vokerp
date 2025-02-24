@@ -40,6 +40,24 @@ export class HouseService implements IHouseService {
         this.houseRepository.save(house);
         return true;
     }
+
+    createHouse = async (house: House) => {
+        house = await this.houseRepository.save(house);
+        this.houses.push(house);
+        return house;
+    }
+
+    createInterior = async (interior: HouseInterior) => {
+        interior = await this.interiorRepository.save(interior);
+        this.interiors.push(interior);
+        return interior;
+    }
+
+    createBasement = async (basement: HouseBasement) => {
+        basement = await this.basementRepository.save(basement);
+        this.basements.push(basement);
+        return basement;
+    }
 }
 
 export const houseServerInitializer = {
@@ -47,6 +65,10 @@ export const houseServerInitializer = {
         houseService = new HouseService();
         houseService.load();
     }
+}
+
+export const getHouseService = () => {
+    return houseService;
 }
 
 let houseService: IHouseService;

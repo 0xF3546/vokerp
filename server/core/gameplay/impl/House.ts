@@ -21,7 +21,16 @@ export class House {
     interiorId!: number;
 
     @Column()
+    name!: string;
+
+    @Column()
     basementId!: number;
+
+    @Column()
+    garage!: boolean;
+
+    @Column("json", {default: null})
+    parkoutPositions: Position[] | null = null;
 
     get interior() {
         return houseService.getInteriorById(this.interiorId);

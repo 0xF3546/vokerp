@@ -9,6 +9,7 @@ import { playerServiceInitializer } from "./core/player/impl/PlayerService";
 import { gamePlayInitializer } from "./core/gameplay/impl/Gameplay";
 import { farmServiceInitializer } from "./core/gameplay/impl/FarmService";
 import { animationServiceInitializer } from "./core/character/impl/AnimationService";
+import { warehouseServiceInitializer } from "./core/inventory/impl/WarehouseService";
 
 on("onResourceStart", (resName: string) => {
   if (resName === GetCurrentResourceName()) {
@@ -36,4 +37,5 @@ const init = (dataSource) => {
   gamePlayInitializer.load();
   farmServiceInitializer.load();
   animationServiceInitializer.load();
+  warehouseServiceInitializer.load();
 }
