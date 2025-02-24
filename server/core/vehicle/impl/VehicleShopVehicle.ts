@@ -15,7 +15,7 @@ export class VehicleShopVehicle {
     @Column()
     price!: number;
 
-    @Column()
+    @Column("json")
     position!: Position;
 
     @Column({default: -1})
