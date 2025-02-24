@@ -1,3 +1,4 @@
+import { Position } from "@shared/types/Position";
 import { Garage } from "./impl/Garage";
 import { Vehicle } from "./impl/Vehicle";
 import { VehicleClass } from "./impl/VehicleClass";
@@ -10,6 +11,8 @@ export type IVehicleService = {
     getVehicle: (vehicleId: number) => Promise<Vehicle>;
     getClassById: (id: number) => VehicleClass | null;
     createGarage(garage: Garage): void;
+    /// es soll die distanz und garage zurückgeben
+    getNearestGarage(position: Position): {Garage: Garage, distance: number} | undefined;
 
     getVehicleShopById(id: number): VehicleShop | undefined;
     getVehicleShops(): VehicleShop[];

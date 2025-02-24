@@ -89,20 +89,23 @@ export class GamePlay implements IGameplay {
     private createBlip(shop: Shop) {
         let color;
         let type;
+        let name = '';
         switch (shop.type) {
             case ShopType.SUPERMARKET:
                 color = 2;
                 type = 52;
+                name = 'Supermarkt';
                 break;
             case ShopType.WEAPONSHOP:
                 color = 1;
                 type = 110;
+                name = 'Waffenladen';
                 break;
         }
         getStreamer().createBlip(new Blip(
             `shop_${shop.id}`,
             shop.position,
-            shop.name,
+            name,
             type,
             color,
             1

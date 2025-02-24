@@ -11,6 +11,7 @@ import { GarageExitpoint } from "./GarageExitpoint";
 import { VehicleShop } from "./VehicleShop";
 import { VehicleShopExitPoint } from "./VehicleShopExitPoint";
 import { VehicleShopVehicle } from "./VehicleShopVehicle";
+import { getDistanceBetween } from "@server/core/foundation/Utils";
 
 export class VehicleService implements IVehicleService {
     private vehicleRepository = dataSource.getRepository(Vehicle);
@@ -54,6 +55,17 @@ export class VehicleService implements IVehicleService {
         this.vehicleShopRepository.find().then(shops => {
             this.vehicleShops = shops;
             console.log(`${shops.length} Fahrzeugshops wurden geladen.`);
+            this.vehicleShops.forEach(shop => {
+                getStreamer().createPed(new PedDto(shop.ped, shop.position));
+                getStreamer().createBlip(new Blip(
+                    `vehicleShop_${shop.id}`,
+                    shop.position,
+                    shop.getTypeName(),
+                    shop.blip,
+                    0,
+                    1
+                ));
+            });
         });
 
         this.vehicleShopVehicleRepository.find().then(vehicles => {
@@ -153,6 +165,17 @@ export class VehicleService implements IVehicleService {
 
     async updateVehicleShop(shop: VehicleShop): Promise<VehicleShop> {
         return await this.vehicleShopRepository.save(shop);
+    }
+
+    getNearestGarage(position: Position): {Garage: Garage, distance: number} | undefined {
+        return this.garageCache.map(g => {
+            return {
+                Garage: g,
+                distance: getDistanceBetween(position, g.position)
+            }
+        }).reduce((prev, current) => {
+            return prev.distance < current.distance ? prev : current;
+        });
     }
 }
 
