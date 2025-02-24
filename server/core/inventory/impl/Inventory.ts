@@ -1,5 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { InventoryItem } from "./InventoryItem";
+import { dataSource } from "@server/data/database/app-data-source";
+import { InventoryDto } from "@shared/models/InventoryDto";
 
 @Entity("inventories") // Sollte plural sein
 export class Inventory {
@@ -15,15 +17,11 @@ export class Inventory {
     @Column()
     maxWeight!: number;
 
-    @Column()
-    imagePath!: string;
-
     @OneToMany(() => InventoryItem, inventoryItem => inventoryItem.inventory)
     items!: InventoryItem[];
 
     addItem(item: InventoryItem) {
-        // Hier fügst du ein neues Item zum Inventory hinzu
-        if (this.items.length < this.maxSlots && this.getWeight() + item.item.weight <= this.maxWeight) {
+        if (this.getFreeSlots() < this.maxSlots && this.getWeight() + item.item.weight <= this.maxWeight) {
             this.items.push(item);
         }
     }
@@ -73,5 +71,11 @@ export class Inventory {
 
     hasItem(itemId: number) {
         return this.items.some(item => item.id === itemId);
+    }
+
+    getDto(): InventoryDto {
+        const dto = new InventoryDto(this.name, this.maxSlots, this.maxWeight);
+        dto.items = this.items.map(item => item.getDto());
+        return dto;
     }
 }

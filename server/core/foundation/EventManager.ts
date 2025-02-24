@@ -50,6 +50,11 @@ class EventManager {
         throw new Error("Method not implemented.");
     }
 
+    emit = (player: number | Player, event: string, ...args: any[]): void => {
+        if (player instanceof Player) player = player.source;
+        emit(event, player, ...args);
+    }
+
     emitWebView = (player: number | Player, event: string, ...args: any[]): void => {
         if (player instanceof Player) player = player.source;
         emitNet("webViewEvent", player, event, ...args);

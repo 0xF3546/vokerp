@@ -1,6 +1,7 @@
 import { dataSource } from "../../../data/database/app-data-source";
 import { IInventoryService } from "../IInventoryService";
 import { Inventory } from "./Inventory";
+import { InventoryItem } from "./InventoryItem";
 
 export class InventoryService implements IInventoryService {
     private inventoryRepository = dataSource.getRepository(Inventory);
@@ -32,5 +33,9 @@ export class InventoryService implements IInventoryService {
                 }
             });
         }
+    }
+
+    async updateInventoryItem(inventoryItem: InventoryItem) {
+        return await dataSource.getRepository(InventoryItem).save(inventoryItem);
     }
 }
