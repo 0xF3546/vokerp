@@ -11,6 +11,9 @@ import { Gender } from "@shared/enum/Gender";
 import { getPlayerService } from "@server/core/player/impl/PlayerService";
 import { PositionParser } from "@server/core/foundation/PositionParser";
 import factionService from "@server/core/faction/impl/FactionService";
+import { DEFAULT_CHARACTER_CLOTHES } from "@shared/constants/DEFAULT_CHARACTER_CLOTHES";
+import { DEFAULT_CHARACTER_PROPS } from "@shared/constants/DEFAULT_CHARACTER_PROPS";
+import { DEFAULT_CHARACTER_DATA } from "@shared/constants/DEFAULT_CHARACTER_DATA";
 
 @Entity("character")
 export class Character {
@@ -72,49 +75,14 @@ export class Character {
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   factionJoinDate!: Date;
 
-  @Column("json", { nullable: true })
-  data?: CharacterData = {
-    Gender: 0,
-    shapeFirst: 0,
-    shapeSecond: 22,
-    shapeMix: 0.7,
-    skinMix: 0.4,
-    skinFirst: 2,
-    noseWidth: 0,
-    browHeight: 1,
-    lips: 0,
-    neckWidth: 0,
-    eyesColor: 3,
-    hair: 39,
-    hairColor: 0,
-    hairColor2: 29,
-    beardStyle: 29,
-    beardOpacity: 0
-  };
+  @Column("json")
+  data?: CharacterData = DEFAULT_CHARACTER_DATA;
 
-  @Column("json", { nullable: true })
-  clothes?: CharacterClothes = {
-    "0": ["0", "0"],
-    "1": ["0", "0"],
-    "3": ["0", "0"],
-    "4": ["0", "0"],
-    "5": ["112", "0"],
-    "6": ["7", "0"],
-    "7": ["0", "0"],
-    "8": ["15", "0"],
-    "9": ["0", "0"],
-    "10": ["0", "0"],
-    "11": ["442", "1"]
-  };
+  @Column("json")
+  clothes?: CharacterClothes = DEFAULT_CHARACTER_CLOTHES;
 
-  @Column("json", { nullable: true })
-  props?: CharacterProps = {
-    "0": ["142", 0],
-    "1": ["18", 0],
-    "2": ["41", 0],
-    "6": ["30", 0],
-    "7": ["9", 0]
-  };
+  @Column("json")
+  props?: CharacterProps = DEFAULT_CHARACTER_PROPS
 
   @Column("json", { nullable: true })
   tattoos?: string[] = [];

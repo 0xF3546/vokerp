@@ -8,15 +8,22 @@ import { getStreamer } from "@server/core/foundation/Streamer";
 import { PedDto } from "@server/core/foundation/PedDto";
 import { Blip } from "@shared/types/Blip";
 import { GarageExitpoint } from "./GarageExitpoint";
+import { VehicleShop } from "./VehicleShop";
+import { VehicleShopExitPoint } from "./VehicleShopExitPoint";
+import { VehicleShopVehicle } from "./VehicleShopVehicle";
 
 export class VehicleService implements IVehicleService {
     private vehicleRepository = dataSource.getRepository(Vehicle);
     private garageRepository = dataSource.getRepository(Garage);
     private vehicleClassRepository = dataSource.getRepository(VehicleClass);
     private garageExitPointRepository = dataSource.getRepository(GarageExitpoint);
+    private vehicleShopRepository = dataSource.getRepository(VehicleShop);
+    private vehicleShopVehicleRepository = dataSource.getRepository(VehicleShopVehicle);
+    private vehicleShopExitPointRepository = dataSource.getRepository(VehicleShopExitPoint);
     private garageCache: Garage[] = [];
     private vehicleCache: Map<number, Vehicle> = new Map();
     private vehicleClassCache: VehicleClass[] = [];
+    private vehicleShops: VehicleShop[] = [];
 
     load() {
         this.garageRepository.find().then(garages => {
@@ -42,6 +49,29 @@ export class VehicleService implements IVehicleService {
         this.vehicleClassRepository.find().then(vehicleClasses => {
             this.vehicleClassCache = vehicleClasses;
             console.log(`${vehicleClasses.length} Fahrzeugklassen wurden geladen.`);
+        });
+
+        this.vehicleShopRepository.find().then(shops => {
+            this.vehicleShops = shops;
+            console.log(`${shops.length} Fahrzeugshops wurden geladen.`);
+        });
+
+        this.vehicleShopVehicleRepository.find().then(vehicles => {
+            vehicles.forEach(vehicle => {
+                const shop = this.vehicleShops.find(s => s.id === vehicle.shopId);
+                if (shop) {
+                    shop.vehicles.push(vehicle);
+                }
+            });
+        });
+
+        this.vehicleShopExitPointRepository.find().then(exitPoints => {
+            exitPoints.forEach(exitPoint => {
+                const shop = this.vehicleShops.find(s => s.id === exitPoint.shopId);
+                if (shop) {
+                    shop.exitPoints.push(exitPoint);
+                }
+            });
         });
     }
 
@@ -102,7 +132,28 @@ export class VehicleService implements IVehicleService {
             this.createBlip(garage);
             this.garageCache.push(garage);
         });
-    }    
+    }
+
+    getVehicleShopById(id: number): VehicleShop | undefined {
+        return this.vehicleShops.find(s => s.id === id);
+    }
+
+    getVehicleShops(): VehicleShop[] {
+        return this.vehicleShops;
+    }
+
+    async createVehicleShop(shop: VehicleShop): Promise<VehicleShop> {
+        await
+        this.vehicleShopRepository.save(shop)
+        .then(() => {
+            this.vehicleShops.push(shop);
+        });
+        return shop;
+    }
+
+    async updateVehicleShop(shop: VehicleShop): Promise<VehicleShop> {
+        return await this.vehicleShopRepository.save(shop);
+    }
 }
 
 export const vehicleServiceInitializer = {

@@ -19,6 +19,9 @@ import { Garage } from "@server/core/vehicle/impl/Garage";
 import { GarageExitpoint } from "@server/core/vehicle/impl/GarageExitpoint";
 import { Vehicle } from "@server/core/vehicle/impl/Vehicle";
 import { VehicleClass } from "@server/core/vehicle/impl/VehicleClass";
+import { VehicleShop } from "@server/core/vehicle/impl/VehicleShop";
+import { VehicleShopExitPoint } from "@server/core/vehicle/impl/VehicleShopExitPoint";
+import { VehicleShopVehicle } from "@server/core/vehicle/impl/VehicleShopVehicle";
 import { DataSource } from "typeorm"
 
 export const dataSource = new DataSource({
@@ -31,5 +34,7 @@ export const dataSource = new DataSource({
     logging: false,
     synchronize: true,
     //entities: [__dirname + "../../core/**/impl/*.{js,ts}"],
-    entities: [Player, PlayerBan, Faction, Rank, Vehicle, VehicleClass, Character, Inventory, Item, InventoryItem, GasStation, House, Clothe, HouseBasement, HouseInterior, Garage, GarageExitpoint, Ticket, JumpPoint, Shop, ClotheShop]
+    entities: [Player, PlayerBan, Faction, Rank, 
+        Vehicle, VehicleClass, VehicleShop, VehicleShopVehicle, VehicleShopExitPoint,
+         Character, Inventory, Item, InventoryItem, GasStation, House, Clothe, HouseBasement, HouseInterior, Garage, GarageExitpoint, Ticket, JumpPoint, Shop, ClotheShop]
 })
