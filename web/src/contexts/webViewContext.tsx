@@ -8,6 +8,7 @@ import Chat from "../components/chat/Chat";
 import NativeUI from "../views/nativeui/NativeUI";
 import CircleMenu from "../views/circlemenu/CircleMenu";
 import Inventory from "../views/inventory/Inventory";
+import Garage from "../views/garage/Garage";
 
 interface WebViewContextProps {
   getActiveComponents: () => Component[];
@@ -50,6 +51,7 @@ const WebViewProvider = ({ children }: { children: ReactNode }) => {
       addComponent(new Component(<NativeUI />, "nativeui"));
       addComponent(new Component(<CircleMenu />, "circlemenu"));
       addComponent(new Component(<Inventory />, "inventory" ))
+      addComponent(new Component(<Garage />, "garage"));
     }
   }, []);
   
