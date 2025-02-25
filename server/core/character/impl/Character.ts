@@ -14,6 +14,7 @@ import factionService from "@server/core/faction/impl/FactionService";
 import { DEFAULT_CHARACTER_CLOTHES } from "@shared/constants/DEFAULT_CHARACTER_CLOTHES";
 import { DEFAULT_CHARACTER_PROPS } from "@shared/constants/DEFAULT_CHARACTER_PROPS";
 import { DEFAULT_CHARACTER_DATA } from "@shared/constants/DEFAULT_CHARACTER_DATA";
+import { Smartphone } from "@server/core/smartphone/impl/Smartphone";
 
 @Entity("character")
 export class Character {
@@ -90,7 +91,12 @@ export class Character {
   @Column("json", { default: "[]" })
   animations: number[] = [];
 
+  @Column({ default: null, nullable: true })
+  number!: string | null;
+
   player?: Player;
+
+  smartphone?: Smartphone;
 
   private lastTeleport = Date.now();
 
@@ -116,6 +122,8 @@ export class Character {
 
     SetPedArmour(GetPlayerPed(this.player.source.toString()), this.player.character.armour);
     // SetEntityHealth(GetPlayerPed(player.source.toString()), player.character.health);
+
+    this.smartphone = new Smartphone(this);
   }
 
   removeCash = (amount: number): boolean => {

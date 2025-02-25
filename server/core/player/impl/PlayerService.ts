@@ -110,6 +110,10 @@ export class PlayerService implements IPlayerService {
     getPlayers() {
         return this.playerCache;
     }
+
+    getByCharId(charId: number) {
+        return this.playerCache.find(player => player.character.id === charId);
+    } 
 }
 
 export const playerServiceInitializer = {
