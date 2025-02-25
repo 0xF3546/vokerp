@@ -3,7 +3,7 @@ import { Player } from "@server/core/player/impl/Player";
 import { getPlayerService } from "@server/core/player/impl/PlayerService";
 import { ChatMessageDto } from "@shared/models/ChatMessagedto";
 
-eventManager.onCallback("Smartphone::LoadChat", async (source: number, chatId: number) => {
+eventManager.onCallback("Smartphone::LoadMessages", async (source: number, chatId: number) => {
     const player: Player = getPlayerService().getBySource(source);
     const chat = player.character.smartphone.getChat(chatId);
     const messages: ChatMessageDto[] = chat.messages.map((message) => {
