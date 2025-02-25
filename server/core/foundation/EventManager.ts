@@ -53,6 +53,7 @@ class EventManager {
     emit = (player: number | Player, event: string, ...args: any[]): void => {
         if (player instanceof Player) player = player.source;
         emit(event, player, ...args);
+        if (this.debug) console.log(`[EmitEvent::${GetPlayerName(player.toString())}::${event}]`);
     }
 
     emitWebView = (player: number | Player, event: string, ...args: any[]): void => {

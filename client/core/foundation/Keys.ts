@@ -15,3 +15,5 @@ import { Delay, Keys } from "./Utils";
         await Delay(1);
     }
 })();
+
+RegisterKeyMapping('inventory', 'Inventar öffnen', 'keyboard', 'I');

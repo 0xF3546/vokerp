@@ -50,7 +50,6 @@ const App: React.FC = () => {
   useEffect(() => {
     setTimeout(() => {
       webView.showComponent("hud");
-      webView.showComponent("charcreator");
     }, 1000);
   }, []);
 

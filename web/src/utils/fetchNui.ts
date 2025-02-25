@@ -14,8 +14,7 @@ import { isEnvBrowser } from "./misc";
 
 export async function fetchNui<T = unknown>(
   eventName: string,
-  data?: unknown,
-  mockData?: T,
+  ...data: unknown[]
 ): Promise<T> {
   const options = {
     method: "post",
@@ -24,8 +23,6 @@ export async function fetchNui<T = unknown>(
     },
     body: JSON.stringify(data),
   };
-
-  if (isEnvBrowser() && mockData) return mockData;
 
   const resourceName = (window as any).GetParentResourceName
     ? (window as any).GetParentResourceName()

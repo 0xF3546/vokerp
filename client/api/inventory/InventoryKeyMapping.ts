@@ -1,1 +1,0 @@
-RegisterKeyMapping('inventory', 'Inventar öffnen', 'keyboard', 'i');

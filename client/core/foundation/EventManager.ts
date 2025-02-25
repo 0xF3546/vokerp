@@ -79,17 +79,32 @@ export class EventManager {
         })
     }
 
-    onWebView = (ev: string, func: (body: any) => void): void => {
+    onWebView = (ev: string, func: (...args: any[]) => void): void => {
         RegisterRawNuiCallback(ev, (args: any) => {
-            try {
-                const requestBody = typeof args === 'string' ? JSON.parse(args) : args;
-                const body = requestBody.body;
-                func(body);
-            } catch (error) {
-                console.error("Fehler beim Verarbeiten des HTTP-Posts:", error);
-            }
+          try {
+            // Wenn args ein String ist, parsen wir ihn als JSON
+            const requestBody = typeof args === 'string' ? JSON.parse(args) : args;
+      
+            // Extrahiere den `body` aus der Anfrage
+            const body = requestBody.body;
+      
+            // Wenn der `body` ein JSON-String ist, parsen wir ihn
+            const parsedBody = typeof body === 'string' ? JSON.parse(body) : body;
+      
+            // Logge die empfangenen Daten
+            console.log(`[NUI::${ev}]`, parsedBody);
+      
+            // Wenn der geparste Body ein Array ist, verwenden wir ihn direkt
+            // Andernfalls packen wir ihn in ein Array
+            const argsArray = Array.isArray(parsedBody) ? parsedBody : [parsedBody];
+      
+            // Rufe die Callback-Funktion mit den Argumenten auf
+            func(...argsArray);
+          } catch (error) {
+            console.error("Fehler beim Verarbeiten des NUI-Callbacks:", error);
+          }
         });
-    };
+      };
 
     onRawWebView = (ev: string, func: Function): void => {
         RegisterNuiCallbackType(ev);

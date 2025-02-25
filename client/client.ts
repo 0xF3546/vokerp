@@ -21,6 +21,7 @@ const playerId = PlayerId();
       DoScreenFadeOut(0);
       await Delay(500);
       console.log('Screen fade out complete!');
+      DisableIdleCamera(true)
       eventManager.emitServer('playerJoined'); // Stelle sicher, dass diese Methode existiert
       break;
     }

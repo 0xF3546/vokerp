@@ -53,12 +53,12 @@ const NativeUI = () => {
 
         switch (item.type) {
             case "text":
-                fetchNui("NativeMenu::Submit", ["text", item.key]);
+                fetchNui("NativeMenu::Submit", "text", item.key);
                 break;
             case "checkbox":
                 item.checked = !item.checked;
                 setMenuItems([...menuItems]);
-                fetchNui("NativeMenu::Submit", ["text", item.key, item.checked]);
+                fetchNui("NativeMenu::Submit", "text", item.key, item.checked);
                 break;
             default:
                 break;

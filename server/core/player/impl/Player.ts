@@ -74,4 +74,8 @@ export class Player {
         }
         return this.voiceRange;
     }
+
+    setDimension = (dimension: number) => {
+        SetPlayerRoutingBucket(this.source.toString(), dimension);
+    }
 }

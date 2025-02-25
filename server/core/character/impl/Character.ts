@@ -15,6 +15,7 @@ import { DEFAULT_CHARACTER_CLOTHES } from "@shared/constants/DEFAULT_CHARACTER_C
 import { DEFAULT_CHARACTER_PROPS } from "@shared/constants/DEFAULT_CHARACTER_PROPS";
 import { DEFAULT_CHARACTER_DATA } from "@shared/constants/DEFAULT_CHARACTER_DATA";
 import { Smartphone } from "@server/core/smartphone/impl/Smartphone";
+import { CharCreatorDto } from "@shared/models/CharCreatorDto";
 
 @Entity("character")
 export class Character {
@@ -98,6 +99,8 @@ export class Character {
 
   smartphone?: Smartphone;
 
+  private tempData;
+
   private lastTeleport = Date.now();
 
   get position() {
@@ -124,6 +127,50 @@ export class Character {
     // SetEntityHealth(GetPlayerPed(player.source.toString()), player.character.health);
 
     this.smartphone = new Smartphone(this);
+
+    if (this.firstname === null) {
+      this.setCreator(true);
+    }
+  }
+
+  setCreator = (state: boolean, creatorDto: CharCreatorDto = null, save = true) => {
+    if (state) {
+      this.tempData = this.data;
+      this.player.setDimension(this.player.id + 1000);
+      this.position = {
+        x: -1374.6988525390625,
+        y: 55.93846130371094,
+        z: 60.3677978515625,
+        heading: 93.54330444335938,
+      }
+      eventManager.emitWebView(this.player, "showComponent", "charcreator");
+    } else {
+      eventManager.emitWebView(this.player, "hideComponent", "charcreator");
+      if (creatorDto.useCreator) {
+        this.position = {
+          x: -1043.063720703125,
+          y: -2746.760498046875,
+          z: 21.3436279296875,
+          heading: 328.81890869140625,
+        }
+        this.firstname = creatorDto.creatorData.firstname;
+        this.lastname = creatorDto.creatorData.lastname;
+        this.birthdate = creatorDto.creatorData.dateOfBirth;
+      } else {
+        this.position = {
+          x: 299,
+          y: -584,
+          z: 43,
+        }
+      }
+      eventManager.emitWebView(this.player, "showComponent", "hud");
+      this.player.setDimension(0);
+      if (!save) {
+        this.data = this.tempData;
+        this.loadMPModel(this.data);
+        this.setClothes(this.clothes, false);
+      }
+    }
   }
 
   removeCash = (amount: number): boolean => {
@@ -324,39 +371,39 @@ export class Character {
 
   setClothes = async (clothes: CharacterClothes, save = true) => {
     if (save) {
-        this.clothes = clothes;
+      this.clothes = clothes;
     }
 
     const ped = this.player.getPed();
 
     for (const [id, [drawableId, textureId]] of Object.entries(clothes)) {
-        const componentId = parseInt(id);
-        const drawable = parseInt(drawableId.toString());
-        const texture = parseInt(textureId.toString());
+      const componentId = parseInt(id);
+      const drawable = parseInt(drawableId.toString());
+      const texture = parseInt(textureId.toString());
 
-        if (componentId === 10) {
-            // if (isCustomBeard(parseInt(charData["beardStyle"]))) continue;
-            continue;
-        } else if (componentId === 1) {
-            if (drawable === 135) {
-                SetPedComponentVariation(ped, componentId, drawable, texture, 2);
-                continue;
-            }
-            if (this.player.getVariable("maskState")) {
-                SetPedComponentVariation(ped, 1, 0, 0, 2);
-                continue;
-            }
+      if (componentId === 10) {
+        // if (isCustomBeard(parseInt(charData["beardStyle"]))) continue;
+        continue;
+      } else if (componentId === 1) {
+        if (drawable === 135) {
+          SetPedComponentVariation(ped, componentId, drawable, texture, 2);
+          continue;
         }
+        if (this.player.getVariable("maskState")) {
+          SetPedComponentVariation(ped, 1, 0, 0, 2);
+          continue;
+        }
+      }
 
-        SetPedComponentVariation(ped, componentId, drawable, texture, 2);
+      SetPedComponentVariation(ped, componentId, drawable, texture, 2);
     }
 
     //eventManager.emitClient(this.player, "Character::setClothes", JSON.stringify(this.clothes));
 
     if (save) {
-        getPlayerService().savePlayer(this.player);
+      getPlayerService().savePlayer(this.player);
     }
-}
+  }
 
   setClothe = async (componentId, drawable, texture, save = true) => {
     if (save) this.clothes[componentId] = [drawable, texture];
@@ -377,6 +424,47 @@ export class Character {
 
     this.setClothes(clothes, false);
   }
+
+  setProp = async (componentId, drawable, texture, save = true) => {
+    if (save) this.props[componentId] = [drawable, texture];
+
+    SetPedPropIndex(this.player.getPed(), componentId, drawable, texture, true);
+    // eventManager.emitClient(this.player, "Character::setProp", componentId, drawable, texture);
+
+    if (save) getPlayerService().savePlayer(this.player);
+}
+
+  setProps = async (props: CharacterProps, save = true) => {
+    if (save) this.props = props;
+
+    for (let id in props) {
+      const propIndex = parseInt(props[id][0].toString());
+      const propTexture = parseInt(props[id][1].toString());
+      SetPedPropIndex(this.player.getPed(), parseInt(id), propIndex, propTexture, true);
+
+      if (propIndex == -1) {
+        ClearPedProp(this.player.getPed(), parseInt(id));
+      }
+    }
+
+    if (save) getPlayerService().savePlayer(this.player);
+
+  }
+
+  setNaked = () => {
+    this.setClothe(1, 0, 0, false);
+    this.setClothe(2, 0, 0, false);
+    this.setClothe(3, 15, 0, false);
+    this.setClothe(4, 21, 0, false);
+    this.setClothe(5, 0, 0, false);
+    this.setClothe(6, 0, 0, false);
+    this.setClothe(7, 0, 0, false);
+    this.setClothe(8, 15, 0, false);
+    this.setClothe(9, 0, 0, false);
+    this.setClothe(10, 0, 0, false);
+    this.setClothe(11, 15, 0, false);
+    this.setProp(0, 8, 0)
+}
 
   loadTattoos = () => {
 
