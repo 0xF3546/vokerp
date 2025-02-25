@@ -6,6 +6,7 @@ import Hud from "../views/hud/Hud";
 import { ViewComponent } from "../@types/ViewComponent";
 import Chat from "../components/chat/Chat";
 import NativeUI from "../views/nativeui/NativeUI";
+import CircleMenu from "../views/circlemenu/CircleMenu";
 
 interface WebViewContextProps {
   getActiveComponents: () => Component[];
@@ -46,6 +47,7 @@ const WebViewProvider = ({ children }: { children: ReactNode }) => {
       addComponent(hudComponent);
       addComponent(new Component(<Chat />, "chat"));
       addComponent(new Component(<NativeUI />, "nativeui"));
+      addComponent(new Component(<CircleMenu />, "circlemenu"));
     }
   }, []);
   

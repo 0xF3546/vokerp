@@ -1,0 +1,54 @@
+#CircleMenu .main {
+    font-family: Montserrat;
+    color: #fff;
+}
+
+#CircleMenu .main .circle {
+    width: 35vw;
+    height: 35vw;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#CircleMenu .main .circle div {
+    width: 5vw;
+    height: 5vw;
+    margin-top: -2.5vw;
+    margin-left: -2.5vw;
+    border-radius: 65px;
+    line-height: 5vw;
+    text-align: center;
+    position: absolute;
+    opacity: 0.95;
+    background: linear-gradient(90deg, rgba(12, 12, 12, 0.9), rgba(32, 32, 32, 0.9));
+    -webkit-box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75);
+}
+
+#CircleMenu .main .circle img{
+    position:absolute;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 2vw;
+}
+
+#CircleMenu .main .infos{
+    position: absolute;
+    text-shadow: 2px 2px 2px #000000a6;
+    top: 50%;
+    left: 50%;
+    transforM: translate(-50%, -50%);
+    text-align: center;
+}
+
+#CircleMenu .main .infos #infosTitle{
+    font-size: 1.25vw;
+}
+
+#CircleMenu .main .infos #infosDesc{
+    font-size: 0.55vw;
+}
