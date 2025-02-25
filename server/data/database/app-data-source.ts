@@ -22,6 +22,9 @@ import { Warehouse } from "@server/core/inventory/impl/Warehouse";
 import { WarehouseStage } from "@server/core/inventory/impl/WarehouseStage";
 import { Player } from "@server/core/player/impl/Player";
 import { PlayerBan } from "@server/core/player/impl/PlayerBan";
+import { PhoneChat } from "@server/core/smartphone/impl/PhoneChat";
+import { PhoneChatMessage } from "@server/core/smartphone/impl/PhoneChatMessage";
+import { PhoneContact } from "@server/core/smartphone/impl/PhoneContact";
 import { Garage } from "@server/core/vehicle/impl/Garage";
 import { GarageExitpoint } from "@server/core/vehicle/impl/GarageExitpoint";
 import { Vehicle } from "@server/core/vehicle/impl/Vehicle";
@@ -46,5 +49,6 @@ export const dataSource = new DataSource({
         Character, Inventory, Item, InventoryItem, GasStation, House, Clothe, HouseBasement, HouseInterior, Garage, GarageExitpoint, Ticket, JumpPoint, Shop, ClotheShop,
         FarmingZone, FarmingzonePosition, Processor,
         Animation, AnimationCategory,
+        PhoneChat, PhoneChatMessage, PhoneContact,
         Warehouse, WarehouseStage]
 })
