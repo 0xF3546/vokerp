@@ -40,6 +40,14 @@ export class Player {
         eventManager.emitWebView("player::VoiceRangeChanged", JSON.stringify(VOICE_RANGES[this.playerVoiceRange]));
         return this.playerVoiceRange;
     }
+
+    setVariable = (key: string, value: any) => {
+        GetPlayer(PlayerPedId()).state[key] = value;
+    }
+
+    getVariable = (key: string) => {
+        return GetPlayer(PlayerPedId()).state[key];
+    }
 }
 
 export let player: Player = new Player(new Character());
