@@ -1,0 +1,126 @@
+#NativeUI .background {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(270deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 80%);
+    right: -100%;
+}
+
+#NativeUI .menu {
+    position: absolute;
+    float: right;
+    font-family: SFProRegular;
+    color: white;
+    top: 20%;
+    right: -30vh;
+    opacity: 0;
+    transform: perspective(1250px) rotate3d(0, 1, 0, -10deg);
+}
+
+#NativeUI .menu .header {
+    font-family: SFProRegular;
+    font-size: 1.9vh;
+    float: right;
+    margin-right: 2vh;
+    height: 4.25vh;
+    width: 34vh;
+    background: linear-gradient(90deg, rgba(162, 51, 51, 0.75), rgb(91, 14, 14, 0.85));
+    /* background: linear-gradient(90deg, rgba(12, 12, 12, 0.45), rgba(32, 32, 32, 0.85)); */
+    /* border-radius: 5px; */
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    text-align: center;
+    line-height: 4.25vh;
+    -webkit-box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75);
+}
+
+#NativeUI .menu .headerFooter {
+    font-size: 1.7vh;
+    float: right;
+    margin-right: 2vh;
+    height: 1vh;
+    width: 34vh;
+    background: linear-gradient(90deg, rgba(162, 51, 51, 0.75), rgb(91, 14, 14, 0.85));
+    /* border-top: 0.5vh solid rgba(129, 22, 22, 1); */
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    text-align: center;
+    margin-top: 0.5vh;
+    /* -webkit-box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75); */
+}
+
+#NativeUI .menu .footer {
+    font-size: 1.7vh;
+    float: right;
+    margin-right: 2vh;
+    height: 1vh;
+    width: 34vh;
+    background: linear-gradient(90deg, rgba(162, 51, 51, 0.75), rgb(91, 14, 14, 0.85));
+    /* border-top: 0.5vh solid rgba(129, 22, 22, 1); */
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    text-align: center;
+    line-height: 5vh;
+    margin-top: 0.25vh;
+    -webkit-box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75);
+}
+
+#NativeUI .menu .header #index {
+    position: absolute;
+    margin-right: 3.5vh;
+    font-size: 1.5vh;
+    right: 0;
+}
+
+#NativeUI .menu #itemList {
+    margin-top: -800vh;
+}
+
+#NativeUI .menu #itemList .item {
+    float: right;
+    font-size: 2.7vh;
+    height: 4.25vh;
+    width: 34vh;
+    background: linear-gradient(90deg, rgba(12, 12, 12, 0.75), rgba(32, 32, 32, 0.85));
+    /* border-radius: 5px; */
+    line-height: 4.25vh;
+    -webkit-box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 0px 10px 0.5px rgba(0, 0, 0, 0.75);
+    margin-right: 2vh;
+    margin-top: 0.25vh;
+}
+
+#NativeUI .menu #itemList .last {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#NativeUI .menu #itemList .item .itemTitle {
+    font-size: 1.5vh;
+    float: left;
+    margin-left: 1.5vh;
+}
+
+#NativeUI .menu #itemList .item .itemTitle i {
+    margin-right: 0.75vh;
+}
+
+#NativeUI .menu #itemList .item .checkBox {
+    font-size: 2vh;
+    float: left;
+    margin-left: 1.6vh;
+}
+
+#NativeUI .menu #itemList .item .itemRightLabel {
+    font-size: 1.5vh;
+    float: right;
+    margin-right: 1vh;
+}
