@@ -39,8 +39,8 @@ export class Smartphone {
         return await getSmartphoneService().createContact(contact);
     }
 
-    getContacts(charId: number) {
-        return this.contacts.filter(contact => contact.charId === charId);
+    getContacts() {
+        return this.contacts;
     }
 
     async deleteContact(contactId: number) {
@@ -57,16 +57,20 @@ export class Smartphone {
         return this.contacts.find(contact => contact.id === contactId);
     }
 
-    async sendChatMessage(contactId: number, phoneMessage: PhoneChatMessage) {
-        const contact = this.contacts.find(contact => contact.id === contactId);
-        if (!contact) return;
+    async sendChatMessage(targetNumber: string, phoneMessage: PhoneChatMessage) {
+        const target = await getPlayerService().findByCharNumber(targetNumber);
+        if (!target) return;
 
-        const chat = this.chats.find(chat => chat.participant.includes(contact.charId));
-        if (!chat) return;
+        let chat = this.chats.find(chat => chat.participant.includes(target.character.id));
+        chat = new PhoneChat();
+        chat.messages = [];
+        chat.participant = [target.character.id, this.character.id];
+        chat = await getSmartphoneService().createChat(chat);
 
-        const target = getPlayerService().getByCharId(contact.charId);
-        const c = await getSmartphoneService().getContactByNumber(target.character.id, this.character.number);
-        target.notify("Neue Nachricht", `Du hast eine neue Nachricht von ${c ? c.name : this.character.number} erhalten!`, "gray");
+        if (target.isOnline()) {
+            const c = await getSmartphoneService().getContactByNumber(target.character.id, this.character.number);
+            target.notify("Neue Nachricht", `Du hast eine neue Nachricht von ${c ? c.name : this.character.number} erhalten!`, "gray");    
+        }
         const msg = await getSmartphoneService().createMessage(phoneMessage);
 
         chat.messages.push(msg);
@@ -74,7 +78,6 @@ export class Smartphone {
         const msgDto = new ChatMessageDto();
         msgDto.message = msg.message;
         msgDto.chatId = chat.id;
-        msgDto.contactId = contactId;
         msgDto.id = msg.id;
         msgDto.timestamp = msg.timestamp;
         msgDto.sender = msg.senderId;

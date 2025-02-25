@@ -61,6 +61,10 @@ export class Player {
         return GetPlayer(this.source.toString()).state[key];
     }
 
+    isOnline = () => {
+        return GetPlayer(this.source.toString()) !== null;
+    }
+
     setVoiceRange = (range: number | undefined): number => {
         const initialRange = range || this.voiceRange++;
         if (initialRange > MAX_VOICE_RANGE) {

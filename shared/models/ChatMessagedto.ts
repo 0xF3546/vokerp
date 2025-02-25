@@ -6,5 +6,5 @@ export class ChatMessageDto {
     timestamp!: Date;
     edited!: boolean;
 
-    contactId!: number;
+    targetNumber?: string;
 }

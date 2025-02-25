@@ -67,4 +67,6 @@ export type IPlayerService = {
     checkBan: (license: string) => Promise<PlayerBan | null>
 
     getByCharId: (charId: number) => Player | undefined
+    findByCharId: (charId: number) => Promise<Player | null>
+    findByCharNumber: (charNumber: string) => Promise<Player | null>
 }

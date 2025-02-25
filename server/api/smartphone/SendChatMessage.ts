@@ -13,5 +13,5 @@ eventManager.on("Smartphone::SendChatMessage", async (source: number, messageDat
     phoneChatMessage.senderId = player.character.id;
     phoneChatMessage.chatId = dto.chatId;
 
-    player.character.smartphone.sendChatMessage(dto.contactId, phoneChatMessage);
+    player.character.smartphone.sendChatMessage(dto.targetNumber, phoneChatMessage);
 });

@@ -13,4 +13,7 @@ export class PhoneContact {
 
     @Column()
     charId!: number;
+
+    @Column()
+    pinned: boolean = false;
 }

@@ -114,6 +114,22 @@ export class PlayerService implements IPlayerService {
     getByCharId(charId: number) {
         return this.playerCache.find(player => player.character.id === charId);
     } 
+
+    findByCharId (charId: number) {
+        return this.playerRepository.findOne({
+            where: {
+                character: { id: charId }
+            }
+        });
+    }
+
+    findByCharNumber (charNumber: string) {
+        return this.playerRepository.findOne({
+            where: {
+                character: { number: charNumber }
+            }
+        });
+    }
 }
 
 export const playerServiceInitializer = {
