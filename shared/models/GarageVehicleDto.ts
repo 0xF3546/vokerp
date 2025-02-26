@@ -1,4 +1,4 @@
-export class VehicleDto {
+export class GarageVehicleDto {
     id!: number;
     name!: string;
     note!: string;

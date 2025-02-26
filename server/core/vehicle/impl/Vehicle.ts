@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 import { VehicleClass } from "./VehicleClass";
 import { Position } from "@shared/types/Position";
 import vehicleService from "./VehicleService";
+import { PositionParser } from "@server/core/foundation/PositionParser";
 
 @Entity("vehicles")
 export class Vehicle {
@@ -10,7 +11,7 @@ export class Vehicle {
     id!: number;
 
     @Column()
-    private vehicleClassId!: number;
+    vehicleClassId!: number;
 
     @Column({ nullable: true })
     charId!: number;
@@ -30,7 +31,23 @@ export class Vehicle {
     @Column("double")
     fuel!: number;
 
+    @Column({ nullable: true, default: null })
+    notes!: string;
+
+    @Column({ default: false })
+    isFavorite!: boolean;
+
+    @Column()
+    garageId!: number;
+
+    entity?: number;
+
     get vehicleClass() {
         return vehicleService.getClassById(this.vehicleClassId);
+    }
+
+    get position() {
+        if (!this.entity) return this.lastPosition;
+        return PositionParser.getPosition(this.entity);
     }
 }

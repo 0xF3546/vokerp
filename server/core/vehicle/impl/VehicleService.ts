@@ -12,6 +12,7 @@ import { VehicleShop } from "./VehicleShop";
 import { VehicleShopExitPoint } from "./VehicleShopExitPoint";
 import { VehicleShopVehicle } from "./VehicleShopVehicle";
 import { getDistanceBetween } from "@server/core/foundation/Utils";
+import { Character } from "@server/core/character/impl/Character";
 
 export class VehicleService implements IVehicleService {
     private vehicleRepository = dataSource.getRepository(Vehicle);
@@ -91,14 +92,31 @@ export class VehicleService implements IVehicleService {
         this.setParkedState(vehicle, true);
     }
 
-    unparkVehicle(vehicle: Vehicle): void {
+    unparkVehicle(vehicle: Vehicle): boolean {
         this.setParkedState(vehicle, false);
+        const garage = this.getGarageById(vehicle.garageId);
+        garage?.exitPoints.forEach(exitPoint => {
+            if (this.getNearestVehicles(exitPoint.position, 5).length === 0) {
+                this.createVehicle(vehicle, exitPoint.position);
+                return true;
+            }
+        });
+        return false;
+    }
+
+    private getNearestVehicles(position: Position, distance: number): Vehicle[] {
+        return Array.from(this.vehicleCache.values()).filter(v => getDistanceBetween(position, v.position) <= distance);
+    }
+
+    getGarageById(id: number): Garage | undefined {
+        return this.garageCache.find(g => g.id === id);
     }
 
     createVehicle = (vehicle: Vehicle, position: Position) => {
         const veh = CreateVehicle(GetHashKey(vehicle.vehicleClass.model), position.x, position.y, position.z, position.heading, true, true);
         SetVehicleNumberPlateText(veh, vehicle.licensePlate || '');
         Entity(veh).state.set['id'] = vehicle.id;
+        vehicle.entity = veh;
         return veh;
     }
 
@@ -176,6 +194,25 @@ export class VehicleService implements IVehicleService {
         }).reduce((prev, current) => {
             return prev.distance < current.distance ? prev : current;
         });
+    }
+
+    getGarageVehicles(character: Character, garageId: number): Vehicle[] {
+        throw new Error("Method not implemented.");
+    }
+
+    async findGarageVehicles(charId: number, garageId: number): Promise<Vehicle[]> | undefined {
+        const result = await this.vehicleRepository.find({
+            where: {
+                charId: charId,
+                garageId: garageId
+            }
+        });
+        result.forEach(v => v.vehicleClassId = this.getClassById(v.vehicleClassId).id);
+        return result;
+    }
+
+    getNearestCharacterVehicles(character: Character): Vehicle[] {
+        return this.getNearestVehicles(character.position, 5).filter(v => v.charId === character.id);
     }
 }
 

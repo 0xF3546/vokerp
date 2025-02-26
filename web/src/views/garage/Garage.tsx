@@ -1,35 +1,33 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Search, Car, ParkingSquare, X, Star, AlertCircle } from "lucide-react"
 import type { GarageDto } from "@shared/models/GarageDto"
-import type { VehicleDto } from "@shared/models/VehicleDto"
+import type { GarageVehicleDto } from "@shared/models/GarageVehicleDto"
+import { fetchNui } from "web/src/utils/fetchNui"
 
 const Garage = () => {
   const [garage, setGarage] = useState<GarageDto | null>(null)
-  const [vehicles, setVehicles] = useState<VehicleDto[]>([
-    { id: 1, name: "Sultan RS", note: "Getunt - Stage 3", isFavorite: true },
-    { id: 2, name: "Zentorno", note: "Stock", isFavorite: false },
-    { id: 3, name: "Kuruma", note: "Daily Driver", isFavorite: true },
-    { id: 4, name: "Bati 801", note: "Racing Setup", isFavorite: false },
-    { id: 5, name: "Dubsta 6x6", note: "Offroad Monster", isFavorite: true },
-    { id: 6, name: "Infernus", note: "Show Car", isFavorite: false },
-    { id: 7, name: "Sanchez", note: "Dirt Bike", isFavorite: false },
-    { id: 8, name: "T20", note: "Racing Setup", isFavorite: true },
-    { id: 9, name: "Buffalo S", note: "Drift Build", isFavorite: false },
-    { id: 10, name: "Elegy RH8", note: "Street Racing", isFavorite: true },
-    { id: 11, name: "Faction Custom", note: "Lowrider", isFavorite: false },
-    { id: 12, name: "Banshee 900R", note: "Track Day", isFavorite: false },
-    { id: 13, name: "Comet Retro", note: "Classic", isFavorite: true },
-    { id: 14, name: "Dominator GTX", note: "Muscle Car", isFavorite: false },
-    { id: 15, name: "Jester Classic", note: "JDM Build", isFavorite: true },
-    { id: 16, name: "Nero Custom", note: "Hypercar", isFavorite: false },
-    { id: 17, name: "Schafter V12", note: "Luxury", isFavorite: false },
-    { id: 18, name: "Turismo R", note: "Racing", isFavorite: true },
-    { id: 19, name: "Vagner", note: "Track Monster", isFavorite: false },
-    { id: 20, name: "XA-21", note: "Hybrid Supercar", isFavorite: true },
-  ])
+  const [vehicles, setVehicles] = useState<GarageVehicleDto[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [activeTab, setActiveTab] = useState<"park" | "unpark">("unpark")
   const [sortBy, setSortBy] = useState<"name" | "favorite">("name")
+
+  useEffect(() => {
+    const load = async () => {
+      const data = await fetchNui(`Garage::Load`);
+      const garageData = data as GarageDto;
+      setGarage(garageData);
+    }
+    load();
+  }, []);
+
+  useEffect(() => {
+    const loadVehicles = async () => {
+      const data = await fetchNui(`Garage::${activeTab === "park" ? "GetNearest" : "GetParkout"}`);
+      const vehiclesData = data as GarageVehicleDto[];
+      setVehicles(vehiclesData);
+    };
+    loadVehicles();
+  }, [activeTab]);
 
   const filteredVehicles = vehicles
     .filter((vehicle) => vehicle.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -41,14 +39,18 @@ const Garage = () => {
       return a.name.localeCompare(b.name)
     })
 
-  const handlePark = (vehicleId: number) => {
-    // Handle parking logic
-    console.log("Parking vehicle:", vehicleId)
+  const handlePark = async (vehicleId: number) => {
+    const data = await fetchNui(`Garage::ParkVehicle`, vehicleId);
+    if (data) {
+      setVehicles(vehicles.filter((vehicle) => vehicle.id !== vehicleId));
+    }
   }
 
-  const handleUnpark = (vehicleId: number) => {
-    // Handle unparking logic
-    console.log("Unparking vehicle:", vehicleId)
+  const handleUnpark = async (vehicleId: number) => {
+    const data = await fetchNui(`Garage::ParkoutVehicle`, vehicleId);
+    if (data) {
+      setVehicles(vehicles.filter((vehicle) => vehicle.id !== vehicleId));
+    }
   }
 
   const toggleFavorite = (vehicleId: number) => {
