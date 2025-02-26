@@ -2,10 +2,13 @@ import { useEffect, useState } from "react"
 import { Search, Car, ParkingSquare, X, Star, AlertCircle } from "lucide-react"
 import type { GarageDto } from "@shared/models/GarageDto"
 import type { GarageVehicleDto } from "@shared/models/GarageVehicleDto"
-import { fetchNui } from "web/src/utils/fetchNui"
+import { fetchNui } from "../../utils/fetchNui"
 
 const Garage = () => {
-  const [garage, setGarage] = useState<GarageDto | null>(null)
+  const [garage, setGarage] = useState<GarageDto | null>({
+    name: 'Lade Garage...',
+    type: 0,
+  })
   const [vehicles, setVehicles] = useState<GarageVehicleDto[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [activeTab, setActiveTab] = useState<"park" | "unpark">("unpark")
@@ -14,6 +17,7 @@ const Garage = () => {
   useEffect(() => {
     const load = async () => {
       const data = await fetchNui(`Garage::Load`);
+      console.log(data);
       const garageData = data as GarageDto;
       setGarage(garageData);
     }
@@ -22,15 +26,26 @@ const Garage = () => {
 
   useEffect(() => {
     const loadVehicles = async () => {
-      const data = await fetchNui(`Garage::${activeTab === "park" ? "GetNearest" : "GetParkout"}`);
-      const vehiclesData = data as GarageVehicleDto[];
-      setVehicles(vehiclesData);
+      try {
+        const data = JSON.parse(await fetchNui(`Garage::${activeTab === "park" ? "GetNearest" : "GetParkout"}`));
+        console.log("Daten von fetchNui:", data);
+        if (!Array.isArray(data)) {
+          console.error("Unerwartetes Format von fetchNui:", data);
+          setVehicles([]);
+        } else {
+          setVehicles(data);
+        }
+      } catch (error) {
+        console.error("Fehler beim Laden der Fahrzeuge:", error);
+        setVehicles([]);
+      }
     };
     loadVehicles();
   }, [activeTab]);
+  
 
   const filteredVehicles = vehicles
-    .filter((vehicle) => vehicle.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter((vehicle) => vehicle.name &&  vehicle.name.toLowerCase().includes(searchQuery.toLowerCase()))
     .sort((a, b) => {
       if (sortBy === "favorite") {
         if (a.isFavorite && !b.isFavorite) return -1
@@ -59,16 +74,20 @@ const Garage = () => {
     )
   }
 
+  const close = () => {
+    fetchNui(`ServerEvent`, `Garage::Close`)
+  }
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 flex items-center justify-center">
       <div className="w-full max-w-5xl p-6 bg-zinc-900/90 backdrop-blur-xl rounded-2xl border border-white/10">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-white flex items-center gap-2">
             <Car className="w-5 h-5" />
-            Garage
+            {garage.name}
             <span className="text-sm font-normal text-white/50">({vehicles.length} Fahrzeuge)</span>
           </h2>
-          <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+          <button onClick={close} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
             <X className="w-5 h-5 text-white/70" />
           </button>
         </div>

@@ -3,7 +3,7 @@ import { Player } from "@server/core/player/impl/Player";
 import { getVehicleService } from "@server/core/vehicle/impl/VehicleService";
 import { VehicleShopVehicle } from "@server/core/vehicle/impl/VehicleShopVehicle";
 
-commandManager.add("addVehicleShopVehicle", (player: Player, args) => {
+commandManager.add("addVehicleShopVehicle", async (player: Player, args) => {
     if (args.length < 3) {
         player.notify("", "Fehler: /addvehicleshop [VehicleClassId] [VehicleShop] [Preis]");
         return;
@@ -34,7 +34,8 @@ commandManager.add("addVehicleShopVehicle", (player: Player, args) => {
     vehicleShopVehicle.position = player.character.position;
 
     vehicleShop.vehicles.push(vehicleShopVehicle);
-    getVehicleService().updateVehicleShop(vehicleShop).then(() => {
+    if (await getVehicleService().createVehicleShopVehicle(vehicleShopVehicle) === null)
+        player.notify("", `Es gab ein Fehler beim speichern des Fahrzeuges." hinzugefügt.`);
+    else 
         player.notify("", `Fahrzeugklasse ${vehicleClass.displayName} für ${vehicleShopVehicle.price} bei "${vehicleShop.name}" hinzugefügt.`);
-    });
 });

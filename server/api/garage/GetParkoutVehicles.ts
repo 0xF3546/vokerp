@@ -1,6 +1,4 @@
 import { eventManager } from "@server/core/foundation/EventManager";
-import { getGamePlay } from "@server/core/gameplay/impl/Gameplay";
-import { Player } from "@server/core/player/impl/Player";
 import { getPlayerService } from "@server/core/player/impl/PlayerService";
 import { getVehicleService } from "@server/core/vehicle/impl/VehicleService";
 import { GarageVehicleDto } from "@shared/models/GarageVehicleDto";
@@ -19,5 +17,5 @@ eventManager.onCallback(`Garage::GetParkout`, async (source) => {
         isFavorite: vehicle.isFavorite,
         note: vehicle.notes,
     }))
-    return JSON.stringify(dto);
+    return await Promise.resolve(JSON.stringify(dto));
 });

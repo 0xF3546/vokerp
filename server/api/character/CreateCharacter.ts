@@ -4,6 +4,6 @@ import { CharCreatorDto } from "@shared/models/CharCreatorDto";
 
 eventManager.on("CharCreator::Submit", (source, data) => {
     const player = getPlayerService().getBySource(source);
-    const dataParsed: CharCreatorDto = JSON.parse(data);
+    const dataParsed: CharCreatorDto = JSON.parse(data)[0];
     player.character.setCreator(false, dataParsed, true);
 });

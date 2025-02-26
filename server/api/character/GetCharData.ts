@@ -9,9 +9,11 @@ eventManager.onCallback("Character::GetCharData", async (source: number) => {
     }
 
     const creatorData: CharCreatorDto = {
-        useCreator: player.character.firstname === "",
-        data: JSON.stringify(player.character.data),
+        useCreator: player.character.firstname === null,
+        data: player.character.data,
     }
 
-    return JSON.stringify(creatorData);
+    console.log(JSON.stringify(creatorData));
+
+    return Promise.resolve(JSON.stringify(creatorData));
 });

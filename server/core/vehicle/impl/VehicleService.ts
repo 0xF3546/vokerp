@@ -27,8 +27,8 @@ export class VehicleService implements IVehicleService {
     private vehicleClassCache: VehicleClass[] = [];
     private vehicleShops: VehicleShop[] = [];
 
-    load() {
-        this.garageRepository.find().then(garages => {
+    async load() {
+        await this.garageRepository.find().then(garages => {
             this.garageCache = garages;
             console.log(`${garages.length} Garagen wurden geladen.`);
         })
@@ -39,7 +39,7 @@ export class VehicleService implements IVehicleService {
             });
         });
 
-        this.garageExitPointRepository.find().then(exitPoints => {
+        await this.garageExitPointRepository.find().then(exitPoints => {
             exitPoints.forEach(exitPoint => {
                 const garage = this.garageCache.find(g => g.id === exitPoint.garageId);
                 if (garage) {
@@ -48,12 +48,12 @@ export class VehicleService implements IVehicleService {
             });
         });
 
-        this.vehicleClassRepository.find().then(vehicleClasses => {
+        await this.vehicleClassRepository.find().then(vehicleClasses => {
             this.vehicleClassCache = vehicleClasses;
             console.log(`${vehicleClasses.length} Fahrzeugklassen wurden geladen.`);
         });
 
-        this.vehicleShopRepository.find().then(shops => {
+        await this.vehicleShopRepository.find().then(shops => {
             this.vehicleShops = shops;
             console.log(`${shops.length} Fahrzeugshops wurden geladen.`);
             this.vehicleShops.forEach(shop => {
@@ -69,7 +69,7 @@ export class VehicleService implements IVehicleService {
             });
         });
 
-        this.vehicleShopVehicleRepository.find().then(vehicles => {
+        await this.vehicleShopVehicleRepository.find().then(vehicles => {
             vehicles.forEach(vehicle => {
                 const shop = this.vehicleShops.find(s => s.id === vehicle.shopId);
                 if (shop) {
@@ -78,7 +78,7 @@ export class VehicleService implements IVehicleService {
             });
         });
 
-        this.vehicleShopExitPointRepository.find().then(exitPoints => {
+        await this.vehicleShopExitPointRepository.find().then(exitPoints => {
             exitPoints.forEach(exitPoint => {
                 const shop = this.vehicleShops.find(s => s.id === exitPoint.shopId);
                 if (shop) {
@@ -246,6 +246,7 @@ export class VehicleService implements IVehicleService {
         vehicle.fuel = vehicleClass.maxFuel;
         vehicleShop.exitPoints.forEach(async (exitPoint) => {
             if (this.getNearestVehicles(exitPoint.position, 5).length === 0) {
+                vehicle.lastPosition = exitPoint.position;
                 vehicle = await this.vehicleRepository.save(vehicle);
                 this.createVehicle(vehicle, exitPoint.position);
                 return vehicle;
@@ -253,6 +254,28 @@ export class VehicleService implements IVehicleService {
         });
         character.player.notify(``, `Es wurde kein freier Ausparkpunkt gefunden.`);
         return null;
+    }
+
+    async createVehicleShopVehicle(vehicleShopVehicle: VehicleShopVehicle): Promise<VehicleShopVehicle> {
+        this.vehicleShops.forEach(async vehicleShop => {
+            if (vehicleShop.id === vehicleShopVehicle.shopId) {
+                const veh = await this.vehicleShopVehicleRepository.save(vehicleShopVehicle);
+                vehicleShop.vehicles.push(veh);
+                return veh;
+            }
+        })
+        return undefined;
+    }
+
+    createVehicleExitPoint(vehicleShopExitPoint: VehicleShopExitPoint): Promise<VehicleShopExitPoint | undefined> {
+        this.vehicleShops.forEach(async vehicleShop => {
+            if (vehicleShop.id === vehicleShopExitPoint.shopId) {
+                const exitPoint = await this.vehicleShopExitPointRepository.save(vehicleShopExitPoint);
+                vehicleShop.exitPoints.push(exitPoint);
+                return exitPoint;
+            }
+        })
+        return undefined;
     }
 }
 

@@ -1,7 +1,8 @@
 import { Gender } from "@shared/enum/Gender";
+import { CharacterData } from "@shared/types/CharacterData";
 
 export class CharCreatorDto {
-    data: string;
+    data: CharacterData;
     useCreator: boolean = false;
     creatorData?: {
         gender: Gender;

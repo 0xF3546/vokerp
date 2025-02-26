@@ -3,7 +3,7 @@ import { getPlayerService } from "@server/core/player/impl/PlayerService";
 import { getShopService } from "@server/core/shop/impl/ShopService";
 import { ShopDto } from "@shared/models/ShopDto";
 
-eventManager.onCallback(`Shop::GetItems`, async (source) => {
+eventManager.onCallback(`Shop::GetItems`, (source) => {
     const player = getPlayerService().getBySource(source);
     if (!player) return;
     const shopId = player.getVariable("shopId");
@@ -20,5 +20,5 @@ eventManager.onCallback(`Shop::GetItems`, async (source) => {
         };
     });
     dto.name = shop.name;
-    return dto;
+    return JSON.stringify(dto);
 })

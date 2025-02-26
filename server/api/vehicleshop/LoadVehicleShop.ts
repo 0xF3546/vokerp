@@ -7,6 +7,7 @@ eventManager.onCallback("VehicleShop::Load", async (source) => {
     const player = getPlayerService().getBySource(source);
     if (!player) return;
     const vehicleShop = getVehicleService().getNearestVehicleShop(player.character.position);
+    console.log(vehicleShop);
     if (!vehicleShop) return;
     if (vehicleShop.distance > 5) return;
 
@@ -23,5 +24,5 @@ eventManager.onCallback("VehicleShop::Load", async (source) => {
             available: vehicle.available
         }))
     };
-    return JSON.stringify(dto);
+    return Promise.resolve(JSON.stringify(dto));
 });

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
-import { Car, Search, X, AlertCircle } from "lucide-react"
+import { Car, Search, X, AlertCircle } from 'lucide-react'
 import { VehicleShopDto } from "@shared/models/VehicleShopDto"
 import { VehicleShopVehicleDto } from "@shared/models/VehicleShopVehicleDto"
-import { fetchNui } from "web/src/utils/fetchNui"
+import { fetchNui } from "../../utils/fetchNui"
 
 interface PurchaseConfirmation {
   vehicle: VehicleShopVehicleDto
@@ -10,22 +10,33 @@ interface PurchaseConfirmation {
 }
 
 export default function VehicleShop() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [vehicleShop, setVehicleShop] = useState<VehicleShopDto>(null)
+  const [searchQuery, setSearchQuery] = useState("");
+  const [vehicleShop, setVehicleShop] = useState<VehicleShopDto | null>(null);
   const [purchaseConfirmation, setPurchaseConfirmation] = useState<PurchaseConfirmation>({
     vehicle: null!,
     isOpen: false,
-  })
+  });
 
   useEffect(() => {
     const load = async () => {
-        const data: VehicleShopDto = await fetchNui("VehicleShop::Load");
-        setVehicleShop(data);
-    }
+      try {
+        const data: VehicleShopDto = JSON.parse(await fetchNui("VehicleShop::Load"));
+        if (!data || !Array.isArray(data.vehicles)) {
+          console.error("Unerwartetes Format von fetchNui:", data);
+          setVehicleShop({ vehicles: [] } as VehicleShopDto); // Fallback auf leeres Array
+        } else {
+          setVehicleShop(data);
+        }
+      } catch (error) {
+        console.error("Fehler beim Laden des Fahrzeugshops:", error);
+        setVehicleShop({ vehicles: [] } as VehicleShopDto); // Fallback
+      }
+    };
     load();
-  }, [])
+  }, []);
 
-  const filteredVehicles = vehicleShop.vehicles.filter((vehicle) => vehicle.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredVehicles = vehicleShop?.vehicles
+    ?.filter((vehicle) => vehicle.name && vehicle.name.toLowerCase().includes(searchQuery.toLowerCase())) || [];
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("de-DE", {
@@ -43,21 +54,25 @@ export default function VehicleShop() {
   const confirmPurchase = async () => {
     const data = await fetchNui("VehicleShop::Purchase", purchaseConfirmation.vehicle.id);
     if (data) {
-        setPurchaseConfirmation({ vehicle: null!, isOpen: false });
+      setPurchaseConfirmation({ vehicle: null!, isOpen: false });
     }
   }
 
+  const close = () => {
+    fetchNui("ServerEvent", "VehicleShop::Close");
+  }
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-black/50">
-      <div className="w-full max-w-7xl p-6 bg-zinc-900/90 backdrop-blur-xl rounded-2xl border border-white/10">
+    <div className="fixed inset-0 flex items-center justify-center p-4 sm:p-6 md:p-8">
+      <div className="w-full max-w-7xl min-h-[600px] p-6 bg-zinc-800/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-white flex items-center gap-2">
             <Car className="w-5 h-5" />
-            Premium Motorsport
+            {vehicleShop?.name || "Fahrzeugshop"}
             <span className="text-sm font-normal text-white/50">({filteredVehicles.length} Fahrzeuge)</span>
           </h2>
-          <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+          <button onClick={close} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
             <X className="w-5 h-5 text-white/70" />
           </button>
         </div>
@@ -71,7 +86,7 @@ export default function VehicleShop() {
               placeholder="Fahrzeug suchen..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 bg-black/40 border border-white/10 rounded-lg pl-10 pr-4 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-white/20"
+              className="w-full h-10 bg-zinc-900/60 border border-white/10 rounded-lg pl-10 pr-4 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-white/20"
             />
           </div>
         </div>
@@ -88,11 +103,11 @@ export default function VehicleShop() {
               {filteredVehicles.map((vehicle) => (
                 <div
                   key={vehicle.id}
-                  className="bg-black/40 rounded-lg border border-white/5 hover:bg-black/60 transition-colors group"
+                  className="bg-zinc-900/60 rounded-lg border border-white/5 hover:bg-zinc-900/80 transition-colors group"
                 >
                   <div className="p-4">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 bg-black/40 rounded-lg flex items-center justify-center">
+                      <div className="w-10 h-10 bg-zinc-800/80 rounded-lg flex items-center justify-center">
                         <Car className="w-5 h-5 text-white/70" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -116,7 +131,7 @@ export default function VehicleShop() {
         {/* Purchase Confirmation Modal */}
         {purchaseConfirmation.isOpen && (
           <div className="fixed inset-0 flex items-center justify-center p-4 bg-black/80">
-            <div className="w-full max-w-md p-6 bg-zinc-900 rounded-2xl border border-white/10">
+            <div className="w-full max-w-md p-6 bg-zinc-800 rounded-2xl border border-white/10 shadow-xl">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
                   <AlertCircle className="w-6 h-6 text-red-500" />
@@ -127,7 +142,7 @@ export default function VehicleShop() {
                 </div>
               </div>
 
-              <div className="bg-black/40 rounded-lg p-4 mb-6">
+              <div className="bg-zinc-900/60 rounded-lg p-4 mb-6">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-white/70">Fahrzeug</span>
                   <span className="text-white font-medium">{purchaseConfirmation.vehicle.name}</span>

@@ -18,5 +18,5 @@ eventManager.onCallback("Smartphone::LoadMessages", async (source: number, chatI
         };
     });
 
-    return JSON.stringify(messages);
+    return Promise.resolve(JSON.stringify(messages));
 });

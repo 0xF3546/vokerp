@@ -3,6 +3,7 @@ import { Character } from "../../character/impl/Character";
 import { Rank } from "../../admin/impl/Rank";
 import { notify } from "@server/core/foundation/Utils";
 import { MAX_VOICE_RANGE } from "@shared/constants/MAX_VOICE_RANGE";
+import { GetPlayer } from "@server/core/foundation/GetPlayer";
 
 @Entity("player")
 export class Player {
@@ -54,15 +55,15 @@ export class Player {
     }
 
     setVariable = (key: string, value: any) => {
-        GetPlayer(this.source.toString()).state[key] = value;
+        GetPlayer(this.source).state[key] = value;
     }
 
     getVariable = (key: string) => {
-        return GetPlayer(this.source.toString()).state[key];
+        return GetPlayer(this.source).state[key];
     }
 
     isOnline = () => {
-        return GetPlayer(this.source.toString()) !== null;
+        return GetPlayer(this.source) !== null;
     }
 
     setVoiceRange = (range: number | undefined): number => {

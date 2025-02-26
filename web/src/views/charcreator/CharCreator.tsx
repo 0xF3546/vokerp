@@ -25,7 +25,24 @@ export default function CharCreator() {
   const [heading, setHeading] = useState<number>(0)
   const [useCreator, setUseCreator] = useState<boolean>(false)
   const [creatorDto, setCreatorDto] = useState<CharCreatorDto>({
-    data: "",
+    data: {
+      Gender: 0,
+      shapeFirst: 0,
+      shapeSecond: 0,
+      shapeMix: 0,
+      skinMix: 0,
+      skinFirst: 0,
+      noseWidth: 0,
+      browHeight: 0,
+      lips: 0,
+      neckWidth: 0,
+      eyesColor: 0,
+      hair: 0,
+      hairColor: 0,
+      hairColor2: 0,
+      beardStyle: 0,
+      beardOpacity: 0
+    },
     useCreator: false,
     creatorData: {
       gender: 0,
@@ -137,7 +154,7 @@ export default function CharCreator() {
       } else {
         handleItemClick("Kopf", "kopf")
       }
-      setCreatorDto((state) => charData);
+      setCreatorDto((state) => ({...state, ...charData}));
     }
 
     load()
@@ -199,7 +216,7 @@ export default function CharCreator() {
   }
 
   const handleSubmit = () => {
-    fetchNui("ServerEvent", "CharCreator::Submit", JSON.stringify(creatorDto))
+    fetchNui("ServerEvent", "CharCreator::Submit", creatorDto)
   }
 
   return (
@@ -294,7 +311,7 @@ export default function CharCreator() {
                 <label className="text-sm text-neutral-400">Geburtsdatum</label>
                 <input
                   id="birthday"
-                  type="date"
+                  type="text"
                   className="w-full rounded bg-neutral-800 px-3 py-2 text-sm text-white outline-none ring-red-500 focus:ring-2"
                   placeholder="TT.MM.JJJJ"
                   onChange={(e) => setCreatorDto({ ...creatorDto, creatorData: { ...creatorDto.creatorData, dateOfBirth: new Date(e.target.value) } })}

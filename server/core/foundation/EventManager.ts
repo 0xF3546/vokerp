@@ -15,9 +15,9 @@ class EventManager {
     }
 
     onCallback(ev: string, func: (source: number, ...args: any[]) => any): void {
-        onNet(ev, (...args) => {
+        onNet(ev, async (...args) => {
             const source = global.source;
-            const result = func(source, ...args);
+            const result = await func(source, ...args);
             if (result) {
                 emitNet(ev + "::Callback", source, result);
             }

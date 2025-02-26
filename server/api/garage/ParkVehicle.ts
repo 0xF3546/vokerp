@@ -6,5 +6,5 @@ eventManager.onCallback(`Garage::ParkVehicle`, async (source, data) => {
     const vehicle = await getVehicleService().getVehicle(data.vehicleId);
     if (!vehicle) return JSON.stringify({ success: false, error: "Vehicle not found" });
     getVehicleService().parkVehicle(vehicle);
-    return JSON.stringify({ success: true });
+    return Promise.resolve(JSON.stringify({ success: true }));
 });

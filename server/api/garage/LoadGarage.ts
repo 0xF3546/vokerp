@@ -5,7 +5,7 @@ import { getPlayerService } from "@server/core/player/impl/PlayerService";
 import { getVehicleService } from "@server/core/vehicle/impl/VehicleService";
 import { GarageDto } from "@shared/models/GarageDto";
 
-eventManager.onCallback(`Garage::Load`, async (source) => {
+eventManager.onCallback(`Garage::Load`, (source) => {
     const player = getPlayerService().getBySource(source);
     if (!player) return;
 
@@ -17,5 +17,8 @@ eventManager.onCallback(`Garage::Load`, async (source) => {
         name: garage.Garage.name,
         type: garage.Garage.type
     }
+
+    console.log(JSON.stringify(dto));
+
     return JSON.stringify(dto);
 });

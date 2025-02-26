@@ -1,3 +1,4 @@
+import { WEBVIEWS_WITHOUT_CURSOR } from "@shared/constants/WEBVIEWS_WITHOUT_CURSOR"
 let events = 0;
 
 export class EventManager {
@@ -58,10 +59,12 @@ export class EventManager {
     }
 
     emitWebView = (event: string, ...args: any[]) => {
-        if (event.toLowerCase() === "showcomponent") {
-            SetNuiFocus(true, true);
-        } else if (event.toLowerCase() === "hidecomponent") {
-            SetNuiFocus(false, false);
+        if (!WEBVIEWS_WITHOUT_CURSOR.includes(event)) {
+            if (event.toLowerCase() === "showcomponent") {
+                SetNuiFocus(true, true);
+            } else if (event.toLowerCase() === "hidecomponent") {
+                SetNuiFocus(false, false);
+            }
         }
 
         const isJSON = (obj: any): boolean => {
@@ -81,30 +84,38 @@ export class EventManager {
 
     onWebView = (ev: string, func: (...args: any[]) => void): void => {
         RegisterRawNuiCallback(ev, (args: any) => {
-          try {
-            // Wenn args ein String ist, parsen wir ihn als JSON
-            const requestBody = typeof args === 'string' ? JSON.parse(args) : args;
-      
-            // Extrahiere den `body` aus der Anfrage
-            const body = requestBody.body;
-      
-            // Wenn der `body` ein JSON-String ist, parsen wir ihn
-            const parsedBody = typeof body === 'string' ? JSON.parse(body) : body;
-      
-            // Logge die empfangenen Daten
-            console.log(`[NUI::${ev}]`, parsedBody);
-      
-            // Wenn der geparste Body ein Array ist, verwenden wir ihn direkt
-            // Andernfalls packen wir ihn in ein Array
-            const argsArray = Array.isArray(parsedBody) ? parsedBody : [parsedBody];
-      
-            // Rufe die Callback-Funktion mit den Argumenten auf
-            func(...argsArray);
-          } catch (error) {
-            console.error("Fehler beim Verarbeiten des NUI-Callbacks:", error);
-          }
+            try {
+                // Wenn args ein String ist, parsen wir ihn als JSON
+                const requestBody = typeof args === 'string' ? JSON.parse(args) : args;
+
+                // Extrahiere den `body` aus der Anfrage
+                const body = requestBody.body;
+
+                // Wenn der `body` ein JSON-String ist, parsen wir ihn
+                const parsedBody = typeof body === 'string' ? JSON.parse(body) : body;
+
+                // Logge die empfangenen Daten
+                console.log(`[NUI::${ev}]`, parsedBody);
+
+                // Wenn der geparste Body ein Array ist, verwenden wir ihn direkt
+                // Andernfalls packen wir ihn in ein Array
+                const argsArray = Array.isArray(parsedBody) ? parsedBody : [parsedBody];
+
+                // Rufe die Callback-Funktion mit den Argumenten auf
+                func(...argsArray);
+            } catch (error) {
+                console.error("Fehler beim Verarbeiten des NUI-Callbacks:", error);
+            }
         });
-      };
+    };
+
+    onWebViewUnfiltered = (ev: string, func: Function): void => {
+        RegisterNuiCallbackType(ev);
+        on(`__cfx_nui:${ev}`, (data: any) => {
+            console.log(`[NUI::${ev}]`, data);
+            func(...data);
+        });
+    }
 
     onRawWebView = (ev: string, func: Function): void => {
         RegisterNuiCallbackType(ev);

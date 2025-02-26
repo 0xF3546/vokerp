@@ -36,6 +36,11 @@ eventManager.on('KEY::E', async (source: number) => {
         }
     });
 
+    if (getVehicleService().getNearestGarage(player.character.position).distance < 5) {
+        eventManager.emitWebView(player.source, "showComponent", "garage");
+        return;
+    }
+
     getVehicleService().getVehicleShops().forEach(vehicleShop => {
         if (getDistanceBetween(player.character.position, vehicleShop.position) < 5) {
             eventManager.emitWebView(player.source, "showComponent", "vehicleshop");

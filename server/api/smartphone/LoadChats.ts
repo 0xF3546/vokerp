@@ -16,5 +16,5 @@ eventManager.onCallback("Smartphone::LoadChats", async (source, cb) => {
             lastMessageDate: lastMesasge ? new Date(lastMesasge.timestamp) : new Date(0),
         };
     });
-    return JSON.stringify(chats);
+    return Promise.resolve(JSON.stringify(chats));
 });

@@ -25,9 +25,7 @@ commandManager.add("AddVehicleShopExitPoint", (player: Player, args) => {
     vehicleShopExitPoint.position = player.character.position;
     vehicleShopExitPoint.order = vehicleShop.exitPoints.length;
 
-    vehicleShop.exitPoints.push(vehicleShopExitPoint);
-
-    getVehicleService().updateVehicleShop(vehicleShop).then(() => {
+    getVehicleService().createVehicleExitPoint(vehicleShopExitPoint).then(() => {
         player.notify("", `Exitpunkt bei "${vehicleShop.name}" hinzugefügt.`);
     });
 });

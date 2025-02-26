@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Search, ShoppingCart, X, Package, AlertCircle, Plus, Minus, Trash2 } from "lucide-react"
 import { ShopItemDto } from "@shared/models/ShopItemDto"
 import { CheckoutDto } from "@shared/models/CheckoutDto"
-import { fetchNui } from "web/src/utils/fetchNui"
+import { fetchNui } from "../../utils/fetchNui"
 
 interface CartItem extends ShopItemDto {
   quantity: number
@@ -15,15 +15,25 @@ export default function Shop() {
 
   useEffect(() => {
     fetchNui("Shop::GetItems")
-      .then((items: ShopItemDto[]) => {
-        setShopItems(items);
+      .then((items: string) => {
+        items = JSON.parse(items);
+        if (!Array.isArray(items)) {
+          console.error("Unerwartetes Format von fetchNui:", items);
+          setShopItems([]); // Fallback
+        } else {
+          setShopItems(items);
+        }
       })
       .catch((error) => {
-        console.error("Failed to fetch shop items:", error)
-      })
-  }, [])
-
-  const filteredItems = shopItems.filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        console.error("Failed to fetch shop items:", error);
+        setShopItems([]); // Fallback, falls der API-Call fehlschlägt
+      });
+  }, []);
+  
+  const filteredItems = shopItems.filter(
+    (item) => item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
 
   const addToCart = (item: ShopItemDto) => {
     setCart((currentCart) => {
@@ -82,14 +92,14 @@ export default function Shop() {
     if (cart.length === 0) return;
     const dtos: CheckoutDto[] = cart.map((item) => ({ itemId: item.id, amount: item.quantity }))
 
-    await fetchNui("ServerEvent", "Shop::Checkout", JSON.stringify(dtos))
+    await fetchNui("ServerEvent", "Shop::Checkout", dtos)
     clearCart()
   }
 
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 flex items-center justify-center">
       <div className="w-full max-w-5xl mx-auto bg-zinc-900/95 backdrop-blur-xl rounded-xl border border-white/10">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/10">

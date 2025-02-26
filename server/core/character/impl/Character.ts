@@ -185,7 +185,7 @@ export class Character {
     }
   }
 
-  removeCash = (amount: number, reason = null): boolean => {
+  removeCash = (amount: number, reason = ""): boolean => {
     if (this.cash < amount) return false;
     this.cash -= amount;
     getPlayerService().savePlayer(this.player);
@@ -193,13 +193,13 @@ export class Character {
     return true;
   }
 
-  addCash = (amount: number, reason = null): void => {
+  addCash = (amount: number, reason = ""): void => {
     this.cash += amount;
     getPlayerService().savePlayer(this.player);
     CashLog.create(this.id, amount, true, reason);
   }
 
-  removeBank = (amount: number, reason = null): boolean => {
+  removeBank = (amount: number, reason = ""): boolean => {
     if (this.bank < amount) return false;
     this.bank -= amount;
     getPlayerService().savePlayer(this.player);
@@ -207,7 +207,7 @@ export class Character {
     return true;
   }
 
-  addBank = (amount: number, reason = null): void => {
+  addBank = (amount: number, reason = ""): void => {
     this.bank += amount;
     getPlayerService().savePlayer(this.player);
     BankLog.create(this.id, amount, true, reason);

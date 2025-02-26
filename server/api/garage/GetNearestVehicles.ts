@@ -5,7 +5,7 @@ import { getPlayerService } from "@server/core/player/impl/PlayerService";
 import { getVehicleService } from "@server/core/vehicle/impl/VehicleService";
 import { GarageVehicleDto } from "@shared/models/GarageVehicleDto";
 
-eventManager.onCallback(`Garage::GetNearest`, async (source) => {
+eventManager.onCallback(`Garage::GetNearest`, (source) => {
     const player = getPlayerService().getBySource(source);
     if (!player) return;
 

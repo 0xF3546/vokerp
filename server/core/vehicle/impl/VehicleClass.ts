@@ -17,5 +17,20 @@ export class VehicleClass {
     category!: VehicleCategory;
 
     @Column()
+    width!: number;
+
+    @Column()
+    slots!: number;
+
+    @Column({default: null, nullable: true})
+    info!: string | null;
+
+    @Column({default: null, nullable: true})
+    livery!: number | null;
+
+    @Column({default: null, nullable: true})
+    extras!: string | null;
+
+    @Column()
     maxFuel!: number;
 }

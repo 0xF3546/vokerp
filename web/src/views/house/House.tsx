@@ -14,7 +14,7 @@ import {
 } from "lucide-react"
 import { HouseDto } from "@shared/models/HouseDto"
 import { TenantDto } from "@shared/models/TenantDto"
-import { fetchNui } from "web/src/utils/fetchNui"
+import { fetchNui } from "../../utils/fetchNui"
 
 export default function HouseManagement() {
   const [showTenantsModal, setShowTenantsModal] = useState(false)

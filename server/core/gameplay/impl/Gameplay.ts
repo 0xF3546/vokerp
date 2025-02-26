@@ -15,13 +15,13 @@ export class GamePlay implements IGameplay {
     private jumpPoints: JumpPoint[] = [];
     private clothesShops: ClotheShop[] = [];
 
-    load() {
-        this.jumpPointRepository.find().then((jumpPoints) => {
+    async load() {
+        await this.jumpPointRepository.find().then((jumpPoints) => {
             this.jumpPoints = jumpPoints;
             console.log(`${jumpPoints.length} JumpPoints wurden geladen.`);
         });
 
-        this.clothesShopRepository.find().then((clothesShops) => {
+        await this.clothesShopRepository.find().then((clothesShops) => {
             this.clothesShops = clothesShops;
             clothesShops.forEach(clothesShop => {
                 getStreamer().createPed(new PedDto(clothesShop.npc, clothesShop.position))
