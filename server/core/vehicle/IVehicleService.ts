@@ -4,6 +4,7 @@ import { Vehicle } from "./impl/Vehicle";
 import { VehicleClass } from "./impl/VehicleClass";
 import { VehicleShop } from "./impl/VehicleShop";
 import { Character } from "../character/impl/Character";
+import { VehicleShopVehicle } from "./impl/VehicleShopVehicle";
 
 export type IVehicleService = {
     load: () => void;
@@ -21,6 +22,9 @@ export type IVehicleService = {
 
     getVehicleShopById(id: number): VehicleShop | undefined;
     getVehicleShops(): VehicleShop[];
+    getVehicleShopVehicleById(id: number): VehicleShopVehicle | undefined;
     createVehicleShop(shop: VehicleShop): Promise<VehicleShop>;
     updateVehicleShop(shop: VehicleShop): Promise<VehicleShop>;
+    getNearestVehicleShop(position: Position): {VehicleShop: VehicleShop, distance: number} | undefined;
+    purchaseVehicle(character: Character, vehicleShopVehicle: VehicleShopVehicle): Promise<Vehicle>;
 }

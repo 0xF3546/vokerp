@@ -4,6 +4,7 @@ import { getGamePlay } from "@server/core/gameplay/impl/Gameplay";
 import { Player } from "@server/core/player/impl/Player";
 import { getPlayerService } from "@server/core/player/impl/PlayerService";
 import { getShopService } from "@server/core/shop/impl/ShopService";
+import { getVehicleService } from "@server/core/vehicle/impl/VehicleService";
 import { JumpPointType } from "@shared/types/JumpPointType";
 
 eventManager.on('KEY::E', async (source: number) => {
@@ -22,6 +23,13 @@ eventManager.on('KEY::E', async (source: number) => {
         if (getDistanceBetween(player.character.position, shop.position) < 5) {
             player.setVariable("shopId", shop.id);
             eventManager.emitWebView(player.source, "showComponent", "shop");
+            return;
+        }
+    });
+
+    getVehicleService().getVehicleShops().forEach(vehicleShop => {
+        if (getDistanceBetween(player.character.position, vehicleShop.position) < 5) {
+            eventManager.emitWebView(player.source, "showComponent", "vehicleshop");
             return;
         }
     });

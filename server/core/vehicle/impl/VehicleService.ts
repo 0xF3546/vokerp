@@ -214,6 +214,46 @@ export class VehicleService implements IVehicleService {
     getNearestCharacterVehicles(character: Character): Vehicle[] {
         return this.getNearestVehicles(character.position, 5).filter(v => v.charId === character.id);
     }
+
+    getNearestVehicleShop(position: Position): { VehicleShop: VehicleShop; distance: number; } | undefined {
+        return this.vehicleShops.map(s => {
+            return {
+                VehicleShop: s,
+                distance: getDistanceBetween(position, s.position)
+            }
+        }).reduce((prev, current) => {
+            return prev.distance < current.distance ? prev : current;
+        });
+    }
+
+    getVehicleShopVehicleById(id: number): VehicleShopVehicle | undefined {
+        return this.vehicleShops.map(s => s.vehicles.find(v => v.id === id)).find(v => v !== undefined);
+    }
+
+    async purchaseVehicle(character: Character, vehicleShopVehicle: VehicleShopVehicle): Promise<Vehicle> {
+        if (!character.removeCash(vehicleShopVehicle.price)) {
+            character.player.notify(``, "Du hast nicht genügend Geld.");
+            return null;
+        }
+        const vehicleShop = this.getVehicleShopById(vehicleShopVehicle.shopId);
+        let vehicle = new Vehicle();
+        const vehicleClass = getVehicleService().getClassById(vehicleShopVehicle.vehicleClass);
+        vehicle.charId = character.id;
+        vehicle.vehicleClassId = vehicleShopVehicle.vehicleClass;
+        vehicle.licensePlate = character.name;
+        vehicle.garageId = vehicleShop.garageId;
+        vehicle.parked = false;
+        vehicle.fuel = vehicleClass.maxFuel;
+        vehicleShop.exitPoints.forEach(async (exitPoint) => {
+            if (this.getNearestVehicles(exitPoint.position, 5).length === 0) {
+                vehicle = await this.vehicleRepository.save(vehicle);
+                this.createVehicle(vehicle, exitPoint.position);
+                return vehicle;
+            }
+        });
+        character.player.notify(``, `Es wurde kein freier Ausparkpunkt gefunden.`);
+        return null;
+    }
 }
 
 export const vehicleServiceInitializer = {
