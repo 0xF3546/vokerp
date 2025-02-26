@@ -10,6 +10,8 @@ import CircleMenu from "../views/circlemenu/CircleMenu";
 import Inventory from "../views/inventory/Inventory";
 import Garage from "../views/garage/Garage";
 import VehicleShop from "../views/vehicleshop/VehicleShop";
+import HouseManagement from "../views/house/House";
+import WarehouseManagement from "../views/warehouse/Warehouse";
 
 interface WebViewContextProps {
   getActiveComponents: () => Component[];
@@ -54,6 +56,8 @@ const WebViewProvider = ({ children }: { children: ReactNode }) => {
       addComponent(new Component(<Inventory />, "inventory" ))
       addComponent(new Component(<Garage />, "garage"));
       addComponent(new Component(<VehicleShop />, "vehicleshop"));
+      addComponent(new Component(<HouseManagement />, "house"));
+      addComponent(new Component(<WarehouseManagement />, "warehouse"));
     }
   }, []);
   
