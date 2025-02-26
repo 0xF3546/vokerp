@@ -14,21 +14,21 @@ import {
 } from "lucide-react"
 import { HouseDto } from "@shared/models/HouseDto"
 import { TenantDto } from "@shared/models/TenantDto"
+import { fetchNui } from "web/src/utils/fetchNui"
 
 export default function HouseManagement() {
   const [showTenantsModal, setShowTenantsModal] = useState(false)
   const [newTenantName, setNewTenantName] = useState("")
   const [selectedHouse, setSelectedHouse] = useState<HouseDto>({
     id: 1,
-    number: "Vinewood Drive 42",
     price: 1250000,
     isDoorOpen: false,
     hasBasement: true,
     hasGarage: true,
-    isGarageOpen: false,
     maxTenants: 4,
     isOwner: true,
     isTenant: false,
+    isInside: false,
     tenants: [
       { id: 1, name: "John Doe", rent: 2500 },
       { id: 2, name: "Jane Smith", rent: 2500 },
@@ -37,10 +37,7 @@ export default function HouseManagement() {
 
   const toggleDoor = () => {
     setSelectedHouse((prev) => ({ ...prev, isDoorOpen: !prev.isDoorOpen }))
-  }
-
-  const toggleGarage = () => {
-    setSelectedHouse((prev) => ({ ...prev, isGarageOpen: !prev.isGarageOpen }))
+    fetchNui(`House::${selectedHouse.isDoorOpen ? "Lock" : "Open"}`, selectedHouse.id)
   }
 
   const addTenant = () => {
@@ -73,6 +70,14 @@ export default function HouseManagement() {
     }))
   }
 
+  const openGarage = () => {
+    console.log("Opening garage...")
+  }
+
+  const close = () => {
+    fetchNui("House::Close")
+  }
+
   return (
     <>
       <div className="fixed inset-0 flex items-center justify-center bg-black/50">
@@ -82,11 +87,11 @@ export default function HouseManagement() {
             <div>
               <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                 <Home className="w-5 h-5" />
-                {selectedHouse.number}
+                {selectedHouse.id}
               </h2>
               <p className="text-white/50 text-sm mt-1">Hauspreis: ${selectedHouse.price.toLocaleString()}</p>
             </div>
-            <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+            <button onClick={close} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
               <X className="w-5 h-5 text-white/70" />
             </button>
           </div>
@@ -103,7 +108,7 @@ export default function HouseManagement() {
               </div>
               <div className="bg-black/40 rounded-xl p-4 border border-white/5">
                 <div className="text-white/50 text-sm mb-1">Straße</div>
-                <div className="text-2xl font-semibold text-white">{selectedHouse.number}</div>
+                <div className="text-2xl font-semibold text-white">{selectedHouse.id}</div>
               </div>
               <div className="bg-black/40 rounded-xl p-4 border border-white/5 md:col-span-1 col-span-2">
                 <button
@@ -118,24 +123,25 @@ export default function HouseManagement() {
 
             {/* Controls */}
             <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <button
-                onClick={toggleDoor}
-                className={`p-6 rounded-xl border border-white/5 flex items-center justify-between transition-colors ${
-                  selectedHouse.isDoorOpen ? "bg-red-600/20 text-white" : "bg-black/40 text-white/70 hover:bg-black/60"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  {selectedHouse.isDoorOpen ? <DoorOpen className="w-5 h-5" /> : <DoorClosed className="w-5 h-5" />}
-                  <span>{selectedHouse.isDoorOpen ? "Tür schließen" : "Tür öffnen"}</span>
-                </div>
-                <div className={`w-2 h-2 rounded-full ${selectedHouse.isDoorOpen ? "bg-red-500" : "bg-white/20"}`} />
-              </button>
+              {(selectedHouse.isOwner || selectedHouse.isTenant) && (
+                <button
+                  onClick={toggleDoor}
+                  className={`p-6 rounded-xl border border-white/5 flex items-center justify-between transition-colors ${selectedHouse.isDoorOpen ? "bg-red-600/20 text-white" : "bg-black/40 text-white/70 hover:bg-black/60"
+                    }`}
+                >
+                  <div className="flex items-center gap-3">
+                    {selectedHouse.isDoorOpen ? <DoorOpen className="w-5 h-5" /> : <DoorClosed className="w-5 h-5" />}
+                    <span>{selectedHouse.isDoorOpen ? "Tür schließen" : "Tür öffnen"}</span>
+                  </div>
+                  <div className={`w-2 h-2 rounded-full ${selectedHouse.isDoorOpen ? "bg-red-500" : "bg-white/20"}`} />
+                </button>
+              )}
 
               {selectedHouse.isDoorOpen && (
                 <button className="p-6 rounded-xl border border-white/5 bg-black/40 text-white/70 hover:bg-black/60 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Home className="w-5 h-5" />
-                    <span>Haus betreten</span>
+                    <span>Haus {selectedHouse.isInside ? 'verlassen' : 'betreten'}</span>
                   </div>
                 </button>
               )}
@@ -149,21 +155,17 @@ export default function HouseManagement() {
                 </button>
               )}
 
-              {selectedHouse.hasGarage && (
+              {selectedHouse.hasGarage && selectedHouse.isOwner && (
                 <button
-                  onClick={toggleGarage}
-                  className={`p-6 rounded-xl border border-white/5 flex items-center justify-between transition-colors ${
-                    selectedHouse.isGarageOpen
-                      ? "bg-red-600/20 text-white"
-                      : "bg-black/40 text-white/70 hover:bg-black/60"
-                  }`}
+                  onClick={openGarage}
+                  className={`p-6 rounded-xl border border-white/5 flex items-center justify-between transition-colors bg-black/40 text-white/70 hover:bg-black/60`}
                 >
                   <div className="flex items-center gap-3">
                     <Car className="w-5 h-5" />
-                    <span>{selectedHouse.isGarageOpen ? "Garage schließen" : "Garage öffnen"}</span>
+                    <span>Garage öffnen</span>
                   </div>
                   <div
-                    className={`w-2 h-2 rounded-full ${selectedHouse.isGarageOpen ? "bg-red-500" : "bg-white/20"}`}
+                    className={`w-2 h-2 rounded-full bg-white/20`}
                   />
                 </button>
               )}

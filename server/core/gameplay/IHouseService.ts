@@ -1,3 +1,4 @@
+import { Position } from "@shared/types/Position"
 import { Player } from "../player/impl/Player"
 import { House } from "./impl/House"
 import { HouseBasement } from "./impl/HouseBasement"
@@ -12,4 +13,6 @@ export type IHouseService = {
     createHouse: (house: House) => Promise<House>
     createInterior: (interior: HouseInterior) => Promise<HouseInterior>
     createBasement: (basement: HouseBasement) => Promise<HouseBasement>
+    getHouses: () => House[]
+    getNearestHouse: (position: Position) => { house: House, distance: number } | null
 }

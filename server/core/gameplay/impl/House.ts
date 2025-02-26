@@ -2,14 +2,16 @@ import { Character } from "@server/core/character/impl/Character";
 import { Position } from "@shared/types/Position";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import houseService from "./HouseService";
+import { HouseTenant } from "./HouseTenant";
 
 @Entity("housing")
 export class House {
+    tenants: HouseTenant[] = [];
     @PrimaryGeneratedColumn()
     id!: number;
 
     @Column()
-    private ownerId: number | null = null;
+    ownerId: number | null = null;
 
     @Column("json")
     position!: Position;
@@ -23,14 +25,19 @@ export class House {
     @Column()
     name!: string;
 
-    @Column()
-    basementId!: number;
+    @Column({default: null, nullable: true})
+    basementId!: number | null;
 
     @Column()
     garage!: boolean;
 
     @Column("json", {default: null})
     parkoutPositions: Position[] | null = null;
+
+    @Column({default: 0})
+    maxTenants!: number;
+
+    isDoorOpen = false;
 
     get interior() {
         return houseService.getInteriorById(this.interiorId);
@@ -42,5 +49,9 @@ export class House {
 
     set owner(character: Character | null) {
         this.ownerId = character?.id || null;
+    }
+
+    isTenant(charId: number) {
+        return this.tenants.some(t => t.characterId === charId);
     }
 }

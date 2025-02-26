@@ -34,6 +34,7 @@ import { VehicleShopExitPoint } from "@server/core/vehicle/impl/VehicleShopExitP
 import { VehicleShopVehicle } from "@server/core/vehicle/impl/VehicleShopVehicle";
 import { DataSource } from "typeorm"
 import { ShopItem } from "@server/core/shop/impl/ShopItem";
+import { HouseTenant } from "@server/core/gameplay/impl/HouseTenant";
 
 export const dataSource = new DataSource({
     type: "mariadb",
@@ -53,5 +54,6 @@ export const dataSource = new DataSource({
         FarmingZone, FarmingzonePosition, Processor,
         Animation, AnimationCategory,
         PhoneChat, PhoneChatMessage, PhoneContact,
-        Warehouse, WarehouseStage]
+        Warehouse, WarehouseStage,
+    HouseTenant]
 })

@@ -4,6 +4,8 @@ import { House } from "./House";
 import { HouseInterior } from "./HouseInterior";
 import { HouseBasement } from "./HouseBasement";
 import { Player } from "@server/core/player/impl/Player";
+import { Position } from "@shared/types/Position";
+import { getDistanceBetween } from "@server/core/foundation/Utils";
 
 export class HouseService implements IHouseService {
     private houseRepository = dataSource.getRepository(House);
@@ -58,6 +60,21 @@ export class HouseService implements IHouseService {
         this.basements.push(basement);
         return basement;
     }
+
+    getHouses = () => {
+        return this.houses;
+    }
+
+    getNearestHouse(position: Position): {house: House, distance: number} | undefined {
+            return this.houses.map(h => {
+                return {
+                    house: h,
+                    distance: getDistanceBetween(position, h.position)
+                }
+            }).reduce((prev, current) => {
+                return prev.distance < current.distance ? prev : current;
+            });
+        }
 }
 
 export const houseServerInitializer = {

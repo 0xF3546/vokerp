@@ -1,6 +1,7 @@
 import { eventManager } from "@server/core/foundation/EventManager";
 import { getDistanceBetween } from "@server/core/foundation/Utils";
 import { getGamePlay } from "@server/core/gameplay/impl/Gameplay";
+import { getHouseService } from "@server/core/gameplay/impl/HouseService";
 import { Player } from "@server/core/player/impl/Player";
 import { getPlayerService } from "@server/core/player/impl/PlayerService";
 import { getShopService } from "@server/core/shop/impl/ShopService";
@@ -9,6 +10,14 @@ import { JumpPointType } from "@shared/types/JumpPointType";
 
 eventManager.on('KEY::E', async (source: number) => {
     const player: Player = getPlayerService().getBySource(source);
+    if (player.getVariable("isInHouse") || player.getVariable("isInBasement")) {
+        const houseId = player.getVariable("houseId");
+        const houes = getHouseService().getHouseById(houseId);
+        if (houes.isDoorOpen) {
+            eventManager.emitWebView(player.source, "showComponent", "house");
+        }
+        return;
+    }
     getGamePlay().getJumpPoints().forEach(jumpPoint => {
         if (getDistanceBetween(player.character.position, jumpPoint.enterPoint) < jumpPoint.rangeAtFirstPoint) {
             getGamePlay().useJumpPoint(player, jumpPoint, JumpPointType.ENTER);
@@ -30,6 +39,13 @@ eventManager.on('KEY::E', async (source: number) => {
     getVehicleService().getVehicleShops().forEach(vehicleShop => {
         if (getDistanceBetween(player.character.position, vehicleShop.position) < 5) {
             eventManager.emitWebView(player.source, "showComponent", "vehicleshop");
+            return;
+        }
+    });
+
+    getHouseService().getHouses().forEach(house => {
+        if (getDistanceBetween(player.character.position, house.position) < 5) {
+            eventManager.emitWebView(player.source, "showComponent", "house");
             return;
         }
     });
