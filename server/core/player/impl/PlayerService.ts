@@ -6,10 +6,12 @@ import { Character } from "@server/core/character/impl/Character";
 import { eventManager } from "@server/core/foundation/EventManager";
 import { PlayerBan } from "./PlayerBan";
 import { LoadedPlayer } from "@shared/types/LoadedPlayer";
+import { getHouseService } from "@server/core/gameplay/impl/HouseService";
 
 export class PlayerService implements IPlayerService {
     private playerBanRepository = dataSource.getRepository(PlayerBan);
     private playerRepository = dataSource.getRepository(Player);
+    private playerInterval;
     /**
      * Cache for Players
      */
@@ -75,14 +77,28 @@ export class PlayerService implements IPlayerService {
             position: player.character.lastPosition,
           }
 
+          this.playerInterval = setInterval(() => {
+            this.playerCache.forEach(player => {
+                player.character.minutes++;
+                if (player.character.minutes >= 60) {
+                    player.character.triggerPayDay();
+                }
+            });
+          }, 60000);
+
         eventManager.emitClient(player.source, "playerLoaded", JSON.stringify(loadedData));
     }
 
     playerDropped(source: number) {
         const player = this.getBySource(source);
         if (player) {
-            this.savePlayer(player);
             this.playerCache.splice(this.playerCache.indexOf(player), 1);
+            if (player.getVariable("houseId")) {
+                player.setVariable("houseId", undefined);
+                const house = getHouseService().getHouseById(player.getVariable("houseId"));
+                player.character.position = house.position;
+            }
+            this.savePlayer(player);
         }
     }
 
