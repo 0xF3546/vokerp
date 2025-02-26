@@ -12,6 +12,9 @@ import Garage from "../views/garage/Garage";
 import VehicleShop from "../views/vehicleshop/VehicleShop";
 import HouseManagement from "../views/house/House";
 import WarehouseManagement from "../views/warehouse/Warehouse";
+import ClothingStore from "../views/clothingstore/ClothingStore";
+import Barbershop from "../views/barbershop/BarberShop";
+import TattooStudio from "../views/tattoostudio/TattooStudio";
 
 interface WebViewContextProps {
   getActiveComponents: () => Component[];
@@ -58,6 +61,9 @@ const WebViewProvider = ({ children }: { children: ReactNode }) => {
       addComponent(new Component(<VehicleShop />, "vehicleshop"));
       addComponent(new Component(<HouseManagement />, "house"));
       addComponent(new Component(<WarehouseManagement />, "warehouse"));
+      addComponent(new Component(<ClothingStore />, "clothingstore"));
+      addComponent(new Component(<Barbershop />, "barbershop"));  
+      addComponent(new Component(<TattooStudio />, "tattoostudio"));
     }
   }, []);
   
