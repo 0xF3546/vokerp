@@ -35,6 +35,8 @@ import { VehicleShopVehicle } from "@server/core/vehicle/impl/VehicleShopVehicle
 import { DataSource } from "typeorm"
 import { ShopItem } from "@server/core/shop/impl/ShopItem";
 import { HouseTenant } from "@server/core/gameplay/impl/HouseTenant";
+import { BankLog } from "@server/core/logging/BankLog";
+import { CashLog } from "@server/core/logging/CashLog";
 
 export const dataSource = new DataSource({
     type: "mariadb",
@@ -48,12 +50,13 @@ export const dataSource = new DataSource({
     //entities: [__dirname + "../../core/**/impl/*.{js,ts}"],
     entities: [Player, PlayerBan, Faction, Rank,
         Vehicle, VehicleClass, VehicleShop, VehicleShopVehicle, VehicleShopExitPoint,
-        Character, Inventory, Item, InventoryItem, GasStation, House, Clothe, HouseBasement, HouseInterior, Garage, GarageExitpoint, Ticket, JumpPoint, 
+        Character, Inventory, Item, InventoryItem, GasStation, House, Clothe, HouseBasement, HouseInterior, Garage, GarageExitpoint, Ticket, JumpPoint,
         Shop, ShopItem,
         ClotheShop,
         FarmingZone, FarmingzonePosition, Processor,
         Animation, AnimationCategory,
         PhoneChat, PhoneChatMessage, PhoneContact,
         Warehouse, WarehouseStage,
-    HouseTenant]
+        HouseTenant,
+        BankLog, CashLog]
 })

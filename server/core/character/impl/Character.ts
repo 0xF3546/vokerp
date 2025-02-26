@@ -16,6 +16,9 @@ import { DEFAULT_CHARACTER_PROPS } from "@shared/constants/DEFAULT_CHARACTER_PRO
 import { DEFAULT_CHARACTER_DATA } from "@shared/constants/DEFAULT_CHARACTER_DATA";
 import { Smartphone } from "@server/core/smartphone/impl/Smartphone";
 import { CharCreatorDto } from "@shared/models/CharCreatorDto";
+import { dataSource } from "@server/data/database/app-data-source";
+import { BankLog } from "@server/core/logging/BankLog";
+import { CashLog } from "@server/core/logging/CashLog";
 
 @Entity("character")
 export class Character {
@@ -40,6 +43,9 @@ export class Character {
 
   @Column({ default: 0 })
   level!: number;
+
+  @Column({ default: 0 })
+  levelHours!: number;
 
   @Column({ default: 0 })
   minutes!: number;
@@ -94,6 +100,12 @@ export class Character {
 
   @Column({ default: null, nullable: true })
   number!: string | null;
+
+  @Column({ default: false })
+  isDead!: boolean;
+
+  @Column({ default: 0 })
+  deathTime!: number;
 
   player?: Player;
 
@@ -177,24 +189,28 @@ export class Character {
     if (this.cash < amount) return false;
     this.cash -= amount;
     getPlayerService().savePlayer(this.player);
+    CashLog.create(this.id, amount, false, reason);
     return true;
   }
 
   addCash = (amount: number, reason = null): void => {
     this.cash += amount;
     getPlayerService().savePlayer(this.player);
+    CashLog.create(this.id, amount, true, reason);
   }
 
   removeBank = (amount: number, reason = null): boolean => {
     if (this.bank < amount) return false;
     this.bank -= amount;
     getPlayerService().savePlayer(this.player);
+    BankLog.create(this.id, amount, false, reason);
     return true;
   }
 
   addBank = (amount: number, reason = null): void => {
     this.bank += amount;
     getPlayerService().savePlayer(this.player);
+    BankLog.create(this.id, amount, true, reason);
   }
 
   loadMPModel = (charData: CharacterData) => {
@@ -468,5 +484,25 @@ export class Character {
 
   loadTattoos = () => {
 
+  }
+
+  setDeath = (state: boolean, deathTime = 300) => {
+    this.isDead = state;
+    if (state) {
+      this.deathTime = deathTime;
+    }
+
+    eventManager.emitClient(this.player, "Character::setDeath", state, this.deathTime);
+  }
+
+  triggerPayDay = () => {
+    if (this.levelHours >= (this.level * 4)) {
+      this.level++;
+      this.levelHours = 0;
+    }
+    this.minutes = 0;
+    this.hours++;
+    this.addBank(this.level * 100, "Sozialbonus");
+    this.player.notify(`PayDay`, `Du hast deinen PayDay erhalten, überprüfe deine Banking App für mehr Informationen.`, `green`);
   }
 }
