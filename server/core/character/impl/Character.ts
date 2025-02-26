@@ -173,26 +173,26 @@ export class Character {
     }
   }
 
-  removeCash = (amount: number): boolean => {
+  removeCash = (amount: number, reason = null): boolean => {
     if (this.cash < amount) return false;
     this.cash -= amount;
     getPlayerService().savePlayer(this.player);
     return true;
   }
 
-  addCash = (amount: number): void => {
+  addCash = (amount: number, reason = null): void => {
     this.cash += amount;
     getPlayerService().savePlayer(this.player);
   }
 
-  removeBank = (amount: number): boolean => {
+  removeBank = (amount: number, reason = null): boolean => {
     if (this.bank < amount) return false;
     this.bank -= amount;
     getPlayerService().savePlayer(this.player);
     return true;
   }
 
-  addBank = (amount: number): void => {
+  addBank = (amount: number, reason = null): void => {
     this.bank += amount;
     getPlayerService().savePlayer(this.player);
   }

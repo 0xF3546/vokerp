@@ -1,9 +1,11 @@
 import { ShopType } from "@shared/enum/ShopType";
 import { Position } from "@shared/types/Position";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { ShopItem } from "./ShopItem";
 
 @Entity("shops")
 export class Shop {
+    items: ShopItem[] = [];
     @PrimaryGeneratedColumn()
     id!: number;
 

@@ -14,7 +14,7 @@ import { HouseBasement } from "@server/core/gameplay/impl/HouseBasement";
 import { HouseInterior } from "@server/core/gameplay/impl/HouseInterior";
 import { JumpPoint } from "@server/core/gameplay/impl/JumpPoint";
 import { Processor } from "@server/core/gameplay/impl/Processor";
-import { Shop } from "@server/core/gameplay/impl/Shop";
+import { Shop } from "@server/core/shop/impl/Shop";
 import { Inventory } from "@server/core/inventory/impl/Inventory";
 import { InventoryItem } from "@server/core/inventory/impl/InventoryItem";
 import { Item } from "@server/core/inventory/impl/Item";
@@ -33,6 +33,7 @@ import { VehicleShop } from "@server/core/vehicle/impl/VehicleShop";
 import { VehicleShopExitPoint } from "@server/core/vehicle/impl/VehicleShopExitPoint";
 import { VehicleShopVehicle } from "@server/core/vehicle/impl/VehicleShopVehicle";
 import { DataSource } from "typeorm"
+import { ShopItem } from "@server/core/shop/impl/ShopItem";
 
 export const dataSource = new DataSource({
     type: "mariadb",
@@ -46,7 +47,9 @@ export const dataSource = new DataSource({
     //entities: [__dirname + "../../core/**/impl/*.{js,ts}"],
     entities: [Player, PlayerBan, Faction, Rank,
         Vehicle, VehicleClass, VehicleShop, VehicleShopVehicle, VehicleShopExitPoint,
-        Character, Inventory, Item, InventoryItem, GasStation, House, Clothe, HouseBasement, HouseInterior, Garage, GarageExitpoint, Ticket, JumpPoint, Shop, ClotheShop,
+        Character, Inventory, Item, InventoryItem, GasStation, House, Clothe, HouseBasement, HouseInterior, Garage, GarageExitpoint, Ticket, JumpPoint, 
+        Shop, ShopItem,
+        ClotheShop,
         FarmingZone, FarmingzonePosition, Processor,
         Animation, AnimationCategory,
         PhoneChat, PhoneChatMessage, PhoneContact,

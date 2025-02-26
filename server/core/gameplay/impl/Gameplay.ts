@@ -2,7 +2,7 @@ import { dataSource } from "@server/data/database/app-data-source";
 import { IGameplay } from "../IGameplay";
 import { JumpPoint } from "./JumpPoint";
 import { JumpPointType } from "@shared/types/JumpPointType";
-import { Shop } from "./Shop";
+import { Shop } from "../../shop/impl/Shop";
 import { getStreamer } from "@server/core/foundation/Streamer";
 import { ShopType } from "@shared/enum/ShopType";
 import { Blip } from "@shared/types/Blip";
@@ -11,25 +11,14 @@ import { PedDto } from "@server/core/foundation/PedDto";
 
 export class GamePlay implements IGameplay {
     private jumpPointRepository = dataSource.getRepository(JumpPoint);
-    private shopRepository = dataSource.getRepository(Shop);
     private clothesShopRepository = dataSource.getRepository(ClotheShop);
     private jumpPoints: JumpPoint[] = [];
-    private shops: Shop[] = [];
     private clothesShops: ClotheShop[] = [];
 
     load() {
         this.jumpPointRepository.find().then((jumpPoints) => {
             this.jumpPoints = jumpPoints;
             console.log(`${jumpPoints.length} JumpPoints wurden geladen.`);
-        });
-
-        this.shopRepository.find().then((shops) => {
-            this.shops = shops;
-            console.log(`${shops.length} Shops wurden geladen.`);
-            shops.forEach(shop => {
-                this.createBlip(shop);
-                getStreamer().createPed(new PedDto(shop.npc, shop.position));
-            });
         });
 
         this.clothesShopRepository.find().then((clothesShops) => {
@@ -77,47 +66,6 @@ export class GamePlay implements IGameplay {
         } else if (jumpPointType === JumpPointType.EXIT) {
             player.character.position = jumpPoint.exitPoint;
         }
-    }
-
-    async createShop(shop: Shop): Promise<Shop> {
-        shop = await this.shopRepository.save(shop);
-        this.shops.push(shop);
-        this.createBlip(shop);
-        return shop;
-    }
-
-    private createBlip(shop: Shop) {
-        let color;
-        let type;
-        let name = '';
-        switch (shop.type) {
-            case ShopType.SUPERMARKET:
-                color = 2;
-                type = 52;
-                name = 'Supermarkt';
-                break;
-            case ShopType.WEAPONSHOP:
-                color = 1;
-                type = 110;
-                name = 'Waffenladen';
-                break;
-        }
-        getStreamer().createBlip(new Blip(
-            `shop_${shop.id}`,
-            shop.position,
-            name,
-            type,
-            color,
-            1
-        ));
-    }
-
-    getShopById(id: number): Shop | undefined {
-        return this.shops.find(shop => shop.id === id);
-    }
-
-    getShops(): Shop[] {
-        return this.shops;
     }
 
     async createClotheShop(clotheShop: ClotheShop): Promise<ClotheShop> {
