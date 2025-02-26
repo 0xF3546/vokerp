@@ -240,7 +240,6 @@ export class VehicleService implements IVehicleService {
         const vehicleClass = getVehicleService().getClassById(vehicleShopVehicle.vehicleClass);
         vehicle.charId = character.id;
         vehicle.vehicleClassId = vehicleShopVehicle.vehicleClass;
-        vehicle.licensePlate = character.name;
         vehicle.garageId = vehicleShop.garageId;
         vehicle.parked = false;
         vehicle.fuel = vehicleClass.maxFuel;
