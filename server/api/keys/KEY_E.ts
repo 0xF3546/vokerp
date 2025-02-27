@@ -3,6 +3,7 @@ import { ProgressBar } from "@server/core/foundation/Progressbar";
 import { getDistanceBetween } from "@server/core/foundation/Utils";
 import { getGamePlay } from "@server/core/gameplay/impl/Gameplay";
 import { getHouseService } from "@server/core/gameplay/impl/HouseService";
+import { getWarehouseService } from "@server/core/inventory/impl/WarehouseService";
 import { Player } from "@server/core/player/impl/Player";
 import { getPlayerService } from "@server/core/player/impl/PlayerService";
 import { getShopService } from "@server/core/shop/impl/ShopService";
@@ -53,6 +54,13 @@ eventManager.on('KEY::E', async (source: number) => {
     getHouseService().getHouses().forEach(house => {
         if (getDistanceBetween(player.character.position, house.position) < 5) {
             eventManager.emitWebView(player.source, "showComponent", "house");
+            return;
+        }
+    });
+
+    getWarehouseService().getWarehouses().forEach(warehouse => {
+        if (getDistanceBetween(player.character.position, warehouse.position) < 5) {
+            eventManager.emitWebView(player.source, "showComponent", "warehouse");
             return;
         }
     });
