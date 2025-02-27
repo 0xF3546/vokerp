@@ -1,3 +1,4 @@
+import { Position } from "@shared/types/Position";
 import { Player } from "../player/impl/Player";
 import { Warehouse } from "./impl/Warehouse";
 import { WarehouseStage } from "./impl/WarehouseStage";
@@ -11,5 +12,6 @@ export interface IWarehouseService {
     buyWarehouse(player: Player, warehouse: Warehouse): Promise<Warehouse>;
     upgradeWarehouse(player: Player, warehouse: Warehouse): Promise<Warehouse>;
 
-    getWarehouseStage(stage: number): WarehouseStage;
+    getWarehouseStage(stage: number): WarehouseStage | null;
+    getNearestWarehouse(position: Position): { warehouse: Warehouse, distance: number };
 }

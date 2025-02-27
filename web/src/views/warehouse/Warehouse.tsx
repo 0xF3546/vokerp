@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Warehouse, DoorOpen, DoorClosed, ArrowUpCircle, X, DollarSign } from "lucide-react"
 import { WarehouseDto } from "@shared/models/WarehouseDto"
+import { fetchNui } from "../../utils/fetchNui"
 
 export default function WarehouseManagement() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
@@ -16,21 +17,39 @@ export default function WarehouseManagement() {
     isOwner: true
   })
 
+  useEffect(() => {
+    const load = async () => {
+      const data = JSON.parse(await fetchNui("Warehouse::Load"));
+      setSelectedWarehouse(data)
+    }
+    load();
+  });
+
   const toggleDoor = () => {
     setSelectedWarehouse((prev) => ({ ...prev, isDoorOpen: !prev.isDoorOpen }))
+    fetchNui("ServerEvent", `Warehouse::${selectedWarehouse.isDoorOpen ? "Lock" : "Unlock"}`)
   }
 
   const enterWarehouse = () => {
     setSelectedWarehouse((prev) => ({ ...prev, isInside: true }))
+    fetchNui("ServerEvent", "Warehouse::Enter")
   }
 
   const leaveWarehouse = () => {
     setSelectedWarehouse((prev) => ({ ...prev, isInside: false }))
+    fetchNui("Warehouse::Leave")
   }
 
-  const handleUpgrade = () => {
-    // Hier würde die Logik für das Upgrade implementiert werden
-    setShowUpgradeModal(false)
+  const handleUpgrade = async () => {
+    const data = JSON.parse(await fetchNui("Warehouse::Upgrade"))
+    if (data.success) {
+      setSelectedWarehouse((prev) => ({ ...prev, level: prev.level + 1 }))
+      setShowUpgradeModal(false)
+    }
+  }
+
+  const close = () => {
+    fetchNui("ServerEvent", "Warehouse::Close")
   }
 
   return (
@@ -43,7 +62,7 @@ export default function WarehouseManagement() {
               <Warehouse className="w-5 h-5" />
               Lagerhalle #{selectedWarehouse.number}
             </h2>
-            <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+            <button onClick={close} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
               <X className="w-5 h-5 text-white/70" />
             </button>
           </div>
@@ -159,13 +178,14 @@ export default function WarehouseManagement() {
                   <span>Upgrade Kosten</span>
                 </div>
                 <div className="text-2xl font-semibold text-white">
-                  ${selectedWarehouse.upgradePrice.toLocaleString()}
+                  ${selectedWarehouse.upgradePrice !== -1 ? selectedWarehouse.upgradePrice.toLocaleString() : "max. Stufe"}
                 </div>
               </div>
 
               <button
                 onClick={handleUpgrade}
                 className="w-full py-3 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors font-medium"
+                disabled={selectedWarehouse.upgradePrice === -1}
               >
                 Upgrade durchführen
               </button>

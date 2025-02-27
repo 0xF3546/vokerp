@@ -1,6 +1,7 @@
 import { Position } from "@shared/types/Position";
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Inventory } from "./Inventory";
+import { getWarehouseService } from "./WarehouseService";
 
 @Entity("warehouses")
 export class Warehouse {
@@ -25,4 +26,10 @@ export class Warehouse {
     @OneToOne(() => Inventory, { cascade: true, eager: true })
     @JoinColumn()
     inventory: Inventory;
+
+    isDoorOpen: boolean = false;
+
+    getStage() {
+        return getWarehouseService().getWarehouseStage(this.stage);
+    }
 }

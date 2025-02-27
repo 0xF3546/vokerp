@@ -79,4 +79,8 @@ export class Player {
     setDimension = (dimension: number) => {
         SetPlayerRoutingBucket(this.source.toString(), dimension);
     }
+    
+    getDimension = () => {
+        return GetPlayerRoutingBucket(this.source.toString());
+    }
 }

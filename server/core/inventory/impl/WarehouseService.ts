@@ -3,6 +3,8 @@ import { IWarehouseService } from "../IWarehouseService";
 import { Warehouse } from "./Warehouse";
 import { Player } from "@server/core/player/impl/Player";
 import { WarehouseStage } from "./WarehouseStage";
+import { getDistanceBetween } from "@server/core/foundation/Utils";
+import { Position } from "@shared/types/Position";
 
 export class WarehouseService implements IWarehouseService {
     private warehouseRepository = dataSource.getRepository(Warehouse);
@@ -37,7 +39,7 @@ export class WarehouseService implements IWarehouseService {
     async deleteWarehouse(id: number) {
         const warehouse = this.getWarehouseById(id);
         if (!warehouse) return;
-        await this.warehouseRepository.delete(warehouse);
+        await this.warehouseRepository.delete(warehouse.id);
         this.warehouses = this.warehouses.filter(w => w.id !== id);
     }
 
@@ -71,7 +73,18 @@ export class WarehouseService implements IWarehouseService {
     }
 
     getWarehouseStage(stage: number) {
-        return this.warehouseStages.find(s => s.stage === stage);
+        return this.warehouseStages.find(s => s.stage === stage) || null;
+    }
+
+    getNearestWarehouse(position: Position): { warehouse: Warehouse, distance: number } {
+        return this.warehouses.map(w => {
+                    return {
+                        warehouse: w,
+                        distance: getDistanceBetween(position, w.position)
+                    }
+                }).reduce((prev, current) => {
+                    return prev.distance < current.distance ? prev : current;
+                });
     }
 }
 
