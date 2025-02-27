@@ -16,6 +16,7 @@ import ClothingStore from "../views/clothingstore/ClothingStore";
 import Barbershop from "../views/barbershop/BarberShop";
 import TattooStudio from "../views/tattoostudio/TattooStudio";
 import Shop from "../views/itemshop/ItemShop";
+import BankMenu from "../views/bank/Bank";
 
 interface WebViewContextProps {
   getActiveComponents: () => Component[];
@@ -66,6 +67,7 @@ const WebViewProvider = ({ children }: { children: ReactNode }) => {
       addComponent(new Component(<Barbershop />, "barbershop"));  
       addComponent(new Component(<TattooStudio />, "tattoostudio"));
       addComponent(new Component(<Shop />, "shop"));
+      addComponent(new Component(<BankMenu />, "bank"));
     }
   }, []);
   

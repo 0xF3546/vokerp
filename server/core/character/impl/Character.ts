@@ -6,7 +6,6 @@ import { CharacterData } from "@shared/types/CharacterData";
 import { CharacterClothes } from "@shared/types/CharacterClothes";
 import { CharacterProps } from "@shared/types/CharacterProps";
 import { eventManager } from "@server/core/foundation/EventManager";
-import { LoadedPlayer } from "@shared/types/LoadedPlayer";
 import { Gender } from "@shared/enum/Gender";
 import { getPlayerService } from "@server/core/player/impl/PlayerService";
 import { PositionParser } from "@server/core/foundation/PositionParser";
@@ -16,12 +15,13 @@ import { DEFAULT_CHARACTER_PROPS } from "@shared/constants/DEFAULT_CHARACTER_PRO
 import { DEFAULT_CHARACTER_DATA } from "@shared/constants/DEFAULT_CHARACTER_DATA";
 import { Smartphone } from "@server/core/smartphone/impl/Smartphone";
 import { CharCreatorDto } from "@shared/models/CharCreatorDto";
-import { dataSource } from "@server/data/database/app-data-source";
 import { BankLog } from "@server/core/logging/BankLog";
 import { CashLog } from "@server/core/logging/CashLog";
 
 @Entity("character")
 export class Character {
+  transactions: BankLog[] = [];
+
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -132,17 +132,18 @@ export class Character {
     return `${this.firstname} ${this.lastname}`;
   }
 
-  load = () => {
+  load = async () => {
     this.loadMPModel(this.data);
 
     SetPedArmour(GetPlayerPed(this.player.source.toString()), this.player.character.armour);
     // SetEntityHealth(GetPlayerPed(player.source.toString()), player.character.health);
 
-    this.smartphone = new Smartphone(this);
-
     if (this.firstname === null) {
       this.setCreator(true);
     }
+    
+    this.smartphone = new Smartphone(this);
+    this.transactions = await BankLog.findTransactions(this.id);
   }
 
   setCreator = (state: boolean, creatorDto: CharCreatorDto = null, save = true) => {
@@ -199,18 +200,24 @@ export class Character {
     CashLog.create(this.id, amount, true, reason);
   }
 
-  removeBank = (amount: number, reason = ""): boolean => {
+  removeBank = async (amount: number, reason = "", useForTransaction = false): Promise<boolean> => {
     if (this.bank < amount) return false;
     this.bank -= amount;
     getPlayerService().savePlayer(this.player);
-    BankLog.create(this.id, amount, false, reason);
+    const log = await BankLog.create(this.id, amount, false, reason, useForTransaction);
+    if (useForTransaction) {
+      this.transactions.push(log);
+    }
     return true;
   }
 
-  addBank = (amount: number, reason = ""): void => {
+  addBank = async (amount: number, reason = "", useForTransaction = false): Promise<void> => {
     this.bank += amount;
     getPlayerService().savePlayer(this.player);
-    BankLog.create(this.id, amount, true, reason);
+    const log = await BankLog.create(this.id, amount, true, reason, useForTransaction);
+    if (useForTransaction) {
+      this.transactions.push(log);
+    }
   }
 
   loadMPModel = (charData: CharacterData) => {

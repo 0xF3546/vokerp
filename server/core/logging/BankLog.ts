@@ -21,12 +21,24 @@ export class BankLog {
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
     timestamp: Date;
 
-    static create = async (characterId: number, amount: number, isPlus: boolean, reason: string) => {
+    @Column({ default: false })
+    useForTransaction: boolean;
+
+    static create = async (characterId: number, amount: number, isPlus: boolean, reason: string, useForTransaction: boolean) => {
         const bankLog = new BankLog();
         bankLog.characterId = characterId;
         bankLog.amount = amount;
         bankLog.isPlus = isPlus;
         bankLog.reason = reason;
+        bankLog.useForTransaction = useForTransaction;
         return await dataSource.getRepository(BankLog).save(bankLog);
+    }
+
+    static findTransactions = async (characterId: number) => {
+        return await dataSource.getRepository(BankLog).find({
+            where: {
+                characterId
+            }
+        });
     }
 }
