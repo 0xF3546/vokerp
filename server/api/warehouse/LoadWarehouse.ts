@@ -1,8 +1,8 @@
 import { WarehouseDto } from "@shared/models/WarehouseDto";
-import { eventManager } from "../foundation/EventManager";
-import { getWarehouseService } from "../inventory/impl/WarehouseService";
-import { getPlayerService } from "../player/impl/PlayerService";
-import { Warehouse } from "../inventory/impl/Warehouse";
+import { eventManager } from "../../core/foundation/EventManager";
+import { getWarehouseService } from "../../core/inventory/impl/WarehouseService";
+import { getPlayerService } from "../../core/player/impl/PlayerService";
+import { Warehouse } from "../../core/inventory/impl/Warehouse";
 
 eventManager.onCallback("Warehouse::Load", (source) => {
     const player = getPlayerService().getBySource(source);

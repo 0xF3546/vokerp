@@ -1,6 +1,6 @@
-import { eventManager } from "../foundation/EventManager";
-import { getWarehouseService } from "../inventory/impl/WarehouseService";
-import { getPlayerService } from "../player/impl/PlayerService";
+import { eventManager } from "../../core/foundation/EventManager";
+import { getWarehouseService } from "../../core/inventory/impl/WarehouseService";
+import { getPlayerService } from "../../core/player/impl/PlayerService";
 
 eventManager.on("Warehouse::Leave", (source) => {
     const player = getPlayerService().getBySource(source);

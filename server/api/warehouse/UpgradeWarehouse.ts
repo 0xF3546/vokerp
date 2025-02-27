@@ -1,7 +1,7 @@
-import { eventManager } from "../foundation/EventManager";
-import { Warehouse } from "../inventory/impl/Warehouse";
-import { getWarehouseService } from "../inventory/impl/WarehouseService";
-import { getPlayerService } from "../player/impl/PlayerService";
+import { eventManager } from "../../core/foundation/EventManager";
+import { Warehouse } from "../../core/inventory/impl/Warehouse";
+import { getWarehouseService } from "../../core/inventory/impl/WarehouseService";
+import { getPlayerService } from "../../core/player/impl/PlayerService";
 
 eventManager.onCallback("Warehouse::Upgrade", (source) => {
     const player = getPlayerService().getBySource(source);
