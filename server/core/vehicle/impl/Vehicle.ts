@@ -42,6 +42,8 @@ export class Vehicle {
 
     entity?: number;
 
+    private _locked;
+
     get vehicleClass() {
         return vehicleService.getClassById(this.vehicleClassId);
     }
@@ -49,5 +51,14 @@ export class Vehicle {
     get position() {
         if (!this.entity) return this.lastPosition;
         return PositionParser.getPosition(this.entity);
+    }
+
+    set locked(value: boolean) {
+        SetVehicleDoorsLocked(this.entity, 7);
+        this._locked = value;
+    }
+
+    get locked() {
+        return this._locked;
     }
 }
