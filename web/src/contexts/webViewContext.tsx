@@ -17,6 +17,7 @@ import Barbershop from "../views/barbershop/BarberShop";
 import TattooStudio from "../views/tattoostudio/TattooStudio";
 import Shop from "../views/itemshop/ItemShop";
 import BankMenu from "../views/bank/Bank";
+import { ProgressBar } from "../components/Progressbar";
 
 interface WebViewContextProps {
   getActiveComponents: () => Component[];

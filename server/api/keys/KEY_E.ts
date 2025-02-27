@@ -1,4 +1,5 @@
 import { eventManager } from "@server/core/foundation/EventManager";
+import { ProgressBar } from "@server/core/foundation/Progressbar";
 import { getDistanceBetween } from "@server/core/foundation/Utils";
 import { getGamePlay } from "@server/core/gameplay/impl/Gameplay";
 import { getHouseService } from "@server/core/gameplay/impl/HouseService";
@@ -10,6 +11,7 @@ import { JumpPointType } from "@shared/types/JumpPointType";
 
 eventManager.on('KEY::E', async (source: number) => {
     const player: Player = getPlayerService().getBySource(source);
+    if (ProgressBar.hide(player)) return;
     if (player.getVariable("isInHouse") || player.getVariable("isInBasement")) {
         const houseId = player.getVariable("houseId");
         const houes = getHouseService().getHouseById(houseId);

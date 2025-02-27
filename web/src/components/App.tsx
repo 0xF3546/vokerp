@@ -3,6 +3,7 @@ import "./App.css";
 import { useWebView } from "../contexts/webViewContext";
 import { useNotification } from "../contexts/notificationContext";
 import { eventListener } from "../utils/EventListener";
+import { ProgressBar } from "./Progressbar";
 
 
 const App: React.FC = () => {
@@ -55,6 +56,7 @@ const App: React.FC = () => {
 
   return (
     <div>
+      <ProgressBar />
       {webView.getActiveComponents().map((component, index) => (
         <div key={index}>
           {component.view}
