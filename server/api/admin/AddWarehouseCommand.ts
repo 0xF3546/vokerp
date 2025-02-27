@@ -5,12 +5,12 @@ import { Player } from "@server/core/player/impl/Player";
 
 commandManager.add("addWarehouse", (player: Player, args) => {
     if (player.rank.permLevel < 90) return;
-    if (args.length < 3) {
+    if (args.length < 2) {
         player.notify("", "Syntax: /addWarehouse [Preis] [Name]");
         return;
     }
 
-    const price = parseInt(args[1]);
+    const price = parseInt(args[0]);
     if (isNaN(price)) {
         player.notify("", "Syntax: /addWarehouse [Preis] [Name]");
         return;

@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useState, useEffect, useCallback } from "react"
 import Notification, { type NotificationProps } from "../components/notification/Notification"

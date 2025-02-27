@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { VehicleClass } from "./VehicleClass";
 import { Position } from "@shared/types/Position";
-import vehicleService from "./VehicleService";
+import vehicleService, { getVehicleService } from "./VehicleService";
 import { PositionParser } from "@server/core/foundation/PositionParser";
 
 @Entity("vehicles")
@@ -45,7 +45,7 @@ export class Vehicle {
     private _locked;
 
     get vehicleClass() {
-        return vehicleService.getClassById(this.vehicleClassId);
+        return getVehicleService().getClassById(this.vehicleClassId);
     }
 
     get position() {

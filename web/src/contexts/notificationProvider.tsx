@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useCallback, useState } from "react"
-import NotificationsContainer from "./NotificationContainer"
+import NotificationsContainer from "./notificationContainer"
 import type { NotificationProps } from "../components/notification/Notification"
 
 interface NotificationContextType {

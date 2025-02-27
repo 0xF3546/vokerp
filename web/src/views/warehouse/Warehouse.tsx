@@ -31,7 +31,7 @@ export default function WarehouseManagement() {
   }
 
   const enterWarehouse = () => {
-    setSelectedWarehouse((prev) => ({ ...prev, isInside: true }))
+    //setSelectedWarehouse((prev) => ({ ...prev, isInside: true }))
     fetchNui("ServerEvent", "Warehouse::Enter")
   }
 
