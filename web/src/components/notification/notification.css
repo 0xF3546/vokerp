@@ -1,52 +1,127 @@
 #notifications {
-  position: fixed; /* Positioniere die Benachrichtigungen an einer festen Stelle */
-  top: 20px; /* Abstand vom oberen Rand */
-  left: 20px; /* Benachrichtigungen auf der linken Seite */
-  z-index: 1000; /* Stelle sicher, dass die Benachrichtigungen über anderen Inhalten liegen */
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
   display: flex;
-  flex-direction: column; /* Benachrichtigungen untereinander anordnen */
-  gap: 10px; /* Abstand zwischen den Benachrichtigungen */
+  flex-direction: column;
+  gap: 8px;
+  max-width: 380px;
+  pointer-events: none;
 }
 
 .notification {
-  animation: fadeIn 0.5s ease-in-out; /* Animation für das Einblenden */
-  background-color: rgba(25, 25, 25, 0.78);
-  max-width: 22vh;
-  min-height: 3vh;
-  word-wrap: break-word;
-  padding: 0.8vh;
-  border-radius: 2px;
-  border-bottom: 5px solid; /* Farbe wird dynamisch gesetzt */
-
-  -webkit-box-shadow: 11px 10px 58px -22px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 11px 10px 58px -22px rgba(0, 0, 0, 0.75);
-  box-shadow: 11px 10px 58px -22px rgba(0, 0, 0, 0.75);
+  --notification-color: #ff3e3e;
+  position: relative;
+  background: linear-gradient(110deg, rgba(15, 15, 15, 0.95), rgba(25, 25, 25, 0.9));
+  border-radius: 4px;
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+  width: 100%;
+  pointer-events: all;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .notification.fadeOut {
-  animation: fadeOut 0.5s ease-in-out forwards; /* Animation für das Ausblenden */
+  animation: slideOut 0.3s ease-in forwards;
+}
+
+/* GTA V style border glow */
+.notification-border-glow {
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--notification-color) 0%,
+    transparent 15%,
+    transparent 85%,
+    var(--notification-color) 100%
+  );
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.5;
+}
+
+.notification-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(var(--notification-rgb), 0.15) 0%,
+    transparent 75%
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.notification:hover .notification-glow {
+  opacity: 1;
+}
+
+.notification-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+.notification-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba(var(--notification-rgb), 0.15);
+  border-radius: 3px;
+  color: var(--notification-color);
+  flex-shrink: 0;
+}
+
+.notification-text {
+  flex: 1;
+  min-width: 0;
 }
 
 .notification-title {
+  font-weight: 600;
+  font-size: 0.85rem;
   text-transform: uppercase;
-  padding: 5px 0 0 10px;
-  font-size: 1.1vh;
-  text-align: center;
+  color: var(--notification-color);
+  letter-spacing: 0.03em;
+  margin-bottom: 2px;
+  font-family: "Roboto Condensed", sans-serif;
 }
 
 .notification-message {
-  padding-left: 10px;
-  font-size: 1.3vh;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0;
+  line-height: 1.4;
+  font-family: "Roboto", sans-serif;
 }
 
-#notifications p {
-  color: #ffffff;
+/* GTA V style hover effect */
+.notification::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.3s;
 }
 
-@keyframes fadeIn {
+.notification:hover::after {
+  transform: translateX(100%);
+}
+
+@keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateX(-100px);
+    transform: translateX(-50px);
   }
   to {
     opacity: 1;
@@ -54,13 +129,27 @@
   }
 }
 
-@keyframes fadeOut {
+@keyframes slideOut {
   from {
     opacity: 1;
     transform: translateX(0);
   }
   to {
     opacity: 0;
-    transform: translateX(-100px);
+    transform: translateX(-50px);
   }
 }
+
+/* Responsive */
+@media (max-width: 640px) {
+  #notifications {
+    left: 10px;
+    right: 10px;
+    max-width: calc(100% - 20px);
+  }
+
+  .notification-content {
+    padding: 8px 10px;
+  }
+}
+
