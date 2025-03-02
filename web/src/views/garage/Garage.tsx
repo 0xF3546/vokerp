@@ -63,6 +63,7 @@ const Garage = () => {
 
   const handleUnpark = async (vehicleId: number) => {
     const data = JSON.parse(await fetchNui(`Garage::ParkoutVehicle`, vehicleId));
+    console.log(data);
     if (data.success) {
       setVehicles(vehicles.filter((vehicle) => vehicle.id !== vehicleId));
     }

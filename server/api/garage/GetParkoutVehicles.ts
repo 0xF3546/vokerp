@@ -11,7 +11,7 @@ eventManager.onCallback(`Garage::GetParkout`, async (source) => {
     if (!garage) return;
     if (garage.distance > 10) return;
 
-    const dto: GarageVehicleDto[] = (await getVehicleService().findGarageVehicles(player.character.id, garage.Garage.id)).map((vehicle) => ({
+    const dto: GarageVehicleDto[] = (await getVehicleService().findGarageVehicles(player.character.id, garage.Garage.id)).filter(x => x.parked).map((vehicle) => ({
         id: vehicle.id,
         name: vehicle.vehicleClass.displayName,
         isFavorite: vehicle.isFavorite,

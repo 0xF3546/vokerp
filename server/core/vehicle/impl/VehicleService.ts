@@ -11,7 +11,7 @@ import { GarageExitpoint } from "./GarageExitpoint";
 import { VehicleShop } from "./VehicleShop";
 import { VehicleShopExitPoint } from "./VehicleShopExitPoint";
 import { VehicleShopVehicle } from "./VehicleShopVehicle";
-import { getDistanceBetween } from "@server/core/foundation/Utils";
+import { Delay, getDistanceBetween } from "@server/core/foundation/Utils";
 import { Character } from "@server/core/character/impl/Character";
 
 export class VehicleService implements IVehicleService {
@@ -90,14 +90,20 @@ export class VehicleService implements IVehicleService {
 
     parkVehicle(vehicle: Vehicle): void {
         this.setParkedState(vehicle, true);
+        DeleteEntity(vehicle.entity);
+        vehicle.entity = null;
     }
 
     unparkVehicle(vehicle: Vehicle): boolean {
-        this.setParkedState(vehicle, false);
         const garage = this.getGarageById(vehicle.garageId);
-        garage?.exitPoints.forEach(exitPoint => {
+        console.log(garage);
+        if (!garage) return false;
+        garage?.exitPoints.forEach(async exitPoint => {
+            console.log(this.getNearestVehicles(exitPoint.position, 5));
+            console.log(this.getNearestVehicles(exitPoint.position, 5).length);
             if (this.getNearestVehicles(exitPoint.position, 5).length === 0) {
-                this.createVehicle(vehicle, exitPoint.position);
+                await this.createVehicle(vehicle, exitPoint.position);
+                this.setParkedState(vehicle, false);
                 return true;
             }
         });
@@ -112,10 +118,13 @@ export class VehicleService implements IVehicleService {
         return this.garageCache.find(g => g.id === id);
     }
 
-    createVehicle = (vehicle: Vehicle, position: Position) => {
+    createVehicle = async (vehicle: Vehicle, position: Position) => {
         const veh = CreateVehicle(GetHashKey(vehicle.vehicleClass.model), position.x, position.y, position.z, position.heading, true, true);
+        while (!DoesEntityExist(veh)) {
+            await Delay(100);
+        }
         SetVehicleNumberPlateText(veh, vehicle.licensePlate || '');
-        Entity(veh).state.set['id'] = vehicle.id;
+        Entity(veh).state['id'] = vehicle.id;
         vehicle.entity = veh;
         return veh;
     }
@@ -288,6 +297,14 @@ export class VehicleService implements IVehicleService {
             }
         })
         return undefined;
+    }
+
+    findVehicle(vehicleId: number): Promise<Vehicle | null> {
+        return this.vehicleRepository.findOne({
+            where: {
+                id: vehicleId
+            }
+        });
     }
 }
 

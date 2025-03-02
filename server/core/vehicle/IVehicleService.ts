@@ -16,6 +16,7 @@ export type IVehicleService = {
     findGarageVehicles(charId: number, garageId: number): Promise<Vehicle[]> | undefined;
     getNearestCharacterVehicles(character: Character): Vehicle[];
     getVehicle: (vehicleId: number) => Promise<Vehicle>;
+    findVehicle(vehicleId: number): Promise<Vehicle | null>;
     getClassById: (id: number) => VehicleClass | null;
     createGarage(garage: Garage): void;
     createGarageExitPoint(garageExitPoint: GarageExitpoint): void;
