@@ -86,11 +86,29 @@ export class VehicleService implements IVehicleService {
                 }
             });
         });
+
+        await this.vehicleRepository.find({
+            where: {
+                parked: false
+            }
+        }).then(vehicles => {
+            vehicles.forEach(vehicle => {
+                this.createVehicle(vehicle, vehicle.lastPosition);
+            });
+            console.log(`${vehicles.length} Fahrzeuge wurden geladen.`);
+        });
+    }
+
+    saveVehicles = async (): Promise<void>  => {
+        this.vehicleCache.forEach(async vehicle => {
+            vehicle.lastPosition = vehicle.position;
+        });
+        await this.vehicleRepository.save(Array.from(this.vehicleCache.values()));
     }
 
     parkVehicle(vehicle: Vehicle): void {
         this.setParkedState(vehicle, true);
-        DeleteEntity(vehicle.entity);
+        this.deleteVehicle(vehicle);
         vehicle.entity = null;
     }
 
@@ -99,8 +117,6 @@ export class VehicleService implements IVehicleService {
         console.log(garage);
         if (!garage) return false;
         garage?.exitPoints.forEach(async exitPoint => {
-            console.log(this.getNearestVehicles(exitPoint.position, 5));
-            console.log(this.getNearestVehicles(exitPoint.position, 5).length);
             if (this.getNearestVehicles(exitPoint.position, 5).length === 0) {
                 await this.createVehicle(vehicle, exitPoint.position);
                 this.setParkedState(vehicle, false);
@@ -126,7 +142,15 @@ export class VehicleService implements IVehicleService {
         SetVehicleNumberPlateText(veh, vehicle.licensePlate || '');
         Entity(veh).state['id'] = vehicle.id;
         vehicle.entity = veh;
+        this.vehicleCache.set(vehicle.id, vehicle);
         return veh;
+    }
+
+    private deleteVehicle(vehicle: Vehicle): void {
+        if (vehicle.entity) {
+            DeleteEntity(vehicle.entity);
+        }
+        this.vehicleCache.delete(vehicle.id);
     }
 
     private setParkedState(vehicle: Vehicle, state: boolean): void {

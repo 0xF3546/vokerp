@@ -3,7 +3,7 @@ import { adminServiceInitializer } from "./core/admin/impl/AdminService";
 import { factionServiceInitializer } from "./core/faction/impl/FactionService";
 import { dataSource } from "./data/database/app-data-source";
 import { houseServerInitializer } from "./core/gameplay/impl/HouseService";
-import { vehicleServiceInitializer } from "./core/vehicle/impl/VehicleService";
+import { getVehicleService, vehicleServiceInitializer } from "./core/vehicle/impl/VehicleService";
 import { gasStationServiceInitializer } from "./core/gameplay/impl/GasStationService";
 import { playerServiceInitializer } from "./core/player/impl/PlayerService";
 import { gamePlayInitializer } from "./core/gameplay/impl/Gameplay";
@@ -25,6 +25,12 @@ on("onResourceStart", (resName: string) => {
     .catch((err) => {
       console.error("Error initializing database", err);
     });
+  }
+});
+
+on("onResourceStop", async (resName: string) => {
+  if (resName === GetCurrentResourceName()) {
+    await getVehicleService().saveVehicles();
   }
 });
 

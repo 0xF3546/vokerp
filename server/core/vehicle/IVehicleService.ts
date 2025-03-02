@@ -10,6 +10,7 @@ import { GarageExitpoint } from "./impl/GarageExitpoint";
 
 export type IVehicleService = {
     load: () => void;
+    saveVehicles: () => Promise<void>;
     parkVehicle: (vehicle: Vehicle) => void;
     unparkVehicle: (vehicle: Vehicle) => boolean;
     getGarageVehicles(character: Character, garageId: number): Vehicle[];
