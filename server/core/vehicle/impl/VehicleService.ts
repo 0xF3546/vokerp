@@ -164,6 +164,19 @@ export class VehicleService implements IVehicleService {
         });
     }
 
+    createGarageExitPoint(garageExitPoint: GarageExitpoint): void {
+        if (garageExitPoint.order === undefined) {
+            garageExitPoint.order = this.garageCache.find(g => g.id === garageExitPoint.garageId).exitPoints.length;
+        }
+        this.garageExitPointRepository.save(garageExitPoint)
+        .then(() => {
+            const garage = this.garageCache.find(g => g.id === garageExitPoint.garageId);
+            if (garage) {
+                garage.exitPoints.push(garageExitPoint);
+            }
+        });
+    }
+
     getVehicleShopById(id: number): VehicleShop | undefined {
         return this.vehicleShops.find(s => s.id === id);
     }

@@ -6,6 +6,7 @@ import { VehicleShop } from "./impl/VehicleShop";
 import { Character } from "../character/impl/Character";
 import { VehicleShopVehicle } from "./impl/VehicleShopVehicle";
 import { VehicleShopExitPoint } from "./impl/VehicleShopExitPoint";
+import { GarageExitpoint } from "./impl/GarageExitpoint";
 
 export type IVehicleService = {
     load: () => void;
@@ -17,6 +18,7 @@ export type IVehicleService = {
     getVehicle: (vehicleId: number) => Promise<Vehicle>;
     getClassById: (id: number) => VehicleClass | null;
     createGarage(garage: Garage): void;
+    createGarageExitPoint(garageExitPoint: GarageExitpoint): void;
     getGarageById(id: number): Garage | undefined;
     /// es soll die distanz und garage zurückgeben
     getNearestGarage(position: Position): {Garage: Garage, distance: number} | undefined;

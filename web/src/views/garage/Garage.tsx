@@ -55,15 +55,15 @@ const Garage = () => {
     })
 
   const handlePark = async (vehicleId: number) => {
-    const data = await fetchNui(`Garage::ParkVehicle`, vehicleId);
-    if (data) {
+    const data = JSON.parse(await fetchNui(`Garage::ParkVehicle`, vehicleId));
+    if (data.sucess) {
       setVehicles(vehicles.filter((vehicle) => vehicle.id !== vehicleId));
     }
   }
 
   const handleUnpark = async (vehicleId: number) => {
-    const data = await fetchNui(`Garage::ParkoutVehicle`, vehicleId);
-    if (data) {
+    const data = JSON.parse(await fetchNui(`Garage::ParkoutVehicle`, vehicleId));
+    if (data.success) {
       setVehicles(vehicles.filter((vehicle) => vehicle.id !== vehicleId));
     }
   }
