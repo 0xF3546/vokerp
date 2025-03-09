@@ -7,7 +7,7 @@ export class Clothe {
     @PrimaryGeneratedColumn()
     id!: number
 
-    @Column()
+    @Column('longtext')
     label!: string
 
     @Column()

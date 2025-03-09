@@ -15,7 +15,7 @@ export class BankLog {
     @Column()
     isPlus: boolean;
 
-    @Column()
+    @Column('longtext')
     reason: string;
 
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

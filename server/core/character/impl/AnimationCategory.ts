@@ -5,6 +5,6 @@ export class AnimationCategory {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
+    @Column('longtext')
     name!: string;
 }

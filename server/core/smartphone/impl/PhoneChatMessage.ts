@@ -8,7 +8,7 @@ export class PhoneChatMessage {
     @Column()
     chatId!: number;
 
-    @Column()
+    @Column('longtext')
     message!: string;
 
     @Column()

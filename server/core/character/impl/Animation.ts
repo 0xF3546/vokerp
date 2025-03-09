@@ -6,16 +6,16 @@ export class Animation {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
+    @Column('longtext')
     nameText!: string;
 
     @Column()
     categoryId!: number;
 
-    @Column()
+    @Column('longtext')
     dictionary!: string;
 
-    @Column()
+    @Column('longtext')
     animationName!: string;
 
     @Column()
