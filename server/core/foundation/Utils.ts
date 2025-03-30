@@ -11,6 +11,14 @@ export const notify = (player: Player | Player[], title: string | null, message:
     });
 };
 
+const broadcast = (title: string, message: string, color: string = "green", delay = 5000, players: string | Player[] = 'all') => {
+    const playerList = Array.isArray(players) ? players : getPlayerService().getPlayers();
+    playerList.forEach((player) => {
+        eventManager.emitWebView(player.source, "broadcast", JSON.stringify({ title, message, color, delay }));
+    });
+
+}
+
 export const notifications = {
     sendTeamNotification: (title: string, message: string, color: string = "green", delay = 5000) => {
         getPlayerService().getPlayers().forEach((player) => {
@@ -26,6 +34,10 @@ export const notifications = {
                 notify(player, title, message, color, delay);
             }
         });
+    },
+
+    sendBroadcast: (title: string, message: string, color: string = "green", delay = 5000, players: string | Player[] = 'all') => {
+        broadcast(title, message, color, delay, players);
     }
 }
 
