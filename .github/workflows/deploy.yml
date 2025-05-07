@@ -23,20 +23,17 @@ jobs:
 
       - name: Install dependencies (Server, Client, Web)
         run: |
-          # Installiere Abhängigkeiten für Server und Client (falls erforderlich)
-          npm ci  # Stellt sicher, dass alle Abhängigkeiten aus package-lock.json installiert werden
-          
-          # Installiere zusätzlich Abhängigkeiten für den 'web' Ordner
+          npm ci
           cd web
-          npm ci  # Installiert die Abhängigkeiten für den Web-Ordner (Vite, TypeScript)
-      
+          npm ci
+
       - name: Build server
         run: |
           npx webpack --config webpack.config.js --env target=server
 
       - name: Build client
         run: |
-          npx webpack --config webpack.config.js --env target=clien
+          npx webpack --config webpack.config.js --env target=client
 
       - name: Build web with tsc && vite
         run: |
@@ -52,7 +49,7 @@ jobs:
           source: |
             server/*
             client/*
-            web/dist/*  # Der 'dist' Ordner von Vite enthält die gebauten Dateien
+            web/dist/*
           target: /home/gta/
           port: 22
           timeout: 30s
