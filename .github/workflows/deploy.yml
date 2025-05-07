@@ -40,7 +40,7 @@ jobs:
           cd web
           npm run build
 
-      - name: Debug: show files
+      - name: Debug - show files
         run: |
           echo "== SERVER =="
           ls -lah server || echo "server folder missing"
