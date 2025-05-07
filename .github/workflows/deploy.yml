@@ -42,6 +42,8 @@ jobs:
           cp -r build/server/* voidrp/server/
           cp -r build/client/* voidrp/client/
           cp -r web/build/* voidrp/web/
+          # Kopiere package.json mit auf den Server
+          cp package.json voidrp/
 
       - name: Show voidrp directory structure
         run: |
@@ -63,3 +65,11 @@ jobs:
           rm: false
           overwrite: true
           debug: true
+
+      - name: Run npm install on server
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SERVER_PRIVATE_KEY }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
+          cd /home/gta/txData/voidrp.base/resources/[gameplay] && npm install
+          "
+        env:
+          SERVER_PRIVATE_KEY: ${{ secrets.SERVER_PRIVATE_KEY }}
