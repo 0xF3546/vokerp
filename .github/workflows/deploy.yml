@@ -49,9 +49,9 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           source: |
-            server  # Wird in den 'server/' Ordner hochgeladen
-            client  # Wird in den 'client/' Ordner hochgeladen
-            web/build/*  # Der Inhalt von 'web/build' wird direkt in 'web/' hochgeladen
+            build/server/*
+            build/client/*
+            web/build/*
           target: /home/gta/
           port: 22
           timeout: 30s
