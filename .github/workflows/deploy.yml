@@ -39,6 +39,7 @@ jobs:
         run: |
           cd web
           npm run build
+
       - name: Debug: show files
         run: |
           echo "== SERVER =="
@@ -47,7 +48,6 @@ jobs:
           ls -lah client || echo "client folder missing"
           echo "== WEB DIST =="
           ls -lah web/dist || echo "web/dist folder missing"
-
 
       - name: Deploy to server (SCP)
         uses: appleboy/scp-action@v0.1.7
