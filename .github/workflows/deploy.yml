@@ -34,16 +34,19 @@ jobs:
       - name: Build web
         run: |
           cd web
-          npm run build 
+          npm run build
 
-      - name: Debug - Show directory content
+      - name: Reorganize output structure
         run: |
-          echo "Checking contents of build/server"
-          ls -lah build/server || echo "No files found in build/server"
-          echo "Checking contents of build/client"
-          ls -lah build/client || echo "No files found in build/client"
-          echo "Checking contents of web/build"
-          ls -lah web/build || echo "No files found in web/build"
+          mkdir -p deploy/server deploy/client deploy/web
+          cp -r build/server/* deploy/server/
+          cp -r build/client/* deploy/client/
+          cp -r web/build/* deploy/web/
+
+      - name: Show deploy directory structure
+        run: |
+          echo "Deploy directory structure:"
+          ls -R deploy
 
       - name: Deploy to server (SCP)
         uses: appleboy/scp-action@v0.1.7
@@ -51,10 +54,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
-          source: |
-            build/server/*
-            build/client/*
-            web/build/*
+          source: deploy
           target: /home/gta/
           port: 22
           timeout: 30s
@@ -63,4 +63,3 @@ jobs:
           rm: false
           overwrite: true
           debug: true
-          tar: true
