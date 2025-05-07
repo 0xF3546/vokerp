@@ -45,12 +45,6 @@ jobs:
           echo "Checking contents of web/build"
           ls -lah web/build || echo "No files found in web/build"
 
-      - name: Create tar archive manually
-        run: |
-          echo "Creating tar archive..."
-          tar -czf build.tar.gz build/server build/client web/build
-          ls -lh build.tar.gz || echo "Tar archive not created"
-
       - name: Deploy to server (SCP)
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -69,3 +63,4 @@ jobs:
           rm: false
           overwrite: true
           debug: true
+          tar: true
