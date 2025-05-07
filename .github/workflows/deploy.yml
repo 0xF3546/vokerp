@@ -78,5 +78,5 @@ jobs:
       - name: Run npm install on server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
-          cd /home/gta/txData/voidrp.base/resources/[gameplay] && npm install
+          cd /home/gta/txData/voidrp.base/resources/[gameplay]/voidrp && npm install
           "
