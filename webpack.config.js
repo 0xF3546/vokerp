@@ -4,7 +4,7 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const glob = require('glob');  // Glob-Paket einbinden, um alle Dateien zu finden
 
 //const buildPath = path.join("D:\\vokerp\\txData\\server.base\\resources\\[gameplay]\\vokerp");
-const buildPath = path.resolve(__dirname, 'build');
+const buildPath = path.join('build');
 
 const server = (env) => ({
     entry: glob.sync('./server/**/*.ts'),  // Alle .ts-Dateien im server/ Verzeichnis einbeziehen
