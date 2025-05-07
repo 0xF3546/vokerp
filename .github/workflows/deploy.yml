@@ -1,0 +1,63 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies (Server, Client, Web)
+        run: |
+          # Installiere Abhängigkeiten für Server und Client (falls erforderlich)
+          npm ci  # Stellt sicher, dass alle Abhängigkeiten aus package-lock.json installiert werden
+          
+          # Installiere zusätzlich Abhängigkeiten für den 'web' Ordner
+          cd web
+          npm ci  # Installiert die Abhängigkeiten für den Web-Ordner (Vite, TypeScript)
+      
+      - name: Build server
+        run: |
+          npx webpack --config webpack.config.js --env target=server
+
+      - name: Build client
+        run: |
+          npx webpack --config webpack.config.js --env target=clien
+
+      - name: Build web with tsc && vite
+        run: |
+          cd web
+          npm run build
+
+      - name: Deploy to server (SCP)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_PRIVATE_KEY }}
+          source: |
+            server/*
+            client/*
+            web/dist/*  # Der 'dist' Ordner von Vite enthält die gebauten Dateien
+          target: /home/gta/
+          port: 22
+          timeout: 30s
+          command_timeout: 10m
+          use_insecure_cipher: false
+          rm: false
+          overwrite: true
+          debug: true
