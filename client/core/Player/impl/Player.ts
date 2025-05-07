@@ -1,6 +1,7 @@
 import { Character } from "client/core/character/impl/Character";
 import { eventManager } from "client/core/foundation/EventManager";
 import { VOICE_RANGES } from "@shared/constants/VOICE_RANGES";
+import GetPlayer from "client/core/foundation/GetPlayer";
 
 export class Player {
     character!: Character;
@@ -42,11 +43,11 @@ export class Player {
     }
 
     setVariable = (key: string, value: any) => {
-        GetPlayer(PlayerPedId()).state[key] = value;
+        GetPlayer().state[key] = value;
     }
 
     getVariable = (key: string) => {
-        return GetPlayer(PlayerPedId()).state[key];
+        return GetPlayer().state[key];
     }
 }
 
