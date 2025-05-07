@@ -27,35 +27,20 @@ jobs:
           cd web
           npm ci
 
-      - name: Build server
+      - name: Build scripts (Server, Client)
         run: |
-          npx webpack --config webpack.config.js --env target=server
-
-      - name: Build client
-        run: |
-          npx webpack --config webpack.config.js --env target=client
+          npx run build
 
       - name: Build web
         run: |
           cd web
           npm run build
 
-      - name: Debug web build
+      - name: Show directory structure
         run: |
-          echo "Checking contents of web/"
-          ls -lah web
-          echo "Checking contents of web/build/"
-          ls -lah web/build || echo "dist does not exist"
-
-
-      - name: Debug - show files
-        run: |
-          echo "== SERVER =="
-          ls -lah server || echo "server folder missing"
-          echo "== CLIENT =="
-          ls -lah client || echo "client folder missing"
-          echo "== WEB DIST =="
-          ls -lah web/build || echo "web/build folder missing"
+          ls
+          echo "Web Directory:"
+          ls -R web/build
 
       - name: Deploy to server (SCP)
         uses: appleboy/scp-action@v0.1.7
