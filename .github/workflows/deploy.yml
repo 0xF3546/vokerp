@@ -35,10 +35,13 @@ jobs:
         run: |
           npx webpack --config webpack.config.js --env target=client
 
-      - name: Build web with tsc && vite
+      - name: Debug web build
         run: |
-          cd web
-          npm run build
+          echo "Checking contents of web/"
+          ls -lah web
+          echo "Checking contents of web/dist/"
+          ls -lah web/dist || echo "dist does not exist"
+
 
       - name: Debug - show files
         run: |
