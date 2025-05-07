@@ -56,9 +56,9 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           source: |
-            - server/*
-            - client/*
-            - web/dist/*
+            server/*
+            client/*
+            web/dist/*
           target: /home/gta/
           port: 22
           timeout: 30s
