@@ -29,16 +29,16 @@ jobs:
 
       - name: Build scripts (Server, Client)
         run: |
-          npm run build
+          npm run build  # Dies stellt sicher, dass server und client korrekt gebaut werden.
 
       - name: Build web
         run: |
           cd web
-          npm run build
+          npm run build  # Baut die Web-Dateien
 
       - name: Show directory structure
         run: |
-          ls
+          ls -R
           echo "Web Directory:"
           ls -R web/build
 
@@ -49,9 +49,9 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           source: |
-            server
-            client
-            web/build
+            server  # Wird in den 'server/' Ordner hochgeladen
+            client  # Wird in den 'client/' Ordner hochgeladen
+            web/build/*  # Der Inhalt von 'web/build' wird direkt in 'web/' hochgeladen
           target: /home/gta/
           port: 22
           timeout: 30s
