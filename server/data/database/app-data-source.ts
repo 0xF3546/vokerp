@@ -43,7 +43,7 @@ export const dataSource = new DataSource({
     host: "45.13.227.193",
     port: 3306,
     username: "gta_gameserver",
-    password: "1V0qB90X£VK+",
+    password: "1V0qB90XVK+",
     database: "gta",
     logging: false,
     synchronize: true,
