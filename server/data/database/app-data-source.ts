@@ -40,11 +40,11 @@ import { CashLog } from "@server/core/logging/CashLog";
 
 export const dataSource = new DataSource({
     type: "mariadb",
-    host: "185.117.3.65",
+    host: "45.13.227.193",
     port: 3306,
-    username: "erik",
-    password: "485zbtmfrt435t",
-    database: "vokerp",
+    username: "gta_gameserver",
+    password: "1V0qB90X£VK+'",
+    database: "gta",
     logging: false,
     synchronize: true,
     //entities: [__dirname + "../../core/**/impl/*.{js,ts}"],
