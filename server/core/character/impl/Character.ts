@@ -17,6 +17,7 @@ import { Smartphone } from "@server/core/smartphone/impl/Smartphone";
 import { CharCreatorDto } from "@shared/models/CharCreatorDto";
 import { BankLog } from "@server/core/logging/BankLog";
 import { CashLog } from "@server/core/logging/CashLog";
+import { CharacterWeapon } from "@shared/types/CharacterWeapon";
 
 @Entity("character")
 export class Character {
@@ -60,6 +61,9 @@ export class Character {
     z: 20.0,
     heading: 0.0,
   };
+
+  @Column("json", { default: [] })
+  weapons!: CharacterWeapon[];
 
 
   @Column({ default: 0 })
@@ -511,5 +515,48 @@ export class Character {
     this.hours++;
     this.addBank(this.level * 100, "Sozialbonus");
     this.player.notify(`PayDay`, `Du hast deinen PayDay erhalten, überprüfe deine Banking App für mehr Informationen.`, `green`);
+  }
+
+  addWeapon = (weapon: string, ammo: number) => {
+    if (this.weapons.find(x => x.weapon == weapon)) {
+      this.weapons.find(x => x.weapon == weapon).ammo += ammo;
+    } else {
+      this.weapons.push({
+        weapon: weapon,
+        ammo: ammo,
+        components: [],
+        serial: "",
+        id: 0,
+      });
+    }
+    GiveWeaponToPed(this.player.getPed(), GetHashKey(weapon), ammo, false, true);
+    getPlayerService().savePlayer(this.player);
+  }
+
+  removeWeapon = (weapon: string) => {
+    this.weapons.splice(this.weapons.indexOf(this.weapons.find(x => x.weapon == weapon)), 1);
+    RemoveWeaponFromPed(this.player.getPed(), GetHashKey(weapon));
+    getPlayerService().savePlayer(this.player);
+  }
+
+  getWeapon = (weapon: string) => {
+    return this.weapons.find(x => x.weapon == weapon);
+  }
+
+  getWeapons = () => {
+    return this.weapons;
+  }
+
+  addWeaponAmmo = (weapon: string, ammo: number) => {
+    if (!this.weapons.find(x => x.weapon == weapon)) return;
+    this.weapons.find(x => x.weapon == weapon).ammo += ammo;
+    GiveWeaponToPed(this.player.getPed(), GetHashKey(weapon), ammo, false, true);
+    getPlayerService().savePlayer(this.player);
+  }
+
+  removeWeaponAmmo = (weapon: string, ammo: number) => {
+    if (!this.weapons.find(x => x.weapon == weapon)) return;
+    this.weapons.find(x => x.weapon == weapon).ammo -= ammo;
+    getPlayerService().savePlayer(this.player);
   }
 }
