@@ -62,8 +62,8 @@ export class Character {
     heading: 0.0,
   };
 
-  @Column("json", { default: [] })
-  weapons!: CharacterWeapon[];
+  @Column("json", { nullable: true })
+  weapons?: CharacterWeapon[] = [];
 
 
   @Column({ default: 0 })
