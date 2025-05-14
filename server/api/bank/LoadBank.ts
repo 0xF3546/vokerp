@@ -13,7 +13,7 @@ eventManager.onCallback("Bank::Load", async (source) => {
         cash: player.character.cash,
         useFaction: false,
         user: player.character.name,
-        transactions: player.character.transactions.map(t => ({
+        transactions: player.character.getTransactions().map(t => ({
             amount: t.amount,
             date: t.timestamp.toISOString(),
             id: t.id,
