@@ -224,6 +224,11 @@ export class Character {
     }
   }
 
+  getTransactions = (): BankLog[] => {
+    return this.transactions.filter(x => x.useForTransaction);
+  }
+    
+
   loadMPModel = (charData: CharacterData) => {
     for (let key in charData) {
       console.log(`Setting ${key} to ${charData[key]}`);
